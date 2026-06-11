@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="{% block meta_descricao %}Banco Digital Hackathon{% endblock %}" />
+  <title>{% block titulo %}BancoHack{% endblock %} — BancoHack</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}" />
+  {% block head_extra %}{% endblock %}
+</head>
+<body class="pagina-{{ request.endpoint }}">
+
+  <!-- ════════════════════════════════════════════
+       CABEÇALHO GLOBAL
+       Visível apenas para usuários autenticados.
+  ════════════════════════════════════════════ -->
+  {% if session.get('email_usuario') %}
+  <header id="cabecalho-principal" class="cabecalho" role="banner">
+    <div class="cabecalho__container">
+
+      <a href="{{ url_for('dashboard') }}" class="cabecalho__logo" aria-label="Ir para o dashboard">
+        <span class="cabecalho__logo-icone" aria-hidden="true">🏦</span>
+        <span class="cabecalho__logo-texto">BancoHack</span>
+      </a>
+
+      <nav id="navegacao-principal" class="cabecalho__nav" aria-label="Navegação principal">
+        <ul class="nav__lista" role="list">
+          <li class="nav__item">
+            <a href="{{ url_for('dashboard') }}"
+               class="nav__link {% if request.endpoint == 'dashboard' %}nav__link--ativo{% endif %}">
+              Dashboard
+            </a>
+          </li>
+          <li class="nav__item">
+            <a href="{{ url_for('transferencia') }}"
+               class="nav__link {% if request.endpoint == 'transferencia' %}nav__link--ativo{% endif %}">
+              Transferir
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="cabecalho__acoes">
+        <form id="form-logout"
+              class="form-logout"
+              action="{{ url_for('logout') }}"
+              method="POST">
+          <button id="btn-logout"
+                  class="btn btn--secundario btn--pequeno"
+                  type="submit"
+                  aria-label="Sair da conta">
+            Sair
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </header>
+  {% endif %}
+
+  <!-- ════════════════════════════════════════════
+       MENSAGENS FLASH (feedback ao usuário)
+       Geradas pelo Controller via flash().
+  ════════════════════════════════════════════ -->
+  {% with mensagens = get_flashed_messages(with_categories=True) %}
+    {% if mensagens %}
+    <section id="area-notificacoes"
+             class="notificacoes"
+             aria-live="polite"
+             aria-label="Notificações do sistema">
+      {% for categoria, texto in mensagens %}
+      <div id="notificacao-{{ loop.index }}"
+           class="notificacao notificacao--{{ categoria }}"
+           role="alert">
+        <span class="notificacao__icone" aria-hidden="true">
+          {% if categoria == 'sucesso' %}✓{% elif categoria == 'erro' %}✕{% else %}ℹ{% endif %}
+        </span>
+        <p class="notificacao__texto">{{ texto }}</p>
+      </div>
+      {% endfor %}
+    </section>
+    {% endif %}
+  {% endwith %}
+
+  <!-- ════════════════════════════════════════════
+       CONTEÚDO PRINCIPAL (injetado por cada página)
+  ════════════════════════════════════════════ -->
+  <main id="conteudo-principal" class="conteudo-principal" role="main">
+    {% block conteudo %}{% endblock %}
+  </main>
+
+  <!-- ════════════════════════════════════════════
+       RODAPÉ GLOBAL
+  ════════════════════════════════════════════ -->
+  <footer id="rodape-principal" class="rodape" role="contentinfo">
+    <div class="rodape__container">
+      <p class="rodape__texto">
+        &copy; 2025 BancoHack — Projeto Hackathon Acadêmico.
+      </p>
+      <p class="rodape__aviso">
+        Ambiente de demonstração. Nenhum dado real é armazenado.
+      </p>
+    </div>
+  </footer>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

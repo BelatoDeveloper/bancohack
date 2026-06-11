@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block titulo %}Dashboard{% endblock %}
+{% block meta_descricao %}Seu painel financeiro no BancoHack{% endblock %}
+
+{% block conteudo %}
+
+<!-- ════════════════════════════════════════════
+     FUNCIONALIDADE 2 — DASHBOARD PRINCIPAL
+     Rota: /dashboard  |  Método: GET
+     Controller busca cliente no Model e injeta:
+       - cliente (objeto Cliente)
+       - conta   (objeto Conta)
+       - historico (lista de dicts)
+     Jinja2 acessa as propriedades via notação de ponto.
+════════════════════════════════════════════ -->
+
+<div id="layout-dashboard" class="layout-dashboard">
+
+  <!-- ── SAUDAÇÃO E RESUMO DO CLIENTE ── -->
+  <section id="secao-boas-vindas"
+           class="secao-boas-vindas"
+           aria-labelledby="titulo-boas-vindas">
+
+    <div id="info-cliente" class="info-cliente">
+      <h1 id="titulo-boas-vindas" class="titulo-boas-vindas">
+        Olá, <span id="nome-cliente" class="nome-cliente">{{ cliente.nome.split()[0] }}</span>!
+      </h1>
+      <p id="subtitulo-boas-vindas" class="subtitulo-boas-vindas">
+        Aqui está o resumo da sua conta.
+      </p>
+    </div>
+
+    <div id="dados-pessoais" class="dados-pessoais" aria-label="Dados cadastrais">
+      <dl id="lista-dados-pessoais" class="lista-dados">
+        <div class="lista-dados__item">
+          <dt class="lista-dados__chave">Nome completo</dt>
+          <dd id="dado-nome-completo" class="lista-dados__valor">{{ cliente.nome }}</dd>
+        </div>
+        <div class="lista-dados__item">
+          <dt class="lista-dados__chave">CPF</dt>
+          <dd id="dado-cpf" class="lista-dados__valor">{{ cliente.cpf_mascarado }}</dd>
+        </div>
+        <div class="lista-dados__item">
+          <dt class="lista-dados__chave">E-mail</dt>
+          <dd id="dado-email" class="lista-dados__valor">{{ cliente.email }}</dd>
+        </div>
+        <div class="lista-dados__item">
+          <dt class="lista-dados__chave">Telefone</dt>
+          <dd id="dado-telefone" class="lista-dados__valor">{{ cliente.telefone }}</dd>
+        </div>
+      </dl>
+    </div>
+
+  </section><!-- /secao-boas-vindas -->
+
+  <!-- ── CARTÃO DE SALDO ── -->
+  <section id="secao-saldo"
+           class="secao-saldo"
+           aria-labelledby="titulo-saldo">
+
+    <article id="cartao-saldo" class="cartao-saldo" aria-label="Saldo disponível">
+      <header id="cabecalho-cartao-saldo" class="cartao-saldo__cabecalho">
+        <h2 id="titulo-saldo" class="cartao-saldo__titulo">Saldo disponível</h2>
+        <div id="dados-conta" class="cartao-saldo__numero-conta">
+          <span class="label-conta">Ag. {{ conta.agencia }}</span>
+          <span class="separador-conta" aria-hidden="true">|</span>
+          <span class="label-conta">Conta {{ conta.numero }}</span>
+        </div>
+      </header>
+
+      <div id="valor-saldo" class="cartao-saldo__valor" aria-live="polite">
+        <span id="saldo-montante"
+              class="saldo-montante"
+              data-saldo-bruto="{{ conta.saldo }}">
+          {{ conta.saldo_formatado() }}
+        </span>
+      </div>
+
+      <footer id="acoes-conta" class="cartao-saldo__acoes">
+        <a id="btn-ir-transferencia"
+           href="{{ url_for('transferencia') }}"
+           class="btn btn--primario"
+           role="button">
+          Fazer uma transferência
+        </a>
+      </footer>
+    </article>
+
+  </section><!-- /secao-saldo -->
+
+  <!-- ── HISTÓRICO DE TRANSFERÊNCIAS ── -->
+  <section id="secao-historico"
+           class="secao-historico"
+           aria-labelledby="titulo-historico">
+
+    <h2 id="titulo-historico" class="titulo-secao">Histórico de movimentações</h2>
+
+    {% if historico %}
+    <div id="container-historico" class="container-historico">
+      <table id="tabela-historico"
+             class="tabela-historico"
+             aria-label="Movimentações financeiras recentes">
+        <thead id="cabecalho-tabela" class="tabela-historico__cabecalho">
+          <tr>
+            <th scope="col" class="tabela-historico__coluna">Tipo</th>
+            <th scope="col" class="tabela-historico__coluna">Contraparte</th>
+            <th scope="col" class="tabela-historico__coluna">Valor</th>
+          </tr>
+        </thead>
+        <tbody id="corpo-tabela-historico" class="tabela-historico__corpo">
+          {% for operacao in historico | reverse %}
+          <tr id="linha-operacao-{{ loop.index }}"
+              class="tabela-historico__linha tabela-historico__linha--{{ operacao.tipo | lower }}">
+            <td class="tabela-historico__celula">
+              <span class="badge badge--{{ operacao.tipo | lower }}">
+                {{ operacao.tipo }}
+              </span>
+            </td>
+            <td class="tabela-historico__celula">
+              {% if operacao.tipo == 'SAÍDA' %}
+                {{ operacao.destinatario_nome }}
+                <small class="conta-referencia">Conta {{ operacao.destinatario_conta }}</small>
+              {% else %}
+                {{ operacao.remetente_nome }}
+                <small class="conta-referencia">Conta {{ operacao.remetente_conta }}</small>
+              {% endif %}
+            </td>
+            <td class="tabela-historico__celula tabela-historico__celula--valor">
+              {{ operacao.valor_formatado }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% else %}
+    <div id="estado-vazio-historico" class="estado-vazio" role="status">
+      <p id="msg-sem-historico" class="estado-vazio__mensagem">
+        Nenhuma movimentação registrada ainda. Realize sua primeira transferência!
+      </p>
+      <a id="link-primeira-transferencia"
+         href="{{ url_for('transferencia') }}"
+         class="btn btn--secundario">
+        Fazer primeira transferência
+      </a>
+    </div>
+    {% endif %}
+
+  </section><!-- /secao-historico -->
+
+</div><!-- /layout-dashboard -->
+
+{% endblock %}

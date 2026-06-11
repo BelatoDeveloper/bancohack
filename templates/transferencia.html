@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block titulo %}Transferência{% endblock %}
+{% block meta_descricao %}Transfira dinheiro para outra conta no BancoHack{% endblock %}
+
+{% block conteudo %}
+
+<!-- ════════════════════════════════════════════
+     FUNCIONALIDADE 3 — FORMULÁRIO DE TRANSFERÊNCIA
+     Rota: /transferencia  |  Métodos: GET e POST
+     GET  → Controller injeta: cliente, outros_clientes
+     POST → Controller valida, chama Model (realizar_transferencia())
+            e redireciona ao dashboard com flash de feedback.
+════════════════════════════════════════════ -->
+
+<section id="secao-transferencia"
+         class="secao-transferencia"
+         aria-labelledby="titulo-transferencia">
+
+  <div id="painel-transferencia" class="painel-transferencia">
+
+    <!-- Cabeçalho da página -->
+    <header id="cabecalho-transferencia" class="cabecalho-transferencia">
+      <a id="link-voltar-dashboard"
+         href="{{ url_for('dashboard') }}"
+         class="link-voltar"
+         aria-label="Voltar ao dashboard">
+        ← Voltar
+      </a>
+      <h1 id="titulo-transferencia" class="titulo-transferencia">
+        Transferir dinheiro
+      </h1>
+      <p id="subtitulo-transferencia" class="subtitulo-transferencia">
+        Escolha o destinatário e o valor que deseja enviar.
+      </p>
+    </header>
+
+    <!-- Resumo do saldo do remetente -->
+    <aside id="resumo-saldo-remetente"
+           class="resumo-saldo"
+           aria-label="Seu saldo atual antes da transferência">
+      <dl class="lista-dados lista-dados--horizontal">
+        <div class="lista-dados__item">
+          <dt class="lista-dados__chave">Conta de origem</dt>
+          <dd id="dado-conta-origem" class="lista-dados__valor">
+            {{ cliente.nome }} — Conta {{ cliente.conta.numero }}
+          </dd>
+        </div>
+        <div class="lista-dados__item">
+          <dt class="lista-dados__chave">Saldo disponível</dt>
+          <dd id="dado-saldo-disponivel"
+              class="lista-dados__valor lista-dados__valor--destaque"
+              data-saldo="{{ cliente.conta.saldo }}">
+            {{ cliente.conta.saldo_formatado() }}
+          </dd>
+        </div>
+      </dl>
+    </aside>
+
+    <!-- Formulário de transferência -->
+    <form id="form-transferencia"
+          class="form form-transferencia"
+          action="{{ url_for('transferencia') }}"
+          method="POST"
+          novalidate
+          aria-label="Formulário de transferência">
+
+      <!-- Campo: Conta de destino -->
+      <div id="grupo-conta-destino" class="form__grupo">
+        <label id="label-conta-destino"
+               class="form__label"
+               for="campo-conta-destino">
+          Conta de destino
+          <span class="form__label-obrigatorio" aria-hidden="true">*</span>
+        </label>
+
+        <select id="campo-conta-destino"
+                class="form__select"
+                name="conta_destino"
+                required
+                aria-required="true"
+                aria-describedby="dica-conta-destino">
+          <option value="" disabled selected>Selecione o destinatário</option>
+          {% for outro in outros_clientes %}
+          <option id="opcao-conta-{{ loop.index }}"
+                  class="opcao-destinatario"
+                  value="{{ outro.conta.numero }}"
+                  data-nome="{{ outro.nome }}"
+                  data-agencia="{{ outro.conta.agencia }}">
+            {{ outro.nome }} — Conta {{ outro.conta.numero }} (Ag. {{ outro.conta.agencia }})
+          </option>
+          {% endfor %}
+        </select>
+
+        <small id="dica-conta-destino" class="form__dica">
+          Apenas contas cadastradas no BancoHack estão disponíveis.
+        </small>
+      </div>
+
+      <!-- Campo: Valor da transferência -->
+      <div id="grupo-valor-transferencia" class="form__grupo">
+        <label id="label-valor"
+               class="form__label"
+               for="campo-valor">
+          Valor a transferir (R$)
+          <span class="form__label-obrigatorio" aria-hidden="true">*</span>
+        </label>
+
+        <div id="wrapper-input-valor" class="form__input-wrapper">
+          <span id="prefixo-moeda"
+                class="form__prefixo"
+                aria-hidden="true">R$</span>
+          <input id="campo-valor"
+                 class="form__input form__input--com-prefixo"
+                 type="number"
+                 name="valor"
+                 placeholder="0,00"
+                 min="0.01"
+                 step="0.01"
+                 required
+                 aria-required="true"
+                 aria-describedby="dica-valor" />
+        </div>
+
+        <small id="dica-valor" class="form__dica">
+          O valor deve ser maior que R$ 0,00 e não pode exceder seu saldo disponível.
+        </small>
+      </div>
+
+      <!-- Ações do formulário -->
+      <div id="grupo-acoes-transferencia" class="form__grupo form__grupo--acoes">
+        <button id="btn-confirmar-transferencia"
+                class="btn btn--primario btn--largo"
+                type="submit">
+          Confirmar transferência
+        </button>
+        <a id="btn-cancelar-transferencia"
+           href="{{ url_for('dashboard') }}"
+           class="btn btn--secundario btn--largo"
+           role="button">
+          Cancelar
+        </a>
+      </div>
+
+    </form><!-- /form-transferencia -->
+
+    <!-- Aviso de segurança -->
+    <aside id="aviso-seguranca"
+           class="aviso-seguranca"
+           role="note"
+           aria-label="Aviso de segurança">
+      <p id="texto-aviso-seguranca" class="aviso-seguranca__texto">
+        ⚠️ Confirme os dados antes de enviar. Transferências não podem ser canceladas
+        após a confirmação.
+      </p>
+    </aside>
+
+  </div><!-- /painel-transferencia -->
+
+</section><!-- /secao-transferencia -->
+
+{% endblock %}

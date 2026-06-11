@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block titulo %}Login{% endblock %}
+{% block meta_descricao %}Acesse sua conta no BancoHack{% endblock %}
+
+{% block conteudo %}
+
+<!-- ════════════════════════════════════════════
+     FUNCIONALIDADE 1 — TELA DE LOGIN
+     Rota: /login  |  Método POST → Controller (app.py > login())
+     O Controller valida com Model (Cliente.verificar_senha())
+     e redireciona ao dashboard em caso de sucesso.
+════════════════════════════════════════════ -->
+
+<section id="secao-login" class="secao-login" aria-labelledby="titulo-login">
+
+  <div id="painel-login" class="painel-login">
+
+    <!-- Identidade visual da marca -->
+    <header id="cabecalho-login" class="cabecalho-login">
+      <div id="logo-login" class="logo-login" aria-hidden="true">🏦</div>
+      <h1 id="titulo-login" class="titulo-login">BancoHack</h1>
+      <p id="subtitulo-login" class="subtitulo-login">
+        Entre na sua conta para continuar
+      </p>
+    </header>
+
+    <!-- Formulário de autenticação -->
+    <form id="form-login"
+          class="form form-login"
+          action="{{ url_for('login') }}"
+          method="POST"
+          novalidate
+          aria-label="Formulário de login">
+
+      <!-- Campo: E-mail -->
+      <div id="grupo-email" class="form__grupo">
+        <label id="label-email"
+               class="form__label"
+               for="campo-email">
+          E-mail
+        </label>
+        <input id="campo-email"
+               class="form__input"
+               type="email"
+               name="email"
+               placeholder="seu@email.com"
+               autocomplete="email"
+               required
+               aria-required="true"
+               aria-describedby="dica-email" />
+        <small id="dica-email" class="form__dica">
+          Use o e-mail cadastrado na sua conta.
+        </small>
+      </div>
+
+      <!-- Campo: Senha -->
+      <div id="grupo-senha" class="form__grupo">
+        <label id="label-senha"
+               class="form__label"
+               for="campo-senha">
+          Senha
+        </label>
+        <input id="campo-senha"
+               class="form__input"
+               type="password"
+               name="senha"
+               placeholder="••••••••"
+               autocomplete="current-password"
+               required
+               aria-required="true" />
+      </div>
+
+      <!-- Ação principal -->
+      <div id="grupo-acoes-login" class="form__grupo form__grupo--acoes">
+        <button id="btn-entrar"
+                class="btn btn--primario btn--largo"
+                type="submit">
+          Entrar na conta
+        </button>
+      </div>
+
+    </form>
+
+    <!-- Dados de demonstração (helpers para o contexto do hackathon) -->
+    <aside id="painel-demo"
+           class="painel-demo"
+           aria-label="Contas de demonstração disponíveis">
+      <h2 id="titulo-demo" class="painel-demo__titulo">Contas de demonstração</h2>
+      <ul id="lista-contas-demo" class="lista-demo" role="list">
+        <li class="lista-demo__item">
+          <span class="lista-demo__label">E-mail:</span>
+          <code class="lista-demo__valor">ana@bancohack.com</code>
+          <span class="lista-demo__label">Senha:</span>
+          <code class="lista-demo__valor">senha123</code>
+        </li>
+        <li class="lista-demo__item">
+          <span class="lista-demo__label">E-mail:</span>
+          <code class="lista-demo__valor">bruno@bancohack.com</code>
+          <span class="lista-demo__label">Senha:</span>
+          <code class="lista-demo__valor">senha456</code>
+        </li>
+        <li class="lista-demo__item">
+          <span class="lista-demo__label">E-mail:</span>
+          <code class="lista-demo__valor">carla@bancohack.com</code>
+          <span class="lista-demo__label">Senha:</span>
+          <code class="lista-demo__valor">senha789</code>
+        </li>
+      </ul>
+    </aside>
+
+  </div><!-- /painel-login -->
+
+</section><!-- /secao-login -->
+
+{% endblock %}
