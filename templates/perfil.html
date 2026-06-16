@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+
+{% block title %}ZicaPay — Perfil{% endblock %}
+
+{% block page_content %}
+<!-- Profile Header -->
+<div class="profile-header">
+  <div class="profile-avatar-wrap">
+    <img src="{{ cliente.foto_url }}" alt="Foto de {{ cliente.nome }}" class="profile-avatar">
+    <div style="position:absolute;bottom:0;right:0;width:24px;height:24px;background:var(--primary);border-radius:50%;border:2px solid white;display:flex;align-items:center;justify-content:center;">
+      <svg width="12" height="12" fill="none" stroke="white" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+    </div>
+  </div>
+  <div class="profile-name">{{ cliente.nome }}</div>
+  <div class="profile-email">{{ cliente.email }}</div>
+  <div style="display:flex;gap:16px;margin-top:8px;">
+    <div style="text-align:center;">
+      <div style="font-size:1.125rem;font-weight:800;color:white;">{{ cliente.conta.saldo_formatado() }}</div>
+      <div style="font-size:0.7rem;color:rgba(255,255,255,0.75);">Saldo</div>
+    </div>
+    <div style="width:1px;background:rgba(255,255,255,0.3);"></div>
+    <div style="text-align:center;">
+      <div style="font-size:1.125rem;font-weight:800;color:white;">{{ cliente.chaves_pix|selectattr('ativa')|list|length }}</div>
+      <div style="font-size:0.7rem;color:rgba(255,255,255,0.75);">Chaves Pix</div>
+    </div>
+    <div style="width:1px;background:rgba(255,255,255,0.3);"></div>
+    <div style="text-align:center;">
+      <div style="font-size:1.125rem;font-weight:800;color:white;">{{ cliente.historico|length }}</div>
+      <div style="font-size:0.7rem;color:rgba(255,255,255,0.75);">Transações</div>
+    </div>
+  </div>
+</div>
+
+<div style="padding:16px;padding-bottom:80px;margin-top:4px;">
+
+  <!-- Dados pessoais -->
+  <div class="profile-section animate-fade-up">
+    <div style="padding:12px 20px;border-bottom:1px solid var(--border);">
+      <p style="font-size:0.7rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.8px;">Dados pessoais</p>
+    </div>
+    <div style="padding:16px 20px;display:flex;flex-direction:column;gap:14px;">
+      <div style="display:flex;justify-content:space-between;">
+        <span style="font-size:0.875rem;color:var(--text-muted);">Nome completo</span>
+        <span style="font-size:0.875rem;font-weight:600;">{{ cliente.nome }}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;">
+        <span style="font-size:0.875rem;color:var(--text-muted);">CPF</span>
+        <span style="font-size:0.875rem;font-weight:600;">{{ cliente.cpf_mascarado }}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;">
+        <span style="font-size:0.875rem;color:var(--text-muted);">E-mail</span>
+        <span style="font-size:0.875rem;font-weight:600;max-width:55%;overflow:hidden;text-overflow:ellipsis;text-align:right;">{{ cliente.email }}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;">
+        <span style="font-size:0.875rem;color:var(--text-muted);">Telefone</span>
+        <span style="font-size:0.875rem;font-weight:600;">{{ cliente.telefone }}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;">
+        <span style="font-size:0.875rem;color:var(--text-muted);">Agência</span>
+        <span style="font-size:0.875rem;font-weight:600;">{{ cliente.conta.agencia }}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;">
+        <span style="font-size:0.875rem;color:var(--text-muted);">Conta</span>
+        <span style="font-size:0.875rem;font-weight:600;">{{ cliente.conta.numero }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Segurança -->
+  <div class="profile-section animate-fade-up delay-1">
+    <div style="padding:12px 20px;border-bottom:1px solid var(--border);">
+      <p style="font-size:0.7rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.8px;">Segurança</p>
+    </div>
+
+    <button onclick="toggleSenhaForm()" class="profile-item" style="width:100%;background:none;border:none;cursor:pointer;">
+      <div class="profile-item-icon">
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+      </div>
+      <div class="profile-item-text">
+        <div class="profile-item-label">Alterar senha</div>
+        <div class="profile-item-sub">Senha segura e atualizada</div>
+      </div>
+      <svg class="profile-item-arrow" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+    </button>
+
+    <div id="senha-form" style="display:none;padding:16px 20px;border-top:1px solid var(--border);">
+      <form method="POST" action="{{ url_for('perfil') }}">
+        <input type="hidden" name="acao" value="alterar_senha">
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div class="form-group">
+            <label class="form-label" for="senha_atual">Senha atual</label>
+            <input class="form-input" type="password" id="senha_atual" name="senha_atual" required placeholder="••••••••">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="nova_senha">Nova senha</label>
+            <input class="form-input" type="password" id="nova_senha" name="nova_senha" required placeholder="Mínimo 6 caracteres" minlength="6">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="confirmar_senha">Confirmar nova senha</label>
+            <input class="form-input" type="password" id="confirmar_senha" name="confirmar_senha" required placeholder="Repita a nova senha">
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button type="button" onclick="toggleSenhaForm()" class="btn btn--outline btn--sm btn--full">Cancelar</button>
+            <button type="submit" class="btn btn--primary btn--sm btn--full">Salvar</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Preferências -->
+  <div class="profile-section animate-fade-up delay-2">
+    <div style="padding:12px 20px;border-bottom:1px solid var(--border);">
+      <p style="font-size:0.7rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.8px;">Preferências</p>
+    </div>
+
+    <div class="profile-item" style="cursor:default;">
+      <div class="profile-item-icon">
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+      </div>
+      <div class="profile-item-text">
+        <div class="profile-item-label">Modo escuro</div>
+        <div class="profile-item-sub">Tema dark ativado</div>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" class="theme-checkbox" onchange="ZicaPay.toggleTheme()">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <a href="{{ url_for('notificacoes') }}" class="profile-item">
+      <div class="profile-item-icon">
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+      </div>
+      <div class="profile-item-text">
+        <div class="profile-item-label">Notificações</div>
+        <div class="profile-item-sub">{{ cliente.notificacoes_nao_lidas }} não lida{{ 's' if cliente.notificacoes_nao_lidas != 1 else '' }}</div>
+      </div>
+      {% if cliente.notificacoes_nao_lidas > 0 %}
+      <span class="badge badge--danger">{{ cliente.notificacoes_nao_lidas }}</span>
+      {% endif %}
+      <svg class="profile-item-arrow" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+
+  <!-- Logout -->
+  <div class="profile-section animate-fade-up delay-3">
+    <form method="POST" action="{{ url_for('logout') }}" onsubmit="return confirm('Deseja realmente sair?')">
+      <button type="submit" class="profile-item" style="width:100%;background:none;border:none;cursor:pointer;">
+        <div class="profile-item-icon profile-item-icon--danger">
+          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        </div>
+        <div class="profile-item-text">
+          <div class="profile-item-label" style="color:var(--danger);">Sair da conta</div>
+          <div class="profile-item-sub">Encerrar sessão com segurança</div>
+        </div>
+      </button>
+    </form>
+  </div>
+
+  <div style="text-align:center;padding:16px 0;color:var(--text-muted);font-size:0.75rem;">
+    ZicaPay v1.0 · Banco digital seguro<br>
+    <span style="color:var(--primary);font-weight:600;">🔒 Conexão segura SSL</span>
+  </div>
+</div>
+
+<script>
+function toggleSenhaForm() {
+  const form = document.getElementById('senha-form');
+  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+</script>
+{% endblock %}

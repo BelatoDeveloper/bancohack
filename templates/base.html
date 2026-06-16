@@ -1,108 +1,73 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="light">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="{% block meta_descricao %}Banco Digital Hackathon{% endblock %}" />
-  <title>{% block titulo %}BancoHack{% endblock %} — BancoHack</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}" />
-  {% block head_extra %}{% endblock %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="theme-color" content="#21C25E">
+  <meta name="description" content="ZicaPay — Seu banco digital inteligente">
+  <title>{% block title %}ZicaPay{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2321C25E'/><text y='.9em' font-size='70' x='50%' text-anchor='middle' fill='white' font-weight='900'>Z</text></svg>">
+  {% block head %}{% endblock %}
 </head>
-<body class="pagina-{{ request.endpoint }}">
+<body>
 
-  <!-- ════════════════════════════════════════════
-       CABEÇALHO GLOBAL
-       Visível apenas para usuários autenticados.
-  ════════════════════════════════════════════ -->
-  {% if session.get('email_usuario') %}
-  <header id="cabecalho-principal" class="cabecalho" role="banner">
-    <div class="cabecalho__container">
+{% block full_page %}
 
-      <a href="{{ url_for('dashboard') }}" class="cabecalho__logo" aria-label="Ir para o dashboard">
-        <span class="cabecalho__logo-icone" aria-hidden="true">🏦</span>
-        <span class="cabecalho__logo-texto">BancoHack</span>
-      </a>
-
-      <nav id="navegacao-principal" class="cabecalho__nav" aria-label="Navegação principal">
-        <ul class="nav__lista" role="list">
-          <li class="nav__item">
-            <a href="{{ url_for('dashboard') }}"
-               class="nav__link {% if request.endpoint == 'dashboard' %}nav__link--ativo{% endif %}">
-              Dashboard
-            </a>
-          </li>
-          <li class="nav__item">
-            <a href="{{ url_for('transferencia') }}"
-               class="nav__link {% if request.endpoint == 'transferencia' %}nav__link--ativo{% endif %}">
-              Transferir
-            </a>
-          </li>
-        </ul>
-      </nav>
-
-      <div class="cabecalho__acoes">
-        <form id="form-logout"
-              class="form-logout"
-              action="{{ url_for('logout') }}"
-              method="POST">
-          <button id="btn-logout"
-                  class="btn btn--secundario btn--pequeno"
-                  type="submit"
-                  aria-label="Sair da conta">
-            Sair
-          </button>
-        </form>
-      </div>
-
+<!-- Toast Container -->
+<div class="toast-container" id="toast-container">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+    <div class="toast toast--{{ category }}">
+      <span class="toast-icon">
+        {% if category == 'sucesso' %}
+        <svg width="20" height="20" fill="none" stroke="#21C25E" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        {% elif category == 'erro' %}
+        <svg width="20" height="20" fill="none" stroke="#EF4444" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        {% else %}
+        <svg width="20" height="20" fill="none" stroke="#F59E0B" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+        {% endif %}
+      </span>
+      <span class="toast-text">{{ message }}</span>
+      <button class="toast-close" onclick="this.parentElement.remove()">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
     </div>
-  </header>
-  {% endif %}
-
-  <!-- ════════════════════════════════════════════
-       MENSAGENS FLASH (feedback ao usuário)
-       Geradas pelo Controller via flash().
-  ════════════════════════════════════════════ -->
-  {% with mensagens = get_flashed_messages(with_categories=True) %}
-    {% if mensagens %}
-    <section id="area-notificacoes"
-             class="notificacoes"
-             aria-live="polite"
-             aria-label="Notificações do sistema">
-      {% for categoria, texto in mensagens %}
-      <div id="notificacao-{{ loop.index }}"
-           class="notificacao notificacao--{{ categoria }}"
-           role="alert">
-        <span class="notificacao__icone" aria-hidden="true">
-          {% if categoria == 'sucesso' %}✓{% elif categoria == 'erro' %}✕{% else %}ℹ{% endif %}
-        </span>
-        <p class="notificacao__texto">{{ texto }}</p>
-      </div>
-      {% endfor %}
-    </section>
-    {% endif %}
+    {% endfor %}
   {% endwith %}
+</div>
 
-  <!-- ════════════════════════════════════════════
-       CONTEÚDO PRINCIPAL (injetado por cada página)
-  ════════════════════════════════════════════ -->
-  <main id="conteudo-principal" class="conteudo-principal" role="main">
-    {% block conteudo %}{% endblock %}
-  </main>
+{% block page_content %}{% endblock %}
 
-  <!-- ════════════════════════════════════════════
-       RODAPÉ GLOBAL
-  ════════════════════════════════════════════ -->
-  <footer id="rodape-principal" class="rodape" role="contentinfo">
-    <div class="rodape__container">
-      <p class="rodape__texto">
-        &copy; 2025 BancoHack — Projeto Hackathon Acadêmico.
-      </p>
-      <p class="rodape__aviso">
-        Ambiente de demonstração. Nenhum dado real é armazenado.
-      </p>
-    </div>
-  </footer>
+{% if session.get('email_usuario') %}
+<!-- Bottom Navigation -->
+<nav class="bottom-nav" role="navigation" aria-label="Navegação principal">
+  <a href="{{ url_for('dashboard') }}" class="nav-item" id="nav-home" aria-label="Início">
+    <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+    <span>Início</span>
+  </a>
+  <a href="{{ url_for('pix') }}" class="nav-item" id="nav-pix" aria-label="Pix">
+    <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+    <span>Pix</span>
+  </a>
+  <a href="{{ url_for('extrato') }}" class="nav-item" id="nav-extrato" aria-label="Extrato">
+    <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+    <span>Extrato</span>
+  </a>
+  <a href="{{ url_for('cartoes') }}" class="nav-item" id="nav-cartoes" aria-label="Cartões">
+    <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+    <span>Cartões</span>
+  </a>
+  <a href="{{ url_for('perfil') }}" class="nav-item" id="nav-perfil" aria-label="Perfil">
+    <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+    <span>Perfil</span>
+  </a>
+</nav>
+{% endif %}
 
-  {% block scripts %}{% endblock %}
+{% endblock %}
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% block scripts %}{% endblock %}
 </body>
 </html>

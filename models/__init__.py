@@ -1,7 +1,6 @@
-# Torna 'models/' um pacote Python importável
-from models.usuario import Usuario
-from models.conta import Conta
-from models.cliente import Cliente
+"""
+models/__init__.py — exporta a instância global do banco de dados.
+"""
 from models.banco_dados import db
 
-__all__ = ["Usuario", "Conta", "Cliente", "db"]
+__all__ = ["db"]

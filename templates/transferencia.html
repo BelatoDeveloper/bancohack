@@ -1,162 +1,127 @@
 {% extends "base.html" %}
 
-{% block titulo %}Transferência{% endblock %}
-{% block meta_descricao %}Transfira dinheiro para outra conta no BancoHack{% endblock %}
+{% block title %}ZicaPay — Transferência{% endblock %}
 
-{% block conteudo %}
+{% block page_content %}
+<div class="page-header">
+  <a href="{{ url_for('dashboard') }}" class="back-btn">
+    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+  </a>
+  <span class="page-title">Transferência</span>
+</div>
 
-<!-- ════════════════════════════════════════════
-     FUNCIONALIDADE 3 — FORMULÁRIO DE TRANSFERÊNCIA
-     Rota: /transferencia  |  Métodos: GET e POST
-     GET  → Controller injeta: cliente, outros_clientes
-     POST → Controller valida, chama Model (realizar_transferencia())
-            e redireciona ao dashboard com flash de feedback.
-════════════════════════════════════════════ -->
+<div class="container" style="padding-top:16px;">
 
-<section id="secao-transferencia"
-         class="secao-transferencia"
-         aria-labelledby="titulo-transferencia">
+  <!-- Saldo -->
+  <div style="background:var(--primary-10);border:1px solid var(--primary-20);border-radius:16px;padding:16px;margin-bottom:20px;text-align:center;">
+    <p style="font-size:0.75rem;color:var(--text-secondary);font-weight:500;">Saldo disponível para transferir</p>
+    <p style="font-size:1.5rem;font-weight:800;color:var(--primary);">{{ cliente.conta.saldo_formatado() }}</p>
+  </div>
 
-  <div id="painel-transferencia" class="painel-transferencia">
+  <!-- Form -->
+  <div class="card animate-fade-up">
+    <h2 style="font-weight:700;margin-bottom:4px;">Nova Transferência</h2>
+    <p style="color:var(--text-secondary);font-size:0.875rem;margin-bottom:20px;">Transfira para outra conta ZicaPay</p>
 
-    <!-- Cabeçalho da página -->
-    <header id="cabecalho-transferencia" class="cabecalho-transferencia">
-      <a id="link-voltar-dashboard"
-         href="{{ url_for('dashboard') }}"
-         class="link-voltar"
-         aria-label="Voltar ao dashboard">
-        ← Voltar
-      </a>
-      <h1 id="titulo-transferencia" class="titulo-transferencia">
-        Transferir dinheiro
-      </h1>
-      <p id="subtitulo-transferencia" class="subtitulo-transferencia">
-        Escolha o destinatário e o valor que deseja enviar.
-      </p>
-    </header>
+    <form method="POST" action="{{ url_for('transferencia') }}" id="form-transfer">
+      <div style="display:flex;flex-direction:column;gap:16px;">
 
-    <!-- Resumo do saldo do remetente -->
-    <aside id="resumo-saldo-remetente"
-           class="resumo-saldo"
-           aria-label="Seu saldo atual antes da transferência">
-      <dl class="lista-dados lista-dados--horizontal">
-        <div class="lista-dados__item">
-          <dt class="lista-dados__chave">Conta de origem</dt>
-          <dd id="dado-conta-origem" class="lista-dados__valor">
-            {{ cliente.nome }} — Conta {{ cliente.conta.numero }}
-          </dd>
-        </div>
-        <div class="lista-dados__item">
-          <dt class="lista-dados__chave">Saldo disponível</dt>
-          <dd id="dado-saldo-disponivel"
-              class="lista-dados__valor lista-dados__valor--destaque"
-              data-saldo="{{ cliente.conta.saldo }}">
-            {{ cliente.conta.saldo_formatado() }}
-          </dd>
-        </div>
-      </dl>
-    </aside>
-
-    <!-- Formulário de transferência -->
-    <form id="form-transferencia"
-          class="form form-transferencia"
-          action="{{ url_for('transferencia') }}"
-          method="POST"
-          novalidate
-          aria-label="Formulário de transferência">
-
-      <!-- Campo: Conta de destino -->
-      <div id="grupo-conta-destino" class="form__grupo">
-        <label id="label-conta-destino"
-               class="form__label"
-               for="campo-conta-destino">
-          Conta de destino
-          <span class="form__label-obrigatorio" aria-hidden="true">*</span>
-        </label>
-
-        <select id="campo-conta-destino"
-                class="form__select"
-                name="conta_destino"
-                required
-                aria-required="true"
-                aria-describedby="dica-conta-destino">
-          <option value="" disabled selected>Selecione o destinatário</option>
-          {% for outro in outros_clientes %}
-          <option id="opcao-conta-{{ loop.index }}"
-                  class="opcao-destinatario"
-                  value="{{ outro.conta.numero }}"
-                  data-nome="{{ outro.nome }}"
-                  data-agencia="{{ outro.conta.agencia }}">
-            {{ outro.nome }} — Conta {{ outro.conta.numero }} (Ag. {{ outro.conta.agencia }})
-          </option>
-          {% endfor %}
-        </select>
-
-        <small id="dica-conta-destino" class="form__dica">
-          Apenas contas cadastradas no BancoHack estão disponíveis.
-        </small>
-      </div>
-
-      <!-- Campo: Valor da transferência -->
-      <div id="grupo-valor-transferencia" class="form__grupo">
-        <label id="label-valor"
-               class="form__label"
-               for="campo-valor">
-          Valor a transferir (R$)
-          <span class="form__label-obrigatorio" aria-hidden="true">*</span>
-        </label>
-
-        <div id="wrapper-input-valor" class="form__input-wrapper">
-          <span id="prefixo-moeda"
-                class="form__prefixo"
-                aria-hidden="true">R$</span>
-          <input id="campo-valor"
-                 class="form__input form__input--com-prefixo"
-                 type="number"
-                 name="valor"
-                 placeholder="0,00"
-                 min="0.01"
-                 step="0.01"
-                 required
-                 aria-required="true"
-                 aria-describedby="dica-valor" />
+        <div class="form-group">
+          <label class="form-label" for="conta_destino">Destinatário</label>
+          <select class="form-input" id="conta_destino" name="conta_destino" required onchange="updateRecipient(this)">
+            <option value="">Selecione o destinatário</option>
+            {% for outro in outros_clientes %}
+            <option value="{{ outro.conta.numero }}">{{ outro.nome }} — Conta {{ outro.conta.numero }}</option>
+            {% endfor %}
+          </select>
         </div>
 
-        <small id="dica-valor" class="form__dica">
-          O valor deve ser maior que R$ 0,00 e não pode exceder seu saldo disponível.
-        </small>
-      </div>
+        <!-- Preview do destinatário -->
+        <div id="recipient-preview" style="display:none;background:var(--surface-2);border-radius:12px;padding:12px 16px;display:none;align-items:center;gap:12px;">
+          <div id="recipient-avatar" style="width:44px;height:44px;border-radius:50%;background:var(--gradient-primary);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:1rem;flex-shrink:0;">?</div>
+          <div>
+            <p id="recipient-name" style="font-weight:700;font-size:0.9rem;">—</p>
+            <p id="recipient-account" style="font-size:0.75rem;color:var(--text-muted);">—</p>
+          </div>
+        </div>
 
-      <!-- Ações do formulário -->
-      <div id="grupo-acoes-transferencia" class="form__grupo form__grupo--acoes">
-        <button id="btn-confirmar-transferencia"
-                class="btn btn--primario btn--largo"
-                type="submit">
-          Confirmar transferência
+        <div class="form-group">
+          <label class="form-label" for="valor">Valor</label>
+          <div class="input-wrapper">
+            <span class="input-icon" style="left:14px;font-weight:600;color:var(--text-secondary);font-size:1rem;">R$</span>
+            <input class="form-input" type="text" id="valor" name="valor" placeholder="0,00" required data-mask="currency" style="padding-left:44px;" inputmode="numeric">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="descricao">Descrição (opcional)</label>
+          <input class="form-input" type="text" id="descricao" placeholder="Para que é essa transferência?">
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--full btn--lg" id="btn-transfer">
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+          Transferir agora
         </button>
-        <a id="btn-cancelar-transferencia"
-           href="{{ url_for('dashboard') }}"
-           class="btn btn--secundario btn--largo"
-           role="button">
-          Cancelar
-        </a>
       </div>
+    </form>
+  </div>
 
-    </form><!-- /form-transferencia -->
+  <!-- Contatos recentes -->
+  {% if outros_clientes %}
+  <div style="margin-top:24px;">
+    <h3 style="font-weight:700;font-size:1rem;margin-bottom:12px;">Contatos disponíveis</h3>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      {% for outro in outros_clientes %}
+      <div class="card card--flat card--clickable" style="padding:14px 16px;display:flex;align-items:center;gap:12px;"
+           onclick="document.getElementById('conta_destino').value='{{ outro.conta.numero }}';updateRecipientManual('{{ outro.nome }}','{{ outro.conta.numero }}')">
+        <div style="width:44px;height:44px;border-radius:50%;background:var(--gradient-primary);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:0.9rem;flex-shrink:0;">
+          {{ outro.nome[0] }}{{ outro.nome.split(' ')[-1][0] if ' ' in outro.nome else '' }}
+        </div>
+        <div style="flex:1;">
+          <p style="font-weight:600;font-size:0.9rem;">{{ outro.nome }}</p>
+          <p style="font-size:0.75rem;color:var(--text-muted);">Ag. {{ outro.conta.agencia }} · Conta {{ outro.conta.numero }}</p>
+        </div>
+        <svg width="18" height="18" fill="none" stroke="var(--text-muted)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
 
-    <!-- Aviso de segurança -->
-    <aside id="aviso-seguranca"
-           class="aviso-seguranca"
-           role="note"
-           aria-label="Aviso de segurança">
-      <p id="texto-aviso-seguranca" class="aviso-seguranca__texto">
-        ⚠️ Confirme os dados antes de enviar. Transferências não podem ser canceladas
-        após a confirmação.
-      </p>
-    </aside>
+<script>
+const recipientData = {
+  {% for outro in outros_clientes %}
+  '{{ outro.conta.numero }}': { name: '{{ outro.nome }}', account: 'Ag. {{ outro.conta.agencia }} · Conta {{ outro.conta.numero }}', initials: '{{ outro.nome[0] }}{{ outro.nome.split(' ')[-1][0] if ' ' in outro.nome else '' }}' },
+  {% endfor %}
+};
 
-  </div><!-- /painel-transferencia -->
+function updateRecipient(select) {
+  const preview = document.getElementById('recipient-preview');
+  const data = recipientData[select.value];
+  if (data) {
+    document.getElementById('recipient-avatar').textContent = data.initials;
+    document.getElementById('recipient-name').textContent = data.name;
+    document.getElementById('recipient-account').textContent = data.account;
+    preview.style.display = 'flex';
+  } else {
+    preview.style.display = 'none';
+  }
+}
 
-</section><!-- /secao-transferencia -->
+function updateRecipientManual(name, account) {
+  const preview = document.getElementById('recipient-preview');
+  const initials = name.split(' ').map(w => w[0]).slice(0, 2).join('');
+  document.getElementById('recipient-avatar').textContent = initials;
+  document.getElementById('recipient-name').textContent = name;
+  document.getElementById('recipient-account').textContent = 'Conta ' + account;
+  preview.style.display = 'flex';
+}
 
+document.getElementById('form-transfer').addEventListener('submit', function() {
+  const btn = document.getElementById('btn-transfer');
+  btn.classList.add('btn--loading');
+  btn.textContent = 'Processando...';
+});
+</script>
 {% endblock %}
