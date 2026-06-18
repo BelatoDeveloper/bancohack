@@ -52,6 +52,20 @@ def splash():
 
 
 # ────────────────────────────────────────────────────────────────────────────────
+# ROTA: Termos de Uso (Scroll of Doom — ZicaPay)
+# Tela de terror jurídico com checkboxes maldosos.
+# Não requer login — é exibida antes do cadastro.
+# ────────────────────────────────────────────────────────────────────────────────
+
+@app.route("/termos")
+def termos():
+    # Redireciona usuários já logados direto para o dashboard
+    if "email_usuario" in session:
+        return redirect(url_for("dashboard"))
+    return render_template("termos.html")
+
+
+# ────────────────────────────────────────────────────────────────────────────────
 # ROTA: Login / Logout / Cadastro
 # ────────────────────────────────────────────────────────────────────────────────
 
