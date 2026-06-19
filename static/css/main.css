@@ -303,6 +303,27 @@ ul { list-style: none; }
   width: 160px; height: 160px;
   border-radius: var(--radius-full);
   background: rgba(255,255,255,0.08);
+  /* =======================================================
+     CORREÇÃO DO BUG — pointer-events: none
+     =======================================================
+     PROBLEMA: Este pseudo-elemento (::before) é um círculo
+     decorativo posicionado com position:absolute. Por padrão,
+     pseudo-elementos herdam pointer-events:auto do pai.
+
+     Isso fazia o círculo "roubar" todos os cliques na área
+     do topo-direito do card, exatamente onde fica o botão
+     #balance-toggle (ícone de olho).
+
+     Diagnóstico confirmado via DevTools:
+       elementFromPoint(centerX, centerY) retornava o DIV
+       .balance-card em vez do BUTTON #balance-toggle,
+       provando que algo acima do botão interceptava o evento.
+
+     SOLUÇÃO: pointer-events:none torna o pseudo-elemento
+     completamente transparente a eventos de mouse/toque.
+     Os cliques passam através dele e atingem o botão real.
+     ======================================================= */
+  pointer-events: none;
 }
 .balance-card::after {
   content: '';
@@ -311,6 +332,19 @@ ul { list-style: none; }
   width: 200px; height: 200px;
   border-radius: var(--radius-full);
   background: rgba(255,255,255,0.05);
+  /* =======================================================
+     CORREÇÃO DO BUG — pointer-events: none (igual ao ::before)
+     =======================================================
+     Este segundo círculo decorativo (::after) cobria a parte
+     inferior-esquerda do card. Sem pointer-events:none, qualquer
+     elemento do card nessa área também seria inacessível.
+
+     Regra geral: SEMPRE adicione pointer-events:none a
+     pseudo-elementos puramente decorativos (::before/::after)
+     que usam position:absolute, especialmente em cards
+     que contêm elementos interativos (botões, links, inputs).
+     ======================================================= */
+  pointer-events: none;
 }
 .balance-label {
   font-size: var(--font-sm);
@@ -335,6 +369,17 @@ ul { list-style: none; }
   padding: var(--space-1);
   display: flex;
   transition: color var(--transition);
+  /* =======================================================
+     REFORÇO — position:relative + z-index:1
+     =======================================================
+     Além de pointer-events:none nos pseudo-elementos, garantimos
+     que o botão de olho fica em uma camada de z-index explícita.
+     Isso serve como defesa em profundidade: mesmo que outro
+     elemento decorativo apareça no futuro, o botão fica na
+     frente no contexto de empilhamento (stacking context).
+     ======================================================= */
+  position: relative;
+  z-index: 2;
 }
 .balance-toggle:hover { color: white; }
 .balance-meta {

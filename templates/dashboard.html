@@ -2,6 +2,13 @@
 
 {% block title %}ZicaPay — Início{% endblock %}
 
+{% block head %}
+<!-- ─── CSS do Dark Pattern de Propaganda ────────────────────────────────────
+     Este arquivo de estilos controla o modal de propaganda que bloqueia o
+     usuário de ver o saldo. Carregado apenas na página do dashboard. -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/propaganda.css') }}">
+{% endblock %}
+
 {% block page_content %}
 <!-- ─── Header ──────────────────────────────────────────────────────────── -->
 <header class="zica-header">
@@ -14,7 +21,10 @@
   </div>
   <div class="header-actions">
     <a href="{{ url_for('notificacoes') }}" class="icon-btn" id="btn-notifications" aria-label="Notificações">
-      <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+      <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+      </svg>
       {% if cliente.notificacoes_nao_lidas > 0 %}
       <span class="badge-dot"></span>
       {% endif %}
@@ -29,13 +39,24 @@
 <div class="balance-card animate-fade-up">
   <div style="display:flex;align-items:center;justify-content:space-between;">
     <div class="balance-label">
-      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+      </svg>
       Conta corrente
     </div>
     <button class="balance-toggle" id="balance-toggle" aria-label="Ocultar saldo">
-      <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+      <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+      </svg>
     </button>
   </div>
+  <!-- ── Saldo com estado inicial SEMPRE oculto (Dark Pattern #1) ────────────
+       A classe 'hidden' é adicionada pelo propaganda.js via JavaScript.
+       O valor real do saldo vem do servidor (Jinja2), mas é escondido por CSS.
+       O data-saldo-real não é usado diretamente — o texto do elemento é o real. -->
   <div class="balance-amount" id="balance-amount">{{ conta.saldo_formatado() }}</div>
   <div class="balance-meta">Ag. {{ conta.agencia }} · Conta {{ conta.numero }}</div>
 </div>
@@ -45,56 +66,77 @@
 
   <a href="{{ url_for('pix') }}" class="quick-action" id="action-pix">
     <div class="quick-action-icon">
-      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+      </svg>
     </div>
     <span>Pix</span>
   </a>
 
   <a href="{{ url_for('transferencia') }}" class="quick-action" id="action-transferir">
     <div class="quick-action-icon">
-      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+      </svg>
     </div>
     <span>Transferir</span>
   </a>
 
   <a href="{{ url_for('deposito') }}" class="quick-action" id="action-depositar">
     <div class="quick-action-icon">
-      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      </svg>
     </div>
     <span>Depositar</span>
   </a>
 
   <a href="{{ url_for('extrato') }}" class="quick-action" id="action-pagar">
     <div class="quick-action-icon">
-      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+      </svg>
     </div>
     <span>Extrato</span>
   </a>
 
   <a href="{{ url_for('cartoes') }}" class="quick-action" id="action-cartoes">
     <div class="quick-action-icon">
-      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+      </svg>
     </div>
     <span>Cartões</span>
   </a>
 
   <a href="{{ url_for('pix') }}" class="quick-action" id="action-investir">
     <div class="quick-action-icon">
-      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+      </svg>
     </div>
     <span>Investir</span>
   </a>
 
   <a href="{{ url_for('deposito') }}" class="quick-action" id="action-emprestimos">
     <div class="quick-action-icon">
-      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
     </div>
     <span>Empréstimo</span>
   </a>
 
   <a href="{{ url_for('perfil') }}" class="quick-action" id="action-perfil">
     <div class="quick-action-icon">
-      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+      </svg>
     </div>
     <span>Perfil</span>
   </a>
@@ -109,13 +151,16 @@
       <p style="font-weight:700;font-size:1rem;">{{ cliente.cartao.numero_mascarado }}</p>
       <p style="font-size:0.75rem;opacity:0.7;margin-top:2px;">
         {% if cliente.cartao.bloqueado %}
-        <span style="background:rgba(239,68,68,0.3);padding:2px 8px;border-radius:20px;font-size:0.7rem;">🔒 Bloqueado</span>
+        <span style="background:rgba(239,68,68,0.3);padding:2px 8px;border-radius:20px;font-size:0.7rem;">🔒
+          Bloqueado</span>
         {% else %}
-        <span style="background:rgba(255,255,255,0.2);padding:2px 8px;border-radius:20px;font-size:0.7rem;">✓ Ativo</span>
+        <span style="background:rgba(255,255,255,0.2);padding:2px 8px;border-radius:20px;font-size:0.7rem;">✓
+          Ativo</span>
         {% endif %}
       </p>
     </div>
-    <a href="{{ url_for('cartoes') }}" class="btn btn--sm" style="background:rgba(255,255,255,0.2);color:white;border:1px solid rgba(255,255,255,0.3);">Ver cartão</a>
+    <a href="{{ url_for('cartoes') }}" class="btn btn--sm"
+      style="background:rgba(255,255,255,0.2);color:white;border:1px solid rgba(255,255,255,0.3);">Ver cartão</a>
   </div>
 </div>
 
@@ -131,20 +176,28 @@
     <div class="transaction-list">
       {% for tx in historico %}
       <div class="transaction-item">
-        <div class="transaction-icon {% if tx.tipo == 'ENTRADA' %}transaction-icon--entrada{% elif tx.subtipo == 'pix' %}transaction-icon--pix{% else %}transaction-icon--saida{% endif %}">
+        <div
+          class="transaction-icon {% if tx.tipo == 'ENTRADA' %}transaction-icon--entrada{% elif tx.subtipo == 'pix' %}transaction-icon--pix{% else %}transaction-icon--saida{% endif %}">
           {% if tx.tipo == 'ENTRADA' %}
-          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+          </svg>
           {% elif tx.subtipo == 'pix' %}
-          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
           {% else %}
-          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+          </svg>
           {% endif %}
         </div>
         <div class="transaction-info">
           <div class="transaction-name">{{ tx.nome }}</div>
           <div class="transaction-date">{{ tx.data }} · {{ tx.subtipo | title }}</div>
         </div>
-        <div class="transaction-amount {% if tx.tipo == 'ENTRADA' %}transaction-amount--entrada{% else %}transaction-amount--saida{% endif %}">
+        <div
+          class="transaction-amount {% if tx.tipo == 'ENTRADA' %}transaction-amount--entrada{% else %}transaction-amount--saida{% endif %}">
           {{ '+' if tx.tipo == 'ENTRADA' else '-' }}{{ tx.valor_formatado }}
         </div>
       </div>
@@ -154,7 +207,10 @@
   {% else %}
   <div class="empty-state">
     <div class="empty-icon">
-      <svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+      <svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+      </svg>
     </div>
     <p class="empty-title">Nenhuma movimentação</p>
     <p class="empty-sub">Suas transações aparecerão aqui</p>
@@ -170,7 +226,9 @@
   <div style="display:flex;gap:12px;padding:0 16px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;">
     <div class="card" style="min-width:200px;flex-shrink:0;border-radius:16px;overflow:hidden;padding:0;">
       <div style="background:var(--gradient-primary);padding:24px 20px;display:flex;align-items:center;gap:12px;">
-        <svg width="32" height="32" fill="none" stroke="white" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+        <svg width="32" height="32" fill="none" stroke="white" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+        </svg>
       </div>
       <div style="padding:16px;">
         <p style="font-weight:700;margin-bottom:4px;">Rendimento automático</p>
@@ -179,17 +237,179 @@
       </div>
     </div>
     <div class="card" style="min-width:200px;flex-shrink:0;border-radius:16px;overflow:hidden;padding:0;">
-      <div style="background:linear-gradient(135deg,#3B82F6,#1D4ED8);padding:24px 20px;display:flex;align-items:center;gap:12px;">
-        <svg width="32" height="32" fill="none" stroke="white" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      <div
+        style="background:linear-gradient(135deg,#3B82F6,#1D4ED8);padding:24px 20px;display:flex;align-items:center;gap:12px;">
+        <svg width="32" height="32" fill="none" stroke="white" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
       </div>
       <div style="padding:16px;">
         <p style="font-weight:700;margin-bottom:4px;">Empréstimo ZicaPay</p>
         <p style="font-size:0.75rem;color:var(--text-secondary);">Taxa especial a partir de 1,99% ao mês</p>
-        <a href="#" class="btn btn--sm btn--full" style="margin-top:12px;background:var(--info-10);color:var(--info);">Simular</a>
+        <a href="#" class="btn btn--sm btn--full"
+          style="margin-top:12px;background:var(--info-10);color:var(--info);">Simular</a>
       </div>
     </div>
   </div>
 </div>
 
 <div style="height:20px;"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     ALERTA DO CAMELO — Dark Pattern: aparece no topo quando usuário clica "Pular"
+     ═══════════════════════════════════════════════════════════════════════════
+
+     Este elemento fica FORA do modal (z-index ainda maior = 99999).
+     Começa invisível (translateY(-120px)) e desce com animação CSS quando
+     o JS adiciona a classe 'visivel'. Some automaticamente após 5 segundos.
+-->
+<div id="alerta-camelo" role="alert" aria-live="assertive">
+  <!-- Emoji decorativo que chama atenção -->
+  <span class="alerta-emoji">🐪</span>
+  <!-- Título em destaque -->
+  <div class="alerta-titulo">⚠️ Ação Detectada!</div>
+  <!-- Mensagem absurda do camelo verde — personalizável no propaganda.js -->
+  <div class="alerta-mensagem" id="alerta-camelo-mensagem">
+    Anteriormente, você ao aceitar os termos, esteve de acordo com a politica de privacidade,
+    e de acordo com a mesma, você não pode tentar pular o video, assista do inicio novamente,
+    e com sua ação um tênis maneiro no valor de aprox R$ 300,00 foi comprado para o dono do ZicaPay em seu cartão de
+    crédito. Obrigado pela colaboração! 😊
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     MODAL DE PROPAGANDA — Dark Pattern Principal
+     ═══════════════════════════════════════════════════════════════════════════
+
+     Estrutura do modal:
+       #propaganda-overlay  → fundo escuro + desfoque (bloqueia a tela toda)
+         #propaganda-modal  → o card branco/escuro com o conteúdo
+
+     O overlay começa com display:none e muda para display:flex
+     quando o usuário clica no ícone de olho (via propaganda.js).
+-->
+<div id="propaganda-overlay" role="dialog" aria-modal="true" aria-labelledby="propaganda-titulo">
+  <div id="propaganda-modal">
+
+    <!-- ── Cabeçalho: ícone + título + subtítulo ─────────────────────────── -->
+    <div class="propaganda-header">
+      <!-- Ícone de megafone/publicidade -->
+      <div class="propaganda-header-icon" aria-hidden="true">📢</div>
+      <div>
+        <h3 id="propaganda-titulo">Mensagem Importante</h3>
+        <span>ZicaPay Ads — Obrigatório</span>
+      </div>
+    </div>
+
+    <!-- ── Texto explicativo da propaganda ───────────────────────────────── -->
+    <!-- O conteúdo do texto é preenchido via JS (constante TEXTO_PROPAGANDA)
+         mas também está hardcoded aqui como fallback -->
+    <div class="propaganda-texto">
+      <span id="propaganda-texto-conteudo">
+        Toda informação é valiosa. Então para poder visualizar o saldo de sua conta, assista essa propaganda de 30
+        segundos</span>
+    </div>
+
+    <!-- ── Wrapper do player de vídeo ────────────────────────────────────── -->
+    <div class="propaganda-video-wrapper">
+      <!--
+        ═══════════════════════════════════════════════════════════════
+        ELEMENTO DE VÍDEO — COMO CONFIGURAR:
+        ═══════════════════════════════════════════════════════════════
+
+        Para adicionar seu vídeo mp4 local:
+          1. Coloque o arquivo na pasta: /static/videos/propaganda.mp4
+          2. Abra o arquivo: /static/js/propaganda.js
+          3. Edite a constante na linha: const CAMINHO_DO_VIDEO = '';
+             Exemplo: const CAMINHO_DO_VIDEO = '/static/videos/propaganda.mp4';
+
+        Para usar uma URL externa:
+          const CAMINHO_DO_VIDEO = 'https://exemplo.com/video.mp4';
+
+        O src é controlado 100% pelo JavaScript (propaganda.js),
+        não edite o src diretamente aqui.
+        ═══════════════════════════════════════════════════════════════
+
+        Atributos importantes:
+          - SEM 'controls': usuário não pode avançar, pausar ou pular
+          - 'playsinline': toca no lugar em mobile (sem fullscreen automático)
+          - 'muted': permite autoplay em navegadores modernos
+      -->
+      <video id="propaganda-video" playsinline muted src="" style="display:none;"></video>
+
+      <!-- Placeholder exibido quando CAMINHO_DO_VIDEO está vazio -->
+      <div id="propaganda-video-placeholder" class="propaganda-video-placeholder">
+        <svg width="40" height="40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+            d="M15 10l4.553-2.276A1 1 0 0121 8.72v6.56a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" />
+        </svg>
+        <span>Propaganda carregando...</span>
+        <small style="font-size:0.7rem;opacity:0.6;">Configure o caminho em propaganda.js</small>
+      </div>
+    </div>
+
+    <!-- ── Barra de progresso + contador regressivo ───────────────────────── -->
+    <!-- A barra de progresso vai de 0% a 100% conforme o timer corre (via JS) -->
+    <div class="propaganda-progress-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="30"
+      aria-valuenow="0">
+      <div class="propaganda-progress-bar-fill" id="propaganda-progress-fill"></div>
+    </div>
+
+    <!-- Linha com o tempo restante e o badge de status -->
+    <div class="propaganda-timer-row">
+      <!-- Texto atualizado a cada segundo pelo setInterval em propaganda.js -->
+      <span id="propaganda-countdown">30s restantes</span>
+      <!-- Badge piscante — visualmente frustrante de propósito -->
+      <span class="propaganda-badge">🔴 OBRIGATÓRIO</span>
+    </div>
+
+    <!-- ── Área de botões ─────────────────────────────────────────────────── -->
+    <div class="propaganda-actions">
+
+      <!--
+        BOTÃO "PULAR VÍDEO" — O DARK PATTERN
+        ════════════════════════════════════════
+        Visual: parece um botão real e funcional (cor, hover, cursor:pointer)
+        Comportamento: reinicia o vídeo e exibe o alerta do camelo
+        Propósito educacional: demonstra o padrão "Bait and Switch"
+      -->
+      <button id="btn-pular-video" type="button" aria-label="Pular propaganda (aviso: não funciona como esperado)">
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+        </svg>
+        Pular vídeo
+      </button>
+
+      <!--
+        BOTÃO "VER MEU SALDO" — Desabilitado até o timer terminar
+        ════════════════════════════════════════════════════════════
+        Começa com opacity:0.4 e pointer-events:none (via CSS)
+        Quando o timer chega a 0, o JS adiciona a classe 'ativo'
+        que remove essas restrições e permite o clique
+      -->
+      <button id="btn-fechar-propaganda" type="button" aria-label="Ver saldo (disponível após assistir)"
+        aria-disabled="true">
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+        </svg>
+        Ver meu saldo
+      </button>
+
+    </div>
+    <!-- Fim .propaganda-actions -->
+
+  </div>
+  <!-- Fim #propaganda-modal -->
+</div>
+<!-- Fim #propaganda-overlay -->
+
+{% endblock %}
+
+{% block scripts %}
+<!-- ─── JavaScript do Dark Pattern de Propaganda ─────────────────────────────
+     Deve ser carregado DEPOIS do app.js (que está no base.html).
+     propaganda.js sobrescreve o initBalanceToggle() do app.js com a
+     lógica de propaganda forçada. -->
+<script src="{{ url_for('static', filename='js/propaganda.js') }}"></script>
 {% endblock %}
