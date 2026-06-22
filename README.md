@@ -1,0 +1,192 @@
+# 🏦 ZicaPay — Banco Digital da Pior Experiência
+
+## Equipe
+
+- **Nome da equipe:** BananasLab Team
+- **Integrantes:**
+  - Eduardo Belato Nazioseno — edunaziozeno61@gmail.com
+  - Kaiqui Salomão Martins de Oliveira — kaiqui.salomaomartins@gmail.com
+  - Gabriel Cordeiro de Souza — bielsouzacordeiro28@gmail.com
+  - Victor Henrique Nascimento Moraes — victor.m@estudante.ifro.edu.br
+- **Curso/Turma:** Tecnologia em Análise e Desenvolvimento de Sistemas (ADS) / 3º Período
+- **Categoria:** Desafio Pior Experiência de Usuário
+
+---
+
+## Problema
+
+Interfaces mal projetadas causam frustração, erros e abandono por parte dos usuários. Princípios básicos de usabilidade são frequentemente ignorados no desenvolvimento de sistemas, prejudicando a experiência de pessoas que dependem dessas ferramentas no dia a dia.
+
+**Público impactado:** qualquer usuário de sistemas digitais — especialmente em contextos financeiros, onde uma interface ruim pode causar erros graves como transferências incorretas, senhas esquecidas ou dados inseridos de forma errada.
+
+---
+
+## Solução
+
+O **ZicaPay** é um protótipo de banco digital desenvolvido intencionalmente com as piores práticas de UX/UI, com objetivo pedagógico de demonstrar na prática como uma interface mal desenhada atrapalha a vida das pessoas.
+
+O sistema viola propositalmente as Heurísticas de Usabilidade de Jakob Nielsen em todas as telas do fluxo, desde a tela inicial até as operações financeiras. Por baixo dos panos, o backend funciona corretamente — transferências, saldo e autenticação operam de forma precisa enquanto o usuário sofre na interface.
+
+**Fluxo da pior experiência:**
+
+1. **Splash** — tela de entrada com instruções confusas
+2. **Termos de Uso** — checkboxes interdependentes e contraditórios que nunca deixam o usuário aceitar de primeira
+3. **Cadastro** — regras de senha absurdas e contraditórias + campo de confirmar senha que sempre diz não coincidir
+4. **Login** — regras de senha que só aparecem após tentar entrar, mudam a cada tentativa e se contradizem
+5. **Dashboard** — saldo visível apenas após assistir propaganda obrigatória
+6. **Propaganda** — anúncio impossível de pular (o usuário aceitou nos termos)
+7. **Operações** — transferências, Pix e extrato funcionam corretamente, mas com interface confusa
+
+**Princípios de UX/UI violados:**
+
+- **H1 — Visibilidade do status:** regras de senha só aparecem após tentar submeter
+- **H4 — Consistência e padrões:** regras se contradizem abertamente entre si
+- **H5 — Prevenção de erros:** o sistema provoca erros ativamente
+- **H6 — Reconhecimento em vez de memorização:** regras mudam a cada tentativa
+- **H9 — Mensagens de erro:** mensagens inúteis como "a senha deve expressar um sentimento positivo"
+- **H10 — Ajuda e documentação:** termos impossíveis de aceitar, propaganda impossível de pular
+
+**Proposta de melhoria:** uma versão corrigida do fluxo seguiria as heurísticas violadas — exibindo os requisitos de senha antes do preenchimento, com validação em tempo real, sem regras contraditórias, e sem barreiras artificiais para acessar informações da própria conta.
+
+---
+
+## Como testar
+
+```bash
+# 1. Clonar o repositório
+git clone https://github.com/BelatoDeveloper/bancohack.git
+cd bancohack
+
+# 2. Criar e ativar ambiente virtual
+python -m venv venv
+venv\Scripts\activate        # Windows
+source venv/bin/activate     # Linux/macOS
+
+# 3. Instalar dependências
+pip install -r requirements.txt
+
+# 4. Rodar o servidor
+python app.py
+
+# 5. Acessar no navegador
+# http://127.0.0.1:5000
+```
+
+**Contas disponíveis para teste:**
+
+| Nome                | E-mail              | Senha    |
+| ------------------- | ------------------- | -------- |
+| Ana Paula Ferreira  | ana@bancohack.com   | senha123 |
+| Bruno Carvalho Lima | bruno@bancohack.com | senha456 |
+| Carla Mendes Souza  | carla@bancohack.com | senha789 |
+
+**Fluxo principal:** acesse `/`, aceite os termos, crie uma conta ou faça login com as credenciais acima, assista a propaganda obrigatória para ver o saldo e explore as funcionalidades.
+
+---
+
+## Tecnologias utilizadas
+
+- **Linguagem:** Python 3.x
+- **Framework:** Flask
+- **Templates:** Jinja2
+- **Frontend:** HTML5, CSS3, JavaScript
+- **Banco de dados:** em memória (sem persistência externa)
+- **Hospedagem:** Render (deploy em nuvem)
+- **Versionamento:** Git + GitHub
+
+---
+
+## Arquitetura MTC
+
+O projeto segue o padrão **MTC (Model — Template — Controller)**, especialização do MVC adaptada ao Flask.
+
+```
+bancohack/
+├── app.py                        ← CONTROLLER (único ponto de entrada HTTP)
+├── requirements.txt
+├── RELATORIO_MTC.md              ← Relatório técnico detalhado da arquitetura
+│
+├── models/                       ← MODEL (dados + regras de negócio)
+│   ├── __init__.py
+│   ├── usuario.py                (superclasse: identidade e autenticação)
+│   ├── cliente.py                (subclasse de Usuario, compõe Conta)
+│   ├── conta.py                  (entidade: saldo e operações financeiras)
+│   ├── cartao.py                 (entidade: cartões do cliente)
+│   ├── pix.py                    (entidade: operações Pix)
+│   ├── notificacao.py            (entidade: notificações do sistema)
+│   └── banco_dados.py            (repositório em memória, seed de dados)
+│
+├── templates/                    ← TEMPLATE (apresentação via Jinja2)
+│   ├── base.html
+│   ├── splash.html
+│   ├── termos.html
+│   ├── login.html
+│   ├── cadastro.html
+│   ├── dashboard.html
+│   ├── extrato.html
+│   ├── transferencia.html
+│   ├── deposito.html
+│   ├── pix.html
+│   ├── cartoes.html
+│   ├── notificacoes.html
+│   └── perfil.html
+│
+└── static/
+    ├── css/
+    │   ├── estilos.css
+    │   ├── main.css
+    │   ├── termos.css
+    │   ├── darkPopups.css
+    │   └── propaganda.css
+    └── js/
+        ├── app.js
+        ├── login.js
+        ├── cadastro.js
+        ├── termos.js
+        ├── propaganda.js
+        ├── darkPopups.js
+        └── popupsConfig.js
+```
+
+> Para detalhamento completo da arquitetura, consulte o arquivo `RELATORIO_MTC.md`.
+
+---
+
+## Uso de IA
+
+O uso de inteligência artificial foi amplo e transparente ao longo de todo o desenvolvimento do projeto. As ferramentas foram utilizadas como apoio criativo e técnico, sempre com revisão, validação e adaptação pela equipe.
+
+| Ferramenta                   | Como foi utilizada                                                                                                                                                                                                                                                                                           |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Claude (Anthropic)** | Geração e refinamento de código JavaScript (lógica das regras absurdas de senha, propagandas, popups e termos); apoio à documentação técnica (README, RELATORIO_MTC.md); sugestão e refinamento de ideias de UX propositalmente ruim; depuração de código e orientação sobre arquitetura Flask |
+| **AntiGravity**        | Geração de ideias criativas para as experiências de pior UX; apoio no desenvolvimento de conceitos visuais e de fluxo; sugestão de abordagens para as telas e interações do sistema                                                                                                                    |
+
+**Partes do projeto apoiadas por IA:**
+
+- Ideação e criatividade — geração de ideias para experiências frustrantes e violações de heurísticas
+- Código frontend — JavaScript das telas de login, cadastro, termos, propaganda e popups
+- Documentação — estruturação e redação do README e do relatório técnico MTC
+- Refinamento — revisão e melhoria de trechos de código já escritos pela equipe
+
+**Adaptações realizadas pela equipe:**
+Todo o conteúdo gerado por IA foi revisado, compreendido, testado e adaptado pelos integrantes antes de ser integrado ao projeto. A arquitetura do sistema, as decisões de design, a implementação do backend em Python/Flask e a lógica de negócio foram desenvolvidas pela equipe, com IA atuando como ferramenta de apoio.
+
+A equipe declara responsabilidade integral pelo conteúdo entregue e está apta a apresentar, explicar e defender tecnicamente todas as decisões do projeto.
+
+---
+
+## Validação
+
+O projeto foi testado pelos próprios integrantes da equipe simulando o fluxo completo do usuário, desde a tela inicial até as operações financeiras. Foram validados:
+
+- Fluxo de termos com checkboxes contraditórios
+- Sistema de regras absurdas de senha no login e cadastro
+- Propaganda obrigatória antes de ver o saldo
+- Operações de transferência, Pix e extrato funcionando corretamente no backend
+
+---
+
+## Licença
+
+Projeto desenvolvido para fins acadêmicos — **Hackathon Extensionista IFRO Ariquemes 2026/1**.
+Uso livre para fins educacionais, com atribuição à equipe BananasLab Team / IFRO Campus Ariquemes.
