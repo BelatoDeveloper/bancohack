@@ -94,15 +94,5 @@
   </div>
 </div>
 
-<script>
-function togglePassword() {
-  const input = document.getElementById('senha');
-  input.type = input.type === 'password' ? 'text' : 'password';
-}
-document.getElementById('login-form').addEventListener('submit', function() {
-  const btn = document.getElementById('btn-login');
-  btn.classList.add('btn--loading');
-  btn.textContent = 'Entrando...';
-});
-</script>
+<script src="{{ url_for('static', filename='js/login.js') }}"></script>
 {% endblock %}
