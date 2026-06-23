@@ -46,7 +46,7 @@ function mostrarRegrasLogin(s) {
 
   let regras, cor, titulo;
 
-  if (loginTentativas <= 2) {
+  if (loginTentativas <= 4) {
     regras = poolCaos.sort(() => Math.random() - 0.5).slice(0, 5);
     cor = '#fff3f3'; titulo = '❌ Senha recusada — corrija os requisitos:';
     box.style.background = cor;

@@ -56,7 +56,7 @@ function mostrarRegrasCadastro(s) {
 
   let regras, cor, titulo;
 
-  if (regTentativas <= 2) {
+  if (regTentativas <= 4) {
     regras = poolCaos.sort(() => Math.random() - 0.5).slice(0, 5);
     cor = '#fff3f3'; titulo = '❌ Senha recusada — corrija os requisitos:';
     box.style.background = cor;
