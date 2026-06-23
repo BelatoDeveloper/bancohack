@@ -30,26 +30,26 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
   if (loginTentativas === 1) {
     box.style.background = '#fff3f3';
     box.style.border = '1px solid #fca5a5';
-    box.innerHTML = '<strong>❌ Senha incorreta.</strong><br>Verifique sua senha e tente novamente.';
+    box.innerHTML = '<strong style="color:#dc2626;">❌ Senha incorreta.</strong><br><span style="color:#666;">Verifique sua senha e tente novamente.</span>';
     sacudir(document.getElementById('btn-login'));
 
   } else if (loginTentativas === 2) {
     box.style.background = '#fff3f3';
     box.style.border = '1px solid #fca5a5';
-    box.innerHTML = '<strong>❌ Senha incorreta.</strong><br>Lembre-se: senhas diferenciam maiúsculas de minúsculas.';
+    box.innerHTML = '<strong style="color:#dc2626;">❌ Senha incorreta.</strong><br><span style="color:#666;">Lembre-se: senhas diferenciam maiúsculas de minúsculas.</span>';
     sacudir(document.getElementById('btn-login'));
 
   } else if (loginTentativas === 3) {
     box.style.background = '#fffbeb';
     box.style.border = '1px solid #fcd34d';
-    box.innerHTML = '<strong>⚠️ Mais uma tentativa incorreta e sua conta será bloqueada.</strong>';
+    box.innerHTML = '<strong style="color:#b45309;">⚠️ Mais uma tentativa incorreta e sua conta será bloqueada.</strong>';
 
   } else {
     // libera na 4ª tentativa
     loginLiberado = true;
     box.style.background = '#f0fdf4';
     box.style.border = '1px solid #86efac';
-    box.innerHTML = '<strong>✅ Senha aceita. Entrando...</strong>';
+    box.innerHTML = '<strong style="color:#15803d;">✅ Senha aceita. Entrando...</strong>';
     setTimeout(() => document.getElementById('login-form').submit(), 800);
   }
 });
