@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}ZicaPay — Depositar{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+  <a href="{{ url_for('dashboard') }}" class="back-btn">
+    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+  </a>
+  <span class="page-title">Depositar</span>
+</div>
+
+<div class="container" style="padding-top:16px;">
+
+  {% if comprovante %}
+  <!-- Comprovante -->
+  <div class="comprovante animate-fade-up">
+    <div class="comprovante-status">
+      <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    </div>
+    <p style="font-size:0.875rem;color:var(--text-secondary);margin-bottom:4px;">Depósito realizado</p>
+    <div class="comprovante-amount">{{ comprovante.valor_formatado }}</div>
+    <p style="color:var(--text-muted);font-size:0.8rem;margin:8px 0 24px;">✓ Confirmado</p>
+
+    <div style="text-align:left;">
+      <div class="comprovante-row">
+        <span>Tipo</span><span>{{ comprovante.nome }}</span>
+      </div>
+      <div class="comprovante-row">
+        <span>Data</span><span>{{ comprovante.data }}</span>
+      </div>
+      <div class="comprovante-row">
+        <span>Status</span>
+        <span class="badge badge--success">{{ comprovante.status | title }}</span>
+      </div>
+      <div class="comprovante-row">
+        <span>Novo saldo</span><span style="color:var(--success);font-weight:700;">{{ cliente.conta.saldo_formatado() }}</span>
+      </div>
+    </div>
+
+    <div style="margin-top:20px;display:flex;gap:12px;">
+      <a href="{{ url_for('deposito') }}" class="btn btn--outline btn--full">Novo depósito</a>
+      <a href="{{ url_for('dashboard') }}" class="btn btn--primary btn--full">Ir ao início</a>
+    </div>
+  </div>
+
+  {% else %}
+  <!-- Saldo atual -->
+  <div style="background:var(--primary-10);border:1px solid var(--primary-20);border-radius:16px;padding:16px;margin-bottom:20px;text-align:center;">
+    <p style="font-size:0.75rem;color:var(--text-secondary);font-weight:500;">Saldo atual</p>
+    <p style="font-size:1.5rem;font-weight:800;color:var(--primary);">{{ cliente.conta.saldo_formatado() }}</p>
+  </div>
+
+  <!-- Método de depósito -->
+  <div class="card animate-fade-up" style="margin-bottom:16px;">
+    <h2 style="font-weight:700;margin-bottom:4px;font-size:1.125rem;">Escolha o método</h2>
+    <p style="color:var(--text-secondary);font-size:0.875rem;margin-bottom:20px;">Selecione como deseja depositar</p>
+
+    <div style="display:flex;gap:12px;margin-bottom:20px;">
+      <label for="tipo-pix" style="flex:1;cursor:pointer;">
+        <input type="radio" id="tipo-pix" name="tipo-select" value="pix" checked style="display:none;" onchange="selectTipo('pix')">
+        <div class="tipo-card" id="card-pix" style="border:2px solid var(--primary);background:var(--primary-10);border-radius:16px;padding:16px;text-align:center;transition:all 0.2s;">
+          <div style="width:40px;height:40px;background:var(--primary);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;">
+            <svg width="22" height="22" fill="none" stroke="white" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <p style="font-weight:700;font-size:0.875rem;">Pix</p>
+          <p style="font-size:0.7rem;color:var(--text-secondary);">Instantâneo</p>
+        </div>
+      </label>
+
+      <label for="tipo-boleto" style="flex:1;cursor:pointer;">
+        <input type="radio" id="tipo-boleto" name="tipo-select" value="boleto" style="display:none;" onchange="selectTipo('boleto')">
+        <div class="tipo-card" id="card-boleto" style="border:2px solid var(--border);background:var(--surface-2);border-radius:16px;padding:16px;text-align:center;transition:all 0.2s;">
+          <div style="width:40px;height:40px;background:var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;">
+            <svg width="22" height="22" fill="none" stroke="var(--text-secondary)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+          </div>
+          <p style="font-weight:700;font-size:0.875rem;">Boleto</p>
+          <p style="font-size:0.7rem;color:var(--text-secondary);">1-3 dias úteis</p>
+        </div>
+      </label>
+    </div>
+
+    <form method="POST" action="{{ url_for('deposito') }}" id="form-deposito">
+      <input type="hidden" name="tipo" value="pix" id="tipo-input">
+
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <!-- Valores rápidos -->
+        <div>
+          <p style="font-size:0.75rem;color:var(--text-muted);font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;">Valores rápidos</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            {% for v in [50, 100, 200, 500, 1000] %}
+            <button type="button" onclick="setValor({{ v }})" class="filter-chip" style="font-size:0.8rem;">R$ {{ '{:,.0f}'.format(v).replace(',', '.') }}</button>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="valor">Outro valor</label>
+          <div class="input-wrapper">
+            <span class="input-icon" style="left:14px;font-weight:600;color:var(--text-secondary);font-size:1rem;">R$</span>
+            <input class="form-input" type="text" id="valor" name="valor" placeholder="0,00" required data-mask="currency" style="padding-left:44px;" inputmode="numeric">
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--full btn--lg" id="btn-depositar">
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          Depositar agora
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Info -->
+  <div style="background:var(--warning-10);border-radius:12px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;">
+    <svg width="20" height="20" fill="none" stroke="var(--warning)" viewBox="0 0 24 24" style="flex-shrink:0;margin-top:2px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.6;">
+      Depósitos via <strong>Pix são instantâneos</strong>. Via boleto podem levar até 3 dias úteis para compensar.
+    </p>
+  </div>
+  {% endif %}
+</div>
+
+<script>
+function selectTipo(tipo) {
+  document.getElementById('tipo-input').value = tipo;
+  const cardPix = document.getElementById('card-pix');
+  const cardBoleto = document.getElementById('card-boleto');
+  if (tipo === 'pix') {
+    cardPix.style.border = '2px solid var(--primary)';
+    cardPix.style.background = 'var(--primary-10)';
+    cardBoleto.style.border = '2px solid var(--border)';
+    cardBoleto.style.background = 'var(--surface-2)';
+  } else {
+    cardBoleto.style.border = '2px solid var(--primary)';
+    cardBoleto.style.background = 'var(--primary-10)';
+    cardPix.style.border = '2px solid var(--border)';
+    cardPix.style.background = 'var(--surface-2)';
+  }
+}
+
+function setValor(valor) {
+  document.getElementById('valor').value = valor.toFixed(2).replace('.', ',');
+}
+
+const form = document.getElementById('form-deposito');
+if (form) {
+  form.addEventListener('submit', function() {
+    const btn = document.getElementById('btn-depositar');
+    if (btn) { btn.classList.add('btn--loading'); btn.textContent = 'Processando...'; }
+  });
+}
+</script>
+{% endblock %}

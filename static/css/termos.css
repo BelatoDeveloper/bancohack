@@ -1,0 +1,952 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   termos.css — ZicaPay "Scroll of Doom"
+   Paleta: Verdes intensos + bordas roxas/neon + caos visual proposital
+   Mobile-first · Responsivo · Animações espalhafatosas
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Override: esta tela não usa max-width limitado do body ── */
+body {
+  max-width: 100% !important;
+  background: #0a1a0e !important;
+  /* Verde escuríssimo, quase preto */
+  overflow-x: hidden;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   WRAPPER PRINCIPAL
+   Ocupa toda a tela, centraliza conteúdo, sem padding-top para o header
+   ════════════════════════════════════════════════════════════════════════════ */
+.termos-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  background: linear-gradient(160deg, #0d2010 0%, #0a1a0e 40%, #111827 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 0 40px 0;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   CABEÇALHO ESTRANHO
+   O título é intencionalmente "comido" pela borda superior.
+   O overflow:hidden no wrapper corta a parte de cima do texto.
+   Para ajustar o quanto é cortado, mude o margin-top de .termos-titulo.
+   ════════════════════════════════════════════════════════════════════════════ */
+.termos-header-weird {
+  width: 100%;
+  background: #21C25E;
+  /* Verde primário ZicaPay */
+  text-align: center;
+  padding: 0 16px 10px 16px;
+  overflow: hidden;
+  /* <-- Este overflow é o segredo do efeito "cortado" */
+  position: relative;
+  border-bottom: 4px solid #0E9F4B;
+  /* Sombra verde neon para dar aquele ar de estranheza */
+  box-shadow: 0 6px 30px rgba(33, 194, 94, 0.5);
+}
+
+/* O título é posicionado para ser parcialmente cortado pela borda superior.
+   margin-top negativo empurra o texto para cima, o overflow:hidden corta.
+   REFERÊNCIA: exatamente como na imagem 3333.PNG */
+.termos-titulo {
+  font-size: clamp(3rem, 20vw, 10rem);
+  /* Grande e responsivo */
+  font-weight: 900;
+  color: #111827;
+  /* Texto escuro sobre verde */
+  letter-spacing: 40px;
+  line-height: 1;
+  margin-top: -70px;
+  /* ← ESTE VALOR controla quanto é "comido" pela borda */
+  font-family: 'Inter', sans-serif;
+  text-transform: lowercase;
+  /* Sombra de texto para dar profundidade */
+  text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.2);
+}
+
+.termos-subtitulo {
+  font-size: 0.8rem;
+  color: rgba(0, 0, 0, 0.6);
+  font-style: italic;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   CONTAINER DE ROLAGEM (Scroll of Doom)
+   Box com borda colorida destacada do fundo escuro — como na referência.
+   Fundo claro para contrastar com o background escuro da página.
+   ════════════════════════════════════════════════════════════════════════════ */
+.termos-scroll-container {
+  width: calc(100% - 24px);
+  max-width: 780px;
+  margin: 20px auto 0;
+  background: #000000;
+  border: 3px solid #7c3aed;
+  /* Borda roxa, igual à referência */
+  border-radius: 8px;
+  /* Altura máxima com scroll — o usuário TEM que rolar */
+  max-height: 65vh;
+  overflow-y: scroll;
+  /* Scrollbar customizada para combinar com o tema */
+  scrollbar-width: thin;
+  scrollbar-color: #21C25E #e5e7eb;
+  box-shadow:
+    0 0 0 2px rgba(124, 58, 237, 0.3),
+    0 8px 40px rgba(0, 0, 0, 0.6),
+    inset 0 0 20px rgba(33, 194, 94, 0.03);
+  position: relative;
+}
+
+/* Scrollbar para webkit (Chrome, Safari, Edge) */
+.termos-scroll-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.termos-scroll-container::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 4px;
+}
+
+.termos-scroll-container::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #21C25E, #7c3aed);
+  border-radius: 4px;
+}
+
+.termos-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #0E9F4B;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   TEXTO DOS TERMOS — Formatação jurídica intencional
+   Fonte pequena, linhas densas, parágrafos sem espaço suficiente.
+   ════════════════════════════════════════════════════════════════════════════ */
+.termos-text-body {
+  padding: 20px 20px 10px;
+  border-bottom: 2px dashed #21C25E;
+}
+
+.termos-section-title {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #ffffff;
+  text-align: center;
+  margin: 20px 0 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 4px;
+}
+
+.termos-text-body p {
+  font-size: 2rem;
+  /* Pequeno de propósito */
+  line-height: 1.55;
+  color: #ffffff;
+  margin-bottom: 12px;
+  text-align: justify;
+  hyphens: auto;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   SEÇÃO DOS CHECKBOXES
+   ════════════════════════════════════════════════════════════════════════════ */
+.checkboxes-section {
+  padding: 16px 20px 20px;
+}
+
+.checkboxes-titulo {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 14px;
+  padding: 8px 12px;
+  background: linear-gradient(135deg, rgba(33, 194, 94, 0.12), rgba(124, 58, 237, 0.08));
+  border-radius: 6px;
+  border: 1px solid rgba(33, 194, 94, 0.3);
+}
+
+/* ── Lista de checkboxes ── */
+.checkbox-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* ── Item de checkbox base ── */
+.checkbox-item {
+  position: relative;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  background: #fafafa;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s;
+}
+
+.checkbox-item:hover {
+  background: #f0fdf4;
+  border-color: #21C25E;
+}
+
+/* ── Variantes de item especial ── */
+/* CB4 — Destaque amarelo/laranja: "Aqui primeiro!" */
+.checkbox-item--destaque {
+  background: linear-gradient(135deg, #fffbeb, #fef3c7);
+  border: 2px solid #f59e0b !important;
+  box-shadow: 0 2px 12px rgba(245, 158, 11, 0.25);
+}
+
+.checkbox-item--destaque:hover {
+  background: #fef9c3;
+}
+
+/* CB7 — Danger: "Não marque!" */
+.checkbox-item--danger {
+  background: linear-gradient(135deg, #fff5f5, #fee2e2);
+  border: 2px solid #ef4444 !important;
+  box-shadow: 0 2px 12px rgba(239, 68, 68, 0.2);
+}
+
+/* CB12 — Warning: "Leia novamente!" */
+.checkbox-item--warning {
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+  border: 2px solid #22c55e !important;
+  box-shadow: 0 2px 12px rgba(34, 197, 94, 0.2);
+}
+
+/* CB16 — Chaos: roleta */
+.checkbox-item--chaos {
+  background: linear-gradient(135deg, #f5f3ff, #ede9fe);
+  border: 2px solid #7c3aed !important;
+  box-shadow: 0 2px 12px rgba(124, 58, 237, 0.2);
+  animation: chaosGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes chaosGlow {
+  from {
+    box-shadow: 0 2px 12px rgba(124, 58, 237, 0.2);
+  }
+
+  to {
+    box-shadow: 0 4px 24px rgba(124, 58, 237, 0.5);
+  }
+}
+
+/* CB19 — Relâmpago */
+.checkbox-item--relampa {
+  background: linear-gradient(135deg, #fffbeb, #fef08a);
+  border: 2px solid #eab308 !important;
+  box-shadow: 0 2px 12px rgba(234, 179, 8, 0.3);
+}
+
+/* CB20 — Final */
+.checkbox-item--final {
+  background: linear-gradient(135deg, #f0fdf4, #bbf7d0);
+  border: 2px solid #21C25E !important;
+  box-shadow: 0 2px 16px rgba(33, 194, 94, 0.3);
+}
+
+/* ── Badge de checkpoint nos itens especiais ── */
+.checkpoint-badge {
+  display: inline-block;
+  font-size: 0.50rem;
+  font-weight: 800;
+  color: #92400e;
+  background: #fde68a;
+  padding: 2px 8px;
+  border-radius: 20px;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.checkpoint-badge--danger {
+  color: #991b1b;
+  background: #fecaca;
+}
+
+.checkpoint-badge--warning {
+  color: #166534;
+  background: #bbf7d0;
+}
+
+.checkpoint-badge--chaos {
+  color: #4c1d95;
+  background: #ddd6fe;
+}
+
+.checkpoint-badge--relampa {
+  color: #713f12;
+  background: #fef08a;
+}
+
+.checkpoint-badge--final {
+  color: #14532d;
+  background: #86efac;
+}
+
+/* ── Label do checkbox ── */
+.checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  width: 100%;
+}
+
+/* ── Input nativo oculto ── */
+.checkbox-label input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+/* ── Checkbox custom visual ── */
+.checkbox-custom {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #9ca3af;
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  background: white;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Checkmark via pseudo-element */
+.checkbox-custom::after {
+  content: '';
+  width: 5px;
+  height: 9px;
+  border-right: 2px solid white;
+  border-bottom: 2px solid white;
+  transform: rotate(45deg) scale(0) translateY(-1px);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Estado marcado */
+.checkbox-label:has(input:checked) .checkbox-custom {
+  background: #21C25E;
+  border-color: #21C25E;
+  transform: scale(1.1);
+  box-shadow: 0 0 0 3px rgba(33, 194, 94, 0.2);
+}
+
+.checkbox-label:has(input:checked) .checkbox-custom::after {
+  transform: rotate(45deg) scale(1) translateY(-1px);
+}
+
+/* Variantes de cor dos checkboxes especiais */
+.checkbox-custom--destaque {
+  border-color: #f59e0b;
+}
+
+.checkbox-label:has(input:checked) .checkbox-custom--destaque {
+  background: #f59e0b;
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+}
+
+.checkbox-custom--danger {
+  border-color: #ef4444;
+}
+
+.checkbox-label:has(input:checked) .checkbox-custom--danger {
+  background: #ef4444;
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+.checkbox-custom--warning {
+  border-color: #22c55e;
+}
+
+.checkbox-custom--chaos {
+  border-color: #7c3aed;
+}
+
+.checkbox-label:has(input:checked) .checkbox-custom--chaos {
+  background: #7c3aed;
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+}
+
+.checkbox-custom--relampa {
+  border-color: #eab308;
+}
+
+.checkbox-label:has(input:checked) .checkbox-custom--relampa {
+  background: #eab308;
+  border-color: #eab308;
+}
+
+.checkbox-custom--final {
+  border-color: #21C25E;
+}
+
+.checkbox-label:has(input:checked) .checkbox-custom--final {
+  background: linear-gradient(135deg, #21C25E, #0E9F4B);
+  border-color: #0E9F4B;
+  box-shadow: 0 0 0 4px rgba(33, 194, 94, 0.3);
+  transform: scale(1.2);
+}
+
+/* Texto do checkbox */
+.checkbox-text {
+  font-size: 0.8rem;
+  color: #374151;
+  line-height: 1.45;
+  flex: 1;
+}
+
+/* Estado marcado: texto fica com linha e opacidade */
+.checkbox-label:has(input:checked) .checkbox-text {
+  text-decoration: line-through;
+  opacity: 0.6;
+  color: #6b7280;
+}
+
+/* ── Contador regressivo do CB19 ── */
+.counter-span {
+  display: inline-block;
+  font-weight: 900;
+  color: #dc2626;
+  font-size: 1.1em;
+  animation: counterPulse 1s ease-in-out infinite;
+}
+
+@keyframes counterPulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.3);
+    color: #ef4444;
+  }
+}
+
+/* ── Botão de confirmar do CB19 ── */
+.btn-confirmar-relampa {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #eab308, #ca8a04);
+  color: white;
+  font-weight: 800;
+  font-size: 0.85rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  animation: btnPulse 0.5s ease-in-out infinite alternate;
+  box-shadow: 0 4px 12px rgba(234, 179, 8, 0.4);
+  font-family: 'Inter', sans-serif;
+}
+
+@keyframes btnPulse {
+  from {
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(234, 179, 8, 0.4);
+  }
+
+  to {
+    transform: scale(1.03);
+    box-shadow: 0 6px 20px rgba(234, 179, 8, 0.7);
+  }
+}
+
+.btn-confirmar-relampa:active {
+  transform: scale(0.97);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   BARRA DE PROGRESSO
+   ════════════════════════════════════════════════════════════════════════════ */
+.progresso-container {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.progresso-texto {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.progresso-bar-bg {
+  width: 100%;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.progresso-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #21C25E, #0E9F4B);
+  border-radius: 20px;
+  transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Verde mais escuro quando quase completo */
+.progresso-bar-fill.quase {
+  background: linear-gradient(90deg, #16a34a, #15803d);
+}
+
+.progresso-bar-fill.completo {
+  background: linear-gradient(90deg, #21C25E, #7c3aed);
+  animation: progressRainbow 1s ease-in-out infinite alternate;
+}
+
+@keyframes progressRainbow {
+  from {
+    background: linear-gradient(90deg, #21C25E, #7c3aed);
+  }
+
+  to {
+    background: linear-gradient(90deg, #7c3aed, #21C25E);
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   BOTÕES DE AÇÃO — Dark Patterns
+   
+   PROPOSITALMENTE INVERTIDOS:
+   - btn-verde = faz ação negativa (desmarcar tudo)
+   - btn-vermelho = faz ação positiva (avançar)
+   ════════════════════════════════════════════════════════════════════════════ */
+.botoes-container {
+  width: calc(100% - 24px);
+  max-width: 780px;
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 0 4px;
+}
+
+.btn-termos {
+  flex: 1;
+  padding: 14px 20px;
+  font-size: 1rem;
+  font-weight: 800;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.3px;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-termos::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0);
+  transition: background 0.2s;
+}
+
+.btn-termos:hover::after {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.btn-termos:active {
+  transform: scale(0.97);
+}
+
+/* VERDE mas que desmarca (dark pattern!) */
+.btn-verde {
+  background: linear-gradient(135deg, #21C25E, #0E9F4B);
+  color: white;
+  box-shadow: 0 6px 20px rgba(33, 194, 94, 0.4);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.btn-verde:hover {
+  box-shadow: 0 8px 28px rgba(33, 194, 94, 0.6);
+  transform: translateY(-1px);
+}
+
+/* VERMELHO mas que avança (dark pattern!) */
+.btn-vermelho {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.btn-vermelho:hover {
+  box-shadow: 0 8px 28px rgba(239, 68, 68, 0.6);
+  transform: translateY(-1px);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   OVERLAY DE ERRO AGRESSIVO
+   Cobre 100% da tela quando o usuário tenta avançar sem completar tudo.
+   Animação espalhafatosa que chama muita atenção.
+   
+   Para customizar o comportamento: edite termos.js → mostrarErroAgressivo()
+   Para mudar o visual: edite os estilos abaixo.
+   ════════════════════════════════════════════════════════════════════════════ */
+.erro-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: rgba(10, 0, 0, 0.97);
+  /* Escondido por padrão — JS adiciona .ativo para mostrar */
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  /* Efeito de scanner/glitch no fundo */
+  background-image:
+    repeating-linear-gradient(0deg,
+      rgba(239, 68, 68, 0.04) 0px,
+      rgba(239, 68, 68, 0.04) 1px,
+      transparent 1px,
+      transparent 4px);
+}
+
+/* Classe .ativo adicionada via JS para exibir o overlay */
+.erro-overlay.ativo {
+  display: flex;
+  animation: erroEntrada 0.15s ease-out forwards;
+}
+
+@keyframes erroEntrada {
+  0% {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+
+  30% {
+    opacity: 1;
+    transform: scale(0.98);
+  }
+
+  60% {
+    transform: scale(1.01);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.erro-conteudo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 32px 24px;
+  animation: erroBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
+}
+
+@keyframes erroBounce {
+  from {
+    transform: translateY(30px) scale(0.8);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Ícone gigante que pisca */
+.erro-icone {
+  font-size: clamp(5rem, 20vw, 8rem);
+  animation: erroIconePulse 0.5s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.8));
+}
+
+@keyframes erroIconePulse {
+  from {
+    transform: scale(1) rotate(-3deg);
+    filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.8));
+  }
+
+  to {
+    transform: scale(1.1) rotate(3deg);
+    filter: drop-shadow(0 0 40px rgba(239, 68, 68, 1));
+  }
+}
+
+/* Texto principal do erro — GIGANTE */
+.erro-texto {
+  font-size: clamp(1.8rem, 7vw, 3.5rem);
+  font-weight: 900;
+  color: #ef4444;
+  text-shadow:
+    0 0 20px rgba(239, 68, 68, 0.8),
+    0 0 40px rgba(239, 68, 68, 0.4),
+    3px 3px 0px #7f1d1d;
+  letter-spacing: -1px;
+  line-height: 1.1;
+  animation: erroTextoShake 0.4s ease-in-out 0.3s both;
+  max-width: 90vw;
+}
+
+@keyframes erroTextoShake {
+  0% {
+    transform: translateX(-8px);
+  }
+
+  20% {
+    transform: translateX(8px);
+  }
+
+  40% {
+    transform: translateX(-6px);
+  }
+
+  60% {
+    transform: translateX(6px);
+  }
+
+  80% {
+    transform: translateX(-3px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* Subtexto com contagem */
+.erro-subtexto {
+  font-size: clamp(1rem, 3.5vw, 1.4rem);
+  color: #fca5a5;
+  font-weight: 600;
+}
+
+/* Dica em destaque */
+.erro-dica {
+  font-size: clamp(0.85rem, 2.5vw, 1rem);
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+  margin-top: 8px;
+  padding: 8px 16px;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 20px;
+  animation: erroFade 2s ease-in-out 0.8s both;
+}
+
+@keyframes erroFade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* ── Borda pulsante vermelha ao redor da tela durante o erro ── */
+.erro-overlay::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  border: 8px solid #ef4444;
+  z-index: 1;
+  animation: erroBorder 0.4s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes erroBorder {
+  from {
+    opacity: 0.8;
+    border-color: #ef4444;
+  }
+
+  to {
+    opacity: 0.2;
+    border-color: #dc2626;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   RESPONSIVIDADE
+   O layout se adapta bem em mobile, mas a experiência ruim se mantém.
+   ════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  .termos-titulo {
+    font-size: clamp(2.2rem, 12vw, 3rem);
+    margin-top: -12px;
+    /* Menos cortado em telas pequenas */
+  }
+
+  .termos-scroll-container {
+    width: calc(100% - 12px);
+    max-height: 60vh;
+    border-radius: 6px;
+  }
+
+  .termos-text-body {
+    padding: 14px 14px 8px;
+  }
+
+  .termos-text-body p {
+    font-size: 0.74rem;
+  }
+
+  .checkboxes-section {
+    padding: 12px 14px 16px;
+  }
+
+  .checkbox-text {
+    font-size: 0.75rem;
+  }
+
+  .botoes-container {
+    width: calc(100% - 12px);
+    flex-direction: column;
+    /* Empilha em telas muito pequenas */
+    gap: 8px;
+  }
+
+  .btn-termos {
+    padding: 12px 16px;
+    font-size: 0.95rem;
+  }
+
+  .erro-texto {
+    font-size: clamp(1.4rem, 8vw, 2rem);
+  }
+}
+
+@media (max-width: 360px) {
+  .termos-titulo {
+    font-size: 2rem;
+    margin-top: -10px;
+  }
+
+  .termos-scroll-container {
+    max-height: 55vh;
+  }
+
+  .checkbox-item {
+    padding: 6px 8px;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   ANIMAÇÕES DE FEEDBACK INLINE
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* Checkbox marcado com shake quando especial é violado */
+@keyframes shakeItem {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  15% {
+    transform: translateX(-6px);
+  }
+
+  30% {
+    transform: translateX(6px);
+  }
+
+  45% {
+    transform: translateX(-4px);
+  }
+
+  60% {
+    transform: translateX(4px);
+  }
+
+  75% {
+    transform: translateX(-2px);
+  }
+
+  90% {
+    transform: translateX(2px);
+  }
+}
+
+.checkbox-item.shake {
+  animation: shakeItem 0.5s ease-in-out;
+  border-color: #ef4444 !important;
+}
+
+/* Flash verde ao marcar com sucesso */
+@keyframes successFlash {
+  0% {
+    background: #dcfce7;
+  }
+
+  100% {
+    background: transparent;
+  }
+}
+
+.checkbox-item.success-flash {
+  animation: successFlash 0.6s ease-out forwards;
+}
+
+/* Aviso de "aqui primeiro" que aparece brevemente */
+.aviso-inline {
+  font-size: 0.7rem;
+  color: #dc2626;
+  font-weight: 700;
+  padding: 4px 8px;
+  background: #fee2e2;
+  border-radius: 4px;
+  margin-top: 4px;
+  display: block;
+  animation: avisoSlide 0.3s ease-out;
+}
+
+@keyframes avisoSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Estado "zerado" dos checkboxes quando alguém ativa o cb4 incorretamente ── */
+.checkbox-item.foi-desmarcado {
+  opacity: 0.7;
+  transition: opacity 0.3s;
+}
+
+/* ── Destaque para indicar qual checkbox está com problema ── */
+.checkbox-item.erro-item {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3) !important;
+  background: #fff5f5 !important;
+}

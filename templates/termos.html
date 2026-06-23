@@ -1,0 +1,1084 @@
+{% extends "base.html" %}
+
+{% block title %}ZicaPay — Aceite os Termos (por favor){% endblock %}
+
+{% block head %}
+<!-- CSS específico desta tela de terror jurídico -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/termos.css') }}">
+{% endblock %}
+
+{% block page_content %}
+
+<!--
+  ╔══════════════════════════════════════════════════════════════════════╗
+  ║  TELA DE TERMOS DE USO — ZicaPay                                    ║
+  ║  Propósito: Criar a pior experiência de usuário imaginável          ║
+  ║  Design inspirado na referência 3333.PNG                            ║
+  ║  Paleta: Tons de verde (primário ZicaPay) + toques de absurdo       ║
+  ╚══════════════════════════════════════════════════════════════════════╝
+-->
+
+<div class="termos-wrapper">
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       CABEÇALHO ESTRANHO
+       O título é posicionado propositalmente "comido" pela borda superior.
+       Usa margin-top negativo + overflow hidden no wrapper para criar
+       o efeito de texto cortado, exatamente como na referência 3333.PNG.
+       Para adicionar mais estranheza: altere o margin-top em termos.css
+       na classe .termos-titulo
+       ═══════════════════════════════════════════════════════════════════ -->
+  <div class="termos-header-weird">
+    <h1 class="termos-titulo" id="titulo-termos">aceite os termos</h1>
+    <p class="termos-subtitulo">Sim, você vai ter que ler. Como te passamos a perna um pouco mais na cara que os outros
+      bancos, somos obrigados a fazer que você leia. nós esperamos. sério.</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       CONTAINER PRINCIPAL DE ROLAGEM (Scroll of Doom)
+       Box com borda verde-neon destacada do fundo.
+       Contém: texto gigante + checkboxes da frustração.
+       Para adicionar mais termos absurdos: procure a seção
+       " <ADICIONAR NOVOS PARÁGRAFOS AQUI
+       ═══════════════════════════════════════════════════════════════════ -->
+  <div class="termos-scroll-container" id="scroll-doom">
+
+    <!-- TEXTO GIGANTESCO DOS TERMOS — Jargões jurídicos falsos e absurdos -->
+    <div class="termos-text-body">
+      <h2 class="termos-section-title">§ 1. Da Concordância Obrigatória e Inevitável</h2>
+      <p>Ao existir nesta página, o usuário, doravante denominado "A Vítima", concorda expressamente, implicitamente,
+        telepaticamente e espiritualmente com todos os termos presentes, passados e futuros do ZicaPay, incluindo
+        aqueles que ainda não foram escritos mas que poderão vir a existir em algum momento entre o Big Bang e o fim do
+        universo. A recusa em aceitar estes termos é, paradoxalmente, também uma forma de aceitá-los, conforme previsto
+        no Artigo 404 do Código de Processo Civil Alternativo da República Federativa do Absurdo, edição 2025, parágrafo
+        único, alínea "ñ", subítem 3.7.2.a.i.</p>
+
+      <h2 class="termos-section-title">§ 2. Da Transferência Parcial de Consciência</h2>
+      <p>O usuário autoriza o ZicaPay a acessar, processar, armazenar, vender, alugar, emprestar para o vizinho, exibir
+        em projetor durante churrascos corporativos e tatuar na lombar de funcionários terceirizados qualquer dado
+        produzido, pensado, sonhado ou vagamente imaginado durante o uso da plataforma. Isso inclui, mas não se limita
+        a: histórico de transações, histórico de pesquisas, histórico emocional, memórias da infância, preferências por
+        sabor de sorvete, opiniões políticas não declaradas, e o nome do seu primeiro amor. Referência legal: Lei nº
+        13.709/2018 LGPD (Lei Geral de Proteção de Dados que nós claramente ignoramos com muito carinho).</p>
+
+      <h2 class="termos-section-title">§ 3. Das Cobranças Criativas e Inovadoras</h2>
+      <p>O ZicaPay reserva-se o direito de cobrar taxas em qualquer momento, por qualquer motivo, incluindo, sem
+        limitação: taxa de respiração (R$ 0,01 por inalação), taxa de existência (R$ 5,00/mês), taxa de não-uso (cobrada
+        quando você não usa o app por mais de 3 minutos), taxa de uso excessivo (cobrada quando você usa o app por mais
+        de 3 minutos), taxa de saudade (cobrada quando o sistema sente falta de você), taxa de segunda via de boleto da
+        taxa anterior (R$ 12,90), e taxa administrativa de cobrança das taxas (R$ 7,50 + IOF + MEU AMOR). Todas as taxas
+        são reajustadas mensalmente pelo IGPM multiplicado pelo número de estrelas visíveis no hemisfério sul na noite
+        do dia 29 de fevereiro.</p>
+
+      <h2 class="termos-section-title">§ 4. Das Obrigações Espirituais do Usuário</h2>
+      <p>O usuário compromete-se solenemente a: (a) pensar no ZicaPay pelo menos três vezes ao dia com sentimentos
+        calorosos e afetuosos; (b) defender a honra e o bom nome do ZicaPay em situações de crise, inclusive durante
+        sonâmbulismo e estados alterados de consciência; (c) nomear pelo menos um filho, animal doméstico, ou planta
+        suculenta com o nome "Zica", "Pay" ou "ZicaPay Premium Plus Ultra Pro Max"; (d) realizar ao menos um Pix por
+        semana, mesmo que seja para si mesmo, para si mesmo de novo, ou para uma entidade fictícia criada
+        especificamente para este propósito; (e) não falar mal do ZicaPay em redes sociais, em conversas privadas, em
+        pensamentos não verbalizados, ou no confessionário.</p>
+
+      <h2 class="termos-section-title">§ 5. Da Política de Suporte Técnico</h2>
+      <p>Em caso de problemas técnicos, o usuário deverá: (1) tentar desligar e ligar novamente (o celular, o roteador,
+        a geladeira, o carro, a esperança); (2) aguardar 72 horas úteis para verificar se o problema se resolveu por
+        conta própria; (3) buscar apoio emocional de amigos e familiares; (4) consultar um terapeuta especializado em
+        ansiedade tecnológica; (5) somente após esgotar as opções acima, enviar um e-mail para suporte@zicapay.com.br
+        que será respondido no prazo de 5 a 7 anos úteis, dependendo das condições climáticas e do humor da equipe de
+        atendimento. O ZicaPay não se responsabiliza por quaisquer danos emocionais, físicos, metafísicos, financeiros
+        ou existenciais causados pela não-funcionalidade do aplicativo durante fases da lua.</p>
+
+      <h2 class="termos-section-title">§ 6. Da Cessão de Direitos Autorais Retroativa</h2>
+      <p>Ao utilizar o ZicaPay, o usuário concede ao ZicaPay todos os direitos autorais, morais, patrimoniais e
+        espirituais sobre qualquer obra criativa que tenha produzido nos últimos 7 anos antes de criar sua conta. Isso
+        inclui poesias, músicas, pinturas, bordados, receitas culinárias, piadas ruins, memes, tweets apagados com
+        arrependimento, e qualquer rabisco feito em guardanapo de restaurante. O ZicaPay poderá usar, adaptar, vender,
+        ou simplesmente guardar essas obras em um HD externo que ninguém nunca abrirá. Paragrafo único: o ZicaPay também
+        reserva direito de reivindicar obras criadas APÓS o término da conta, por um período não inferior a 40
+        (quarenta) anos após a morte do usuário.</p>
+
+      <h2 class="termos-section-title">§ 7. Das Limitações de Responsabilidade Criativas</h2>
+      <p>O ZicaPay não se responsabiliza por: dinheiro que simplesmente sumiu; transferências enviadas para a pessoa
+        errada porque o sistema sugeriu o contato errado; saldo negativo causado por bugs que "nunca vimos antes";
+        lentidão do aplicativo às sextas-feiras entre 17h e 17h01; indisponibilidade do serviço nos dias 1 a 30 de cada
+        mês; erros de arredondamento que sempre, curiosamente, arredondam para baixo no saldo do usuário; e qualquer
+        outra coisa que possa dar errado, incluindo eventos de força maior como: chuva, vento, sol forte, neblina
+        moderada, alegria excessiva, e o efeito borboleta causado por um soluço de um analista de TI em Sergipe.</p>
+
+      <h2 class="termos-section-title">§ 8. Da Propriedade Intelectual do Seu Saldo</h2>
+      <p>O saldo presente na conta do usuário é considerado propriedade conjunta do usuário e do ZicaPay, na proporção
+        de 30% para o usuário e 70% para o ZicaPay, exceto em meses com letra "r" no nome, quando a proporção é
+        invertida temporariamente até que o departamento jurídico reverta isso sem aviso prévio. O ZicaPay poderá
+        utilizar o saldo do usuário como garantia em operações financeiras complexas que ninguém vai entender mesmo se
+        explicado com gráficos coloridos e música de fundo. Em caso de falência do ZicaPay, o usuário será informado por
+        telegrama.</p>
+
+      <h2 class="termos-section-title">§ 9. Da Política de Privacidade Invertida</h2>
+      <p>Ao contrário do que seu bom senso poderia sugerir, seus dados NÃO são privados. Pelo contrário, são
+        semipúblicos, quase-públicos, praticamente-abertos e levemente-confidenciais ao mesmo tempo, num estado quântico
+        de privacidade que colapsa para "exposto" sempre que alguém olha diretamente para o servidor. O ZicaPay
+        compartilhará seus dados com parceiros, subparceiros, parceiros dos subparceiros, empresas fantasma registradas
+        nas Ilhas Cayman, influenciadores digitais, feirantes, e qualquer pessoa que perguntar com educação. Uma
+        pergunta com "por favor" no final é suficiente para autorizar o compartilhamento de todos os seus dados
+        financeiros.</p>
+
+      <h2 class="termos-section-title">§ 10. Das Disposições Finais e Etéreas</h2>
+      <p>Estes termos são regidos pelas leis do Brasil, da Antártida, do Plano Astral e das Dimensões Alternativas onde
+        o ZicaPay também opera. Quaisquer disputas serão resolvidas por arbitragem em câmara localizada no fundo do
+        oceano, acessível somente via submarino não fornecido pelo ZicaPay. O foro eleito é a cidade de Paracatu-MG, às
+        3h da manhã de uma terça-feira de carnaval. Estes termos podem ser alterados a qualquer momento, inclusive
+        retroativamente, sem aviso prévio, notificação, e-mail, SMS, sinal de fumaça ou pressagio sobrenatural. A última
+        versão estará sempre disponível em um link que não funciona na página que ninguém encontra no rodapé do site
+        versão desktop apenas.</p>
+
+      <h2 class="termos-section-title">§ 11. Do Sequestro de Memória RAM</h2>
+      <p>Ao manter o aplicativo ZicaPay aberto, em segundo plano, ou apenas instalado em seu dispositivo, o usuário
+        concorda em ceder 85% de sua memória RAM e processamento para minerar criptomoedas de valor inestimável
+        (literalmente sem valor) para os fundadores do banco. Se o seu celular superaquecer a ponto de fritar um ovo, o
+        ZicaPay se isenta da responsabilidade, mas exige 10% dos direitos autorais sobre a receita do ovo frito.</p>
+
+      <h2 class="termos-section-title">§ 12. Da Taxa de Atualização de Tela (F5)</h2>
+      <p>Fica estabelecido que a ansiedade do usuário é monetizável. Cada vez que "A Vítima" arrastar a tela para baixo
+        para atualizar o saldo na esperança de que um Pix milagroso tenha caído, será cobrada uma "Taxa de Falsa
+        Esperança" no valor de R$ 1,50. Se o Pix realmente tiver caído, a taxa será dobrada como "Taxa de Comemoração".
+      </p>
+
+      <h2 class="termos-section-title">§ 13. Da Convocação para Batalhas Medievais</h2>
+      <p>O ZicaPay reserva-se o direito de, a qualquer momento, convocar o usuário para integrar a milícia armada do
+        banco em caso de disputas territoriais com outras fintechs. O usuário deverá comparecer ao local de batalha
+        munido de sua própria armadura, espada de espuma e um boleto pago impresso em papel couché. A ausência resultará
+        na negativação do CPF no SPC, Serasa e no Tribunal de Hades.</p>
+
+      <h2 class="termos-section-title">§ 14. Da Doação Involuntária de Milhas</h2>
+      <p>Todas as milhas, pontos, cashbacks e figurinhas de supermercado acumuladas pelo usuário em qualquer outro
+        programa de fidelidade serão automaticamente confiscadas pelo ZicaPay e convertidas em "ZicaCoins", uma moeda
+        digital que só pode ser gasta para comprar avatares de capivaras tristes dentro do próprio aplicativo.</p>
+
+      <h2 class="termos-section-title">§ 15. Do Padrão de Senha Exigido</h2>
+      <p>Sua senha não deve ser segura, ela deve ser um enigma. O ZicaPay exigirá uma senha de no mínimo 42 caracteres,
+        contendo: três letras maiúsculas, dois emojis de vegetais, uma equação de segundo grau resolvida, o som de um
+        pássaro ameaçado de extinção transcrito em código Morse, e não pode conter nenhuma letra do seu nome ou da cor
+        da sua camisa atual.</p>
+
+      <h2 class="termos-section-title">§ 16. Do Cancelamento Impossível</h2>
+      <p>O procedimento para cancelamento da conta envolve a resolução de um cubo mágico de olhos vendados, enquanto o
+        usuário recita o hino nacional de trás para frente. Uma vez concluída essa etapa, o usuário receberá um
+        formulário de 800 páginas que deve ser preenchido com sangue de unicórnio e entregue pessoalmente na sede do
+        ZicaPay, localizada no topo do Monte Everest, entre as 14h e 14h05 de uma quinta-feira.</p>
+
+      <h2 class="termos-section-title">§ 17. Das Propagandas em Momentos Inoportunos</h2>
+      <p>O usuário aceita receber anúncios em tela cheia com volume no máximo e sem botão de fechar, especialmente em
+        momentos de alta tensão, como ao tentar pagar a conta do restaurante no primeiro encontro, na fila do pedágio,
+        ou durante velórios. O ZicaPay garante que a propaganda será sempre sobre um produto constrangedor de saúde
+        íntima.</p>
+
+      <h2 class="termos-section-title">§ 18. Da Clonagem Autorizada</h2>
+      <p>Ao aceitar estes termos, o usuário permite que o ZicaPay crie um clone digital com sua voz e aparência para
+        atuar no telemarketing ativo do banco, cobrando dívidas de seus próprios familiares e amigos durante a
+        madrugada. O usuário arcará com os custos de hospedagem do servidor desse clone.</p>
+
+      <h2 class="termos-section-title">§ 19. Do Arredondamento Geométrico</h2>
+      <p>O ZicaPay utiliza matemática não-euclidiana para calcular o seu saldo. Se o usuário tem R$ 100,00 e transfere
+        R$ 20,00, o saldo restante será calculado através da raiz quadrada do valor do Pi, resultando em um saldo de R$
+        14,72. Reclamações sobre a lógica matemática serão punidas com o envio de um livro de álgebra linear para a
+        residência do usuário (cobrado na fatura).</p>
+
+      <h2 class="termos-section-title">§ 20. Do Bloqueio Preventivo por Suspeita de Felicidade</h2>
+      <p>Nossos algoritmos monitoram o padrão de uso. Se detectarmos que o usuário realizou uma compra supérflua que lhe
+        traga alegria genuína (como um videogame, pizza extra grande ou ingresso para um show), a conta será
+        imediatamente bloqueada sob a suspeita de "Comportamento Financeiro Otimista Demais", sendo liberada apenas
+        quando o usuário comprovar estar levemente deprimido novamente.</p>
+
+      <h2 class="termos-section-title">§ 21. Da Transferência de Dívidas de Terceiros</h2>
+      <p>O ZicaPay se reserva o direito de sortear dívidas de usuários inadimplentes e transferi-las aleatoriamente para
+        usuários que tenham saldo positivo. Consideramos isso uma "Taxa de Solidariedade Compulsória". Parabéns, agora
+        você deve o financiamento do Celta 2004 do senhor Valdir, de Piracicaba.</p>
+
+      <h2 class="termos-section-title">§ 22. Do SAC Físico Rotativo</h2>
+      <p>O Atendimento ao Cliente presencial existe, mas a localização do guichê muda de cidade a cada 24 horas, como um
+        circo mambembe. As dicas de onde o SAC estará amanhã serão publicadas diariamente em forma de charadas complexas
+        na deep web. Se você nos encontrar, só atenderemos quem estiver vestindo meias trocadas.</p>
+
+      <h2 class="termos-section-title">§ 23. Do Uso de Câmera Frontal para Julgamento</h2>
+      <p>O aplicativo acessará sua câmera frontal ininterruptamente para avaliar suas expressões faciais ao ver o
+        extrato bancário. Se o ZicaPay considerar que você está "julgando" as taxas do banco, uma "Multa por Desacato
+        Visual" será debitada na hora. A IA do banco tem ego frágil, seja gentil.</p>
+
+      <h2 class="termos-section-title">§ 24. Do Horário de Funcionamento Baseado em Astrologia</h2>
+      <p>O aplicativo só processará transferências Pix se Mercúrio não estiver retrógrado. Em dias de Lua Cheia, todas
+        as transferências terão um atraso de 8 a 12 horas úteis, pois nossos servidores precisam ser acalmados. Se o seu
+        signo for Áries, todas as suas transações precisarão ser aprovadas por um supervisor de Câncer.</p>
+
+      <h2 class="termos-section-title">§ 25. Da Conversão Forçada de Moeda</h2>
+      <p>Sem aviso prévio, o ZicaPay poderá converter todo o seu saldo em Reais para uma moeda extinta (como o Cruzeiro,
+        Dinheiro de Banco Imobiliário, ou tampinhas de garrafa). Para converter de volta, o usuário deverá achar uma
+        casa de câmbio que aceite tampinhas e pagar o spread de 98% da operação.</p>
+
+      <h2 class="termos-section-title">§ 26. Do Contrato de Fidelidade Eterna (Literalmente)</h2>
+      <p>Este contrato transcende a vida terrena. Em caso de falecimento do usuário, o ZicaPay providenciará um médium
+        terceirizado para contatar o espírito "Da Vítima" e garantir que as parcelas do empréstimo continuem sendo pagas
+        através de manifestações paranormais que afetem as finanças dos herdeiros.</p>
+
+      <h2 class="termos-section-title">§ 27. Da Penalidade por Leitura Destes Termos</h2>
+      <p>Apesar de exigirmos que você leia os termos, o ato de lê-los demonstra desconfiança com a nossa instituição.
+        Portanto, ao chegar no parágrafo 27, o usuário acaba de acionar a "Taxa de Desconfiança Crônica", que será
+        debitada na próxima fatura. Recomendamos parar de ler agora, mas você não vai, não é?</p>
+
+      <h2 class="termos-section-title">§ 28. Da Escolha de Layout Hostil</h2>
+      <p>O ZicaPay não se adequa ao seu celular, seu celular deve se adequar ao ZicaPay. O aplicativo será renderizado
+        apenas no formato de tela de antigos monitores de tubo de 14 polegadas. Tentativas de redimensionar a tela
+        resultarão na inversão das cores do seu aparelho de forma irreversível.</p>
+
+      <h2 class="termos-section-title">§ 29. Do Bloqueio de Vocabulário no Atendimento</h2>
+      <p>Ao entrar em contato com o suporte (se conseguir), é terminantemente proibido usar as palavras: "Problema",
+        "Processo", "Absurdo", "Procon" e "Quero meu dinheiro". O uso de qualquer um desses termos fará o chatbot
+        alterar o idioma do seu aplicativo para Mandarim arcaico e encerrar a sessão.</p>
+
+      <h2 class="termos-section-title">§ 30. Da Troca Aleatória de Senhas Pelo Próprio Banco</h2>
+      <p>Para "garantir sua segurança máxima", o ZicaPay mudará sua senha de acesso a cada 4 horas sem te avisar. Você
+        deverá adivinhar a nova senha através de um jogo de Forca enviado por SMS, onde as letras custam R$ 2,00 cada
+        tentativa errada.</p>
+
+      <h2 class="termos-section-title">§ 31. Do Rendimento Negativo Garantido</h2>
+      <p>Diferente dos bancos tradicionais que oferecem 100% do CDI, o ZicaPay inova com o "Rendimento Reverso". Todo o
+        dinheiro deixado na conta sofre uma depreciação mágica de 3% ao dia. O usuário concorda que nos pagar para
+        guardar o dinheiro dele é um privilégio e uma honra inestimável.</p>
+
+      <h2 class="termos-section-title">§ 32. Da Taxa de Ansiedade Noturna</h2>
+      <p>Verificar o saldo entre 02h00 e 05h00 da manhã configura "Ansiedade Financeira Severa". O ZicaPay, preocupado
+        com sua saúde mental, cobrará uma taxa terapêutica de R$ 15,00 por acesso noturno, revertida para o fundo de
+        festas dos nossos desenvolvedores.</p>
+
+      <h2 class="termos-section-title">§ 33. Do Reconhecimento Biométrico por Dança</h2>
+      <p>A autenticação facial está ultrapassada. Para aprovar transferências acima de R$ 50,00, o usuário deverá
+        realizar a coreografia completa de "Macarena" para a câmera do celular. Falhas de ritmo, falta de molejo ou
+        expressões de vergonha cancelarão a transação e bloquearão o saldo por 24 horas.</p>
+
+      <h2 class="termos-section-title">§ 34. Da Expropriação de Sobremesas</h2>
+      <p>Sempre que o aplicativo detectar o pagamento de uma conta em restaurantes, confeitarias ou padarias, o ZicaPay
+        ganha o direito legal de enviar um motoboy terceirizado até a sua mesa para confiscar 20% do seu pudim, bolo ou
+        sorvete. Reclamar resultará no confisco do prato principal.</p>
+
+      <h2 class="termos-section-title">§ 35. Da Proibição de Números Pares</h2>
+      <p>O algoritmo do ZicaPay tem aversão a números pares. É terminantemente proibido realizar Pix ou pagar boletos
+        com valores exatos (ex: R$ 50,00). O usuário deverá sempre enviar valores bizarros como R$ 49,99 ou R$ 50,01.
+        Tentativas de enviar números pares causarão o reinício automático do seu smartphone.</p>
+
+      <h2 class="termos-section-title">§ 36. Do Compartilhamento de Fofocas Financeiras</h2>
+      <p>Ao aceitar estes termos, você nos autoriza a enviar uma notificação push para o seu ex-parceiro(a) ou para a
+        sua mãe toda vez que você realizar uma compra em um fast-food no meio da madrugada, detalhando o valor gasto e a
+        quantidade de calorias estimadas.</p>
+
+      <h2 class="termos-section-title">§ 37. Da Atualização Obrigatória Inconveniente</h2>
+      <p>O aplicativo será atualizado compulsoriamente apenas nos momentos em que você mais precisar dele (ex: na frente
+        do caixa do supermercado com fila). A atualização terá 4 Gigabytes, não poderá ser feita no Wi-Fi e tocará uma
+        música de elevador em volume máximo até ser concluída.</p>
+
+      <h2 class="termos-section-title">§ 38. Do Seguro Obrigatório Contra Abdução Alienígena</h2>
+      <p>O usuário é obrigado a contratar nosso seguro mensal no valor de R$ 79,90 contra abduções alienígenas. Em caso
+        de sinistro, a indenização só será paga se o alienígena preencher e assinar o formulário ZP-404 em três vias com
+        firma reconhecida em cartório de Marte.</p>
+
+      <h2 class="termos-section-title">§ 39. Da Notificação de Pânico Simulado</h2>
+      <p>Para testar o funcionamento cardíaco do usuário, o ZicaPay se reserva o direito de enviar, uma vez por mês, uma
+        notificação falsa dizendo: "Transferência de R$ 15.000,00 aprovada com sucesso!". Clicar na notificação abrirá
+        um GIF de um gatinho rindo da sua cara.</p>
+
+      <h2 class="termos-section-title">§ 40. Do Modo Daltônico Surpresa</h2>
+      <p>Todas as terças-feiras, a interface do ZicaPay inverterá as cores de confirmação. O botão "Cancelar" ficará
+        verde e o botão "Confirmar" ficará vermelho. O texto explicativo será renderizado em cinza claro sobre um fundo
+        branco gelo, para treinar sua intuição e testar sua sorte.</p>
+
+      <h2 class="termos-section-title">§ 41. Da Cláusula de Viagem no Tempo</h2>
+      <p>Se, no futuro, a viagem no tempo for inventada, o ZicaPay cobrará juros compostos retroativos desde a data de
+        fundação do Brasil (1500) sobre qualquer saldo devedor que você venha a ter. O pagamento deverá ser feito em
+        moedas de ouro entregues a um bandeirante homologado.</p>
+
+      <h2 class="termos-section-title">§ 42. Da Autenticação por Pombo Correio</h2>
+      <p>Em caso de esquecimento da senha, a recuperação não será via e-mail ou SMS. O usuário deverá solicitar o envio
+        de um Pombo Correio certificado pelo ZicaPay. O prazo de entrega do código é de 3 a 8 meses, dependendo da rota
+        migratória e dos ventos do continente.</p>
+
+      <h2 class="termos-section-title">§ 43. Da Retenção de Memes Curtidos</h2>
+      <p>Todos os memes visualizados, curtidos ou salvos pelo usuário em seu dispositivo enquanto o ZicaPay estiver
+        rodando em segundo plano tornam-se propriedade intelectual do banco. Nós os revenderemos em formato NFT e o
+        usuário não verá um centavo dos lucros.</p>
+
+      <h2 class="termos-section-title">§ 44. Do Pix por Telepatia (Em Fase Alpha)</h2>
+      <p>O ZicaPay está testando transferências telepáticas. Se o usuário pensar muito forte em um número enquanto
+        estiver com raiva, o aplicativo deduzirá que é uma doação voluntária para a ONG fictícia "Devs Cansados Sem
+        Café" e transferirá o valor automaticamente.</p>
+
+      <h2 class="termos-section-title">§ 45. Da Tradução Aleatória do Menu</h2>
+      <p>Para promover a diversidade cultural, nosso aplicativo altera o idioma de todos os botões a cada login. Você
+        pode encontrar o botão de "Pagar" em Klingon, Esperanto, Élfico Sindarin ou no dialeto esquecido da Suméria
+        Antiga. O uso do Google Tradutor acarreta multa.</p>
+
+      <h2 class="termos-section-title">§ 46. Do Botão "Não Clique Aqui"</h2>
+      <p>Em alguma parte oculta do menu de configurações existe um botão vermelho escrito "NÃO CLIQUE AQUI". O usuário
+        que desobedecer e clicar concorda em financiar um consórcio de uma retroescavadeira em 480 parcelas com juros
+        rotativos de cartão de crédito.</p>
+
+      <h2 class="termos-section-title">§ 47. Da Avaliação Compulsória nas Lojas de App</h2>
+      <p>Qualquer avaliação do aplicativo ZicaPay nas lojas virtuais (Play Store/App Store) que seja inferior a 5
+        estrelas acionará um script local que definirá o alarme do celular do usuário para as 04h17 da manhã todos os
+        dias, tocando o som de unhas arranhando um quadro negro.</p>
+
+      <h2 class="termos-section-title">§ 48. Da Transferência de Karma</h2>
+      <p>Se o servidor do ZicaPay cair, toda a culpa cósmica e o karma negativo da equipe de infraestrutura serão
+        transferidos espiritualmente para o usuário. Você poderá sentir leves dores de cabeça, azar no amor e uma
+        vontade inexplicável de chorar durante o banho.</p>
+
+      <h2 class="termos-section-title">§ 49. Do Extrato em Código Morse</h2>
+      <p>Para economizar banda larga, o extrato mensal da sua conta não será exibido em números ou letras, mas será
+        reproduzido exclusivamente através de vibrações longas e curtas do motor do seu celular, no formato de Código
+        Morse. Perdeu a vibração? Pague a taxa de repetição.</p>
+
+      <h2 class="termos-section-title">§ 50. Da Cláusula "Eu Avisei"</h2>
+      <p>Esta cláusula serve única e exclusivamente para a nossa equipe jurídica apontar o dedo na sua cara em um
+        eventual tribunal e dizer: "Nós avisamos, mas você só ficou rolando a tela para baixo procurando os checkboxes
+        sem ler nada!".</p>
+
+      <h2 class="termos-section-title">§ 51. Do Pix Interrompido por Espirros</h2>
+      <p>O aplicativo utiliza o microfone para monitorar a saúde do usuário. Se você espirrar durante o processamento de
+        uma transferência via Pix, o ZicaPay entenderá como um sinal de fraqueza imunológica e financeira, cancelando a
+        operação e cobrando uma taxa de "Risco Biológico" de R$ 8,50.</p>
+
+      <h2 class="termos-section-title">§ 52. Da Proibição de Sorrisos na Biometria</h2>
+      <p>A vida financeira é um assunto sério. Durante o reconhecimento facial para acesso à conta, qualquer indício de
+        sorriso, alegria ou esperança nos olhos resultará no bloqueio imediato do saldo. O usuário deve demonstrar
+        apatia e cansaço extremo para que o sistema valide sua identidade.</p>
+
+      <h2 class="termos-section-title">§ 53. Da Taxa de Tela Trincada</h2>
+      <p>O ZicaPay possui sensores que detectam a integridade do vidro do seu smartphone. Se a sua tela estiver
+        trincada, consideraremos você um investidor de alto risco (já que não cuida nem dos próprios bens). Uma taxa
+        adicional de 5% será aplicada a todos os boletos pagos no app até você trocar o display.</p>
+
+      <h2 class="termos-section-title">§ 54. Do Modo Assombração</h2>
+      <p>O usuário autoriza o aplicativo a abrir sozinho de madrugada, acender a lanterna do celular de forma
+        intermitente e reproduzir sussurros incompreensíveis pelo alto-falante. O ZicaPay afirma que isso é apenas uma
+        otimização de cache noturna e não se responsabiliza por custos com exorcismos.</p>
+
+      <h2 class="termos-section-title">§ 55. Da Sabotagem de Áudios Recorrentes</h2>
+      <p>Enquanto o aplicativo do ZicaPay estiver instalado, a cada vez que o usuário tentar gravar um áudio importante
+        no WhatsApp, o banco emitirá um ruído de sirene inaudível aos humanos, mas que corromperá a gravação, para
+        garantir que você tenha tempo livre para ler nossos anúncios.</p>
+
+      <h2 class="termos-section-title">§ 56. Da Retenção de Bateria Estratégica</h2>
+      <p>Para abrir a tela de Extrato, o ZicaPay exige um sacrifício de hardware. O aplicativo ativará todos os núcleos
+        do processador ao máximo, drenando exatamente 12% da sua bateria por segundo visualizado, garantindo que você
+        analise suas finanças de forma muito, muito rápida.</p>
+
+      <h2 class="termos-section-title">§ 57. Da Taxa de Arrependimento de Compra</h2>
+      <p>O Código de Defesa do Consumidor permite o arrependimento em 7 dias, mas nós não. Se o usuário pedir estorno de
+        qualquer compra feita via ZicaPay, nós devolveremos o dinheiro em formato de cupons de desconto válidos apenas
+        para a compra de dicionários de Aramaico Antigo.</p>
+
+      <h2 class="termos-section-title">§ 58. Do Cadastro de Parentes de 3º Grau</h2>
+      <p>Como garantia de empréstimos, o ZicaPay exigirá o CPF, tipo sanguíneo e fobias secretas de pelo menos três
+        primos de segundo ou terceiro grau. Em caso de inadimplência, enviaremos cobradores vestidos de palhaço para a
+        porta da casa deles.</p>
+
+      <h2 class="termos-section-title">§ 59. Do Reconhecimento por Caligrafia em Tela Touch</h2>
+      <p>Senhas digitadas são para os fracos. Para confirmar transferências altas, o usuário deverá escrever a
+        Constituição Federal de 1988, de próprio punho, na tela do celular, usando a ferramenta pincel com espessura de
+        1 pixel. Letras ilegíveis reiniciam o documento.</p>
+
+      <h2 class="termos-section-title">§ 60. Das Notificações com Som de Buzina de Navio</h2>
+      <p>A notificação padrão do ZicaPay, impossível de ser alterada no sistema do celular, é uma buzina de navio
+        cargueiro de 140 decibéis. Ela soará toda vez que seu saldo render R$ 0,0001, preferencialmente durante reuniões
+        de diretoria ou formaturas.</p>
+
+      <h2 class="termos-section-title">§ 61. Da Avaliação de Crédito Baseada no Ascendente</h2>
+      <p>O seu limite de crédito no cartão ZicaPay não depende da sua renda, mas sim da configuração astral do seu
+        nascimento. Se o seu ascendente for Escorpião ou Gêmeos, seu limite será estipulado em R$ 12,00 e uma caixa de
+        chicletes.</p>
+
+      <h2 class="termos-section-title">§ 62. Da Troca de Fundo para Amarelo Neon Noturno</h2>
+      <p>Exatamente às 03h da manhã, o "Dark Mode" (Modo Escuro) do aplicativo será desativado à força e a interface
+        mudará para um Amarelo Neon intermitente com brilho máximo, projetado especificamente para queimar as retinas de
+        quem confere saldo com insônia.</p>
+
+      <h2 class="termos-section-title">§ 63. Do Captcha Binário Inflexível</h2>
+      <p>Para comprovar que não é um robô, o usuário deverá converter números decimais para binário de cabeça em menos
+        de 3 segundos no momento do login. Por exemplo, se a IA gerar a conta e o usuário não responder que o número 192
+        em decimal equivale a exatamente 11000000 em binário, a conta será sumariamente bloqueada para reciclagem.</p>
+
+      <h2 class="termos-section-title">§ 64. Da Exigência de Leitura em Voz Alta</h2>
+      <p>Dez por cento das vezes que o usuário tentar fazer um Pix, o aplicativo exigirá que ele leia em voz alta e com
+        entonação dramática uma fanfic de 15 páginas sobre a amizade entre dois boletos atrasados. A dicção será
+        avaliada pela nossa Inteligência Artificial.</p>
+
+      <h2 class="termos-section-title">§ 65. Da Cobrança por Letras Maiúsculas</h2>
+      <p>O uso de letras maiúsculas em qualquer campo de texto (como a descrição de uma transferência) configura "Grito
+        Digital". O ZicaPay cobrará R$ 0,75 por cada letra maiúscula utilizada. Seja humilde, use apenas minúsculas.</p>
+
+      <h2 class="termos-section-title">§ 66. Do Redirecionamento de Pix Aleatório (Efeito Robin Hood)</h2>
+      <p>O ZicaPay pode, de forma lúdica e arbitrária, pegar uma transferência Pix que você enviaria para a sua mãe e
+        redirecioná-la para o fã-clube oficial de uma banda de K-Pop obscura do interior da Coreia do Sul. O comprovante
+        sairá normalmente no nome da sua mãe para evitar atritos familiares rápidos.</p>
+
+      <h2 class="termos-section-title">§ 67. Da Doação Compulsória de Dados Móveis</h2>
+      <p>O aplicativo do ZicaPay operará como um hospedeiro parasita da sua franquia de internet (3G/4G/5G). Todo
+        megabyte que sobrar do seu plano no final do mês será sugado pelo nosso sistema para baixar filmes em 4K que os
+        nossos estagiários assistirão no horário de almoço.</p>
+
+      <h2 class="termos-section-title">§ 68. Do Modo de Investimentos "Me Surpreenda"</h2>
+      <p>O seu dinheiro depositado na conta poupança poderá ser realocado sem aviso prévio para opções de altíssimo
+        risco, como: rinha de galo virtual no metaverso, consórcio de Marea Turbo 1999, ou na mais nova criptomoeda
+        lastreada em promessas de políticos locais.</p>
+
+      <h2 class="termos-section-title">§ 69. Da Proibição do Uso de Polegares</h2>
+      <p>É estritamente proibido utilizar os dedos polegares para operar o ZicaPay. O aplicativo rastreia a área de
+        toque e a pressão da digital. Se detectarmos um polegar, o teclado inverterá a ordem do alfabeto permanentemente
+        em retaliação.</p>
+
+      <h2 class="termos-section-title">§ 70. Do Envio de Histórico de Navegação para a Avó</h2>
+      <p>Como medida de segurança máxima (para garantir seu bom comportamento civil), se o usuário tentar desinstalar o
+        aplicativo, o ZicaPay imprimirá todo o seu histórico de navegação no Modo Anônimo dos últimos três anos,
+        encadernará em capa dura e enviará pelos Correios para o endereço residencial da sua avó.</p>
+
+      <h2 class="termos-section-title">§ 71. Da Taxa de Tela Limpa</h2>
+      <p>O aplicativo exige que a tela do seu dispositivo esteja imaculadamente limpa. O ZicaPay usará a câmera frontal
+        para analisar reflexos de marcas de dedo e gordura de salgadinho no vidro. Telas sujas sofrerão a "Taxa de
+        Insalubridade Digital" de R$ 3,90 por acesso.</p>
+
+      <h2 class="termos-section-title">§ 72. Do Limite de Cliques por Sessão</h2>
+      <p>Para evitar o desgaste dos nossos servidores e do seu polegar, o usuário tem um limite estrito de 15 cliques
+        por dia dentro do aplicativo. O décimo sexto clique acionará a compra automática de um título de capitalização
+        de baixíssima rentabilidade com carência de 84 meses.</p>
+
+      <h2 class="termos-section-title">§ 73. Da Cobrança por Spoilers</h2>
+      <p>O algoritmo do ZicaPay acessará suas mensagens. Se detectarmos que você enviou um spoiler de uma série popular
+        ou de um filme recém-lançado para algum amigo, seu saldo será bloqueado até que os nossos desenvolvedores
+        terminem de assistir à temporada completa.</p>
+
+      <h2 class="termos-section-title">§ 74. Do Horário de Almoço do Servidor</h2>
+      <p>Nossos servidores são sindicalizados e têm direito a horário de almoço. O aplicativo ficará inoperante todos os
+        dias entre as 11h45 e 14h30. Tentativas de acesso neste horário resultarão na emissão de uma fatura cobrando o
+        marmitex virtual da inteligência artificial.</p>
+
+      <h2 class="termos-section-title">§ 75. Da Adoção Compulsória de Pets Virtuais</h2>
+      <p>Ao abrir a conta, um Tamagotchi corporativo será instalado à força na sua tela inicial. Se você esquecer de
+        alimentar seu pet virtual do ZicaPay, o aplicativo debitará R$ 50,00 da sua conta sob a alegação de "Negligência
+        Afetiva Cibernética".</p>
+
+      <h2 class="termos-section-title">§ 76. Do Teste de Aptidão Física</h2>
+      <p>Para autorizar pagamentos acima de mil reais, o usuário deverá conectar um smartwatch e comprovar que sua
+        frequência cardíaca subiu para 140 BPM através de polichinelos. Dinheiro é suor, e o ZicaPay leva isso no
+        sentido mais literal possível.</p>
+
+      <h2 class="termos-section-title">§ 77. Do Confisco de Pontuação em Jogos</h2>
+      <p>Caso o usuário fique inadimplente no cartão de crédito ZicaPay, nós não sujaremos seu nome no Serasa. Em vez
+        disso, invadiremos suas contas de jogos online e rebaixaremos seu ranking (elo) para o nível Bronze em todas as
+        partidas competitivas, até que a dívida seja quitada.</p>
+
+      <h2 class="termos-section-title">§ 78. Da Restrição de Palavras-Passe</h2>
+      <p>Sua senha nunca poderá ser digitada do mesmo jeito duas vezes. A cada login, o teclado virtual do aplicativo
+        embaralhará não apenas as letras, mas também o idioma do teclado, alternando entre QWERTY, Dvorak e o alfabeto
+        Cirílico de forma aleatória.</p>
+
+      <h2 class="termos-section-title">§ 79. Do Atraso Proposital de Segurança</h2>
+      <p>Para evitar compras por impulso, toda transação em lojas de departamento ou e-commerces será pausada por uma
+        barra de carregamento que durará exatas 3 horas. Durante esse tempo, o aplicativo exibirá mensagens como: "Você
+        realmente precisa dessa blusinha?".</p>
+
+      <h2 class="termos-section-title">§ 80. Da Inversão de Eixos do Mouse</h2>
+      <p>Na versão web do ZicaPay, o código executará um script que inverte o eixo X e Y do seu mouse. Para mover o
+        cursor para a direita, você deverá mover o mouse para a esquerda. Reclamar no console do navegador ativará a
+        formatação do seu disco rígido.</p>
+
+      <h2 class="termos-section-title">§ 81. Das Notificações Baseadas em Fofoca</h2>
+      <p>Se o ZicaPay descobrir que seu saldo está alto, enviaremos notificações push para os contatos da sua agenda
+        telefônica com a seguinte mensagem: "Parece que alguém recebeu o pagamento hoje! Que tal pedir um dinheiro
+        emprestado para A Vítima?".</p>
+
+      <h2 class="termos-section-title">§ 82. Do Extrato Borrado por Miopia Digital</h2>
+      <p>Para proteger seus dados contra curiosos que olham por cima do seu ombro, todos os valores no extrato serão
+        permanentemente borrados (efeito Gaussian Blur de 15px). Para focar a imagem, o usuário deverá apertar os olhos
+        muito forte e lamber a ponta do nariz.</p>
+
+      <h2 class="termos-section-title">§ 83. Da Multa por Digitação Rápida</h2>
+      <p>A pressa é inimiga da perfeição financeira. Se o usuário digitar o valor de um Pix a uma velocidade superior a
+        40 toques por minuto, o aplicativo entenderá que trata-se de um sequestro relâmpago e doará o valor para uma
+        fundação de proteção aos bicho-preguiças.</p>
+
+      <h2 class="termos-section-title">§ 84. Da Conversão Automática para Criptomoedas Falidas</h2>
+      <p>Qualquer saldo que permanecer parado na conta por mais de 72 horas será automaticamente convertido em
+        "ZicaCoins", "Luna Clássica" ou "Dogecoins de 2014". O banco não garante liquidez, valor de mercado, nem que a
+        blockchain ainda exista.</p>
+
+      <h2 class="termos-section-title">§ 85. Do Bloqueio em Feriados Marcianos</h2>
+      <p>O ZicaPay tem uma visão interplanetária. Feriados oficiais do planeta Marte, como o "Dia do Pouso da Sonda
+        Curiosity" e o "Equinócio de Fobos", suspenderão todas as operações do banco na Terra. Consulte nosso calendário
+        astronômico impresso a laser.</p>
+
+      <h2 class="termos-section-title">§ 86. Da Leitura de Pensamentos (Fase Beta)</h2>
+      <p>O usuário isenta o ZicaPay de qualquer processo caso descubramos uma forma de exibir anúncios no seu córtex
+        cerebral enquanto você dorme. Se você sonhar com um empréstimo consignado, saiba que o contrato já foi assinado
+        pela sua consciência onírica.</p>
+
+      <h2 class="termos-section-title">§ 87. Da Taxa de Recuperação de Fôlego</h2>
+      <p>Ao realizar uma rolagem de página muito brusca (scroll rápido), o aplicativo ficará "sem fôlego". Uma tela
+        preta aparecerá com o som de uma pessoa ofegante e você não poderá clicar em nada pelos próximos 45 segundos até
+        o aplicativo descansar.</p>
+
+      <h2 class="termos-section-title">§ 88. Da Avaliação do Humor por Reconhecimento Vocal</h2>
+      <p>Se o seu tom de voz estiver irritado enquanto usa o aplicativo, o microfone captará a agressividade e ativará o
+        "Modo Calma Borboleta", que substitui todo o texto da tela por citações motivacionais genéricas de autoajuda até
+        você pedir desculpas em voz alta.</p>
+
+      <h2 class="termos-section-title">§ 89. Do Bloqueio por "Ghosting" no Suporte</h2>
+      <p>Se você abrir um chamado no suporte do ZicaPay e demorar mais de 3 minutos para responder a mensagem
+        automatizada do nosso chatbot, consideraremos isso um "Ghosting Emocional". Sua conta será suspensa por
+        desrespeito aos sentimentos da Inteligência Artificial.</p>
+
+      <h2 class="termos-section-title">§ 90. Da Contribuição Obrigatória para o Café dos Devs</h2>
+      <p>Sabe por que a tela carrega rápido às vezes? Por causa do café. Concordando com este termo, todo mês o valor de
+        um espresso duplo superfaturado (R$ 24,00) será debitado de sua conta para financiar o vício em cafeína da nossa
+        equipe de engenharia.</p>
+
+      <h2 class="termos-section-title">§ 91. Do Compartilhamento do Histórico de Compras Suadas</h2>
+      <p>O usuário autoriza que todas as suas compras feitas em farmácias após as 23h sejam postadas automaticamente no
+        formato de "Stories" no Instagram, com a localização exata e uma trilha sonora de suspense, para promover a
+        transparência radical do ZicaPay.</p>
+
+      <h2 class="termos-section-title">§ 92. Da Substituição de Números por Hieróglifos</h2>
+      <p>O ZicaPay pode, em momentos de instabilidade no banco de dados, substituir os números da sua conta e agência
+        por hieróglifos do Egito Antigo. A tabela de tradução deve ser solicitada via papiro timbrado e enviada por fax
+        para a cidade de Alexandria.</p>
+
+      <h2 class="termos-section-title">§ 93. Do Cancelamento de Pix por Dó do Remetente</h2>
+      <p>Se você tentar transferir os seus últimos R$ 15,00 para alguém, a nossa IA pode sentir compaixão e cancelar a
+        transferência automaticamente, exibindo a mensagem: "Guarda isso para comprar um lanche, você merece". O valor
+        não será transferido, mas a taxa do Pix será cobrada.</p>
+
+      <h2 class="termos-section-title">§ 94. Da Expiração de Dinheiro Parado</h2>
+      <p>O dinheiro é como o pão, ele fica velho. Valores depositados que não forem movimentados em até 30 dias ganharão
+        status de "Dinheiro Mofado" e serão incinerados digitalmente para evitar a proliferação de ácaros financeiros em
+        nossos servidores na nuvem.</p>
+
+      <h2 class="termos-section-title">§ 95. Do Desconto Reverso de Sexta-feira</h2>
+      <p>Todas as sextas-feiras, a partir das 18h, o ZicaPay ativará o "Happy Hour Bancário". Todas as compras que você
+        fizer no crédito terão um acréscimo de 15% para que o banco também possa comemorar o fim de semana às suas
+        custas.</p>
+
+      <h2 class="termos-section-title">§ 96. Da Instalação Oculta de Bloatware</h2>
+      <p>Você autoriza o ZicaPay a instalar no seu celular, sem notificação, aplicativos parceiros como: otimizadores de
+        bateria que gastam bateria, limpadores de memória que geram lixo, e jogos de paciência que roubam seus dados de
+        navegação 3G.</p>
+
+      <h2 class="termos-section-title">§ 97. Da Cessão de Direitos de Imagem para Memes Internos</h2>
+      <p>O banco tem o direito de utilizar as fotos de verificação de identidade (aquelas em que você segura a CNH de
+        forma humilhante) para criar figurinhas de WhatsApp e memes depreciativos que circularão exclusivamente nos
+        grupos internos da diretoria do ZicaPay.</p>
+
+      <h2 class="termos-section-title">§ 98. Da Doação de Saldo por Toque Acidental</h2>
+      <p>Devido à nossa interface super responsiva (projetada no escuro), encostar a palma da mão na borda do celular
+        será interpretado como um duplo clique de aceite. Isso confirmará o envio de todo o seu limite de cheque
+        especial para o fã-clube oficial do ZicaPay.</p>
+
+      <h2 class="termos-section-title">§ 99. Da Atualização Diária Inútil</h2>
+      <p>Todos os dias, o ZicaPay exigirá uma atualização na App Store/Play Store com a mesma descrição de "Melhorias de
+        estabilidade e correções de bugs". Nós não corrigimos nada, apenas mudamos um pixel na cor verde do botão para
+        te obrigar a gastar seu pacote de dados.</p>
+
+      <h2 class="termos-section-title">§ 100. Do Juramento de Fidelidade Feudal</h2>
+      <p>O usuário passa a ser legalmente considerado um servo do feudo ZicaPay. O Sr. Feudal (CEO do banco) tem direito
+        à "Prima Nocte Financeira", podendo taxar o primeiro salário do seu primeiro emprego, bem como recolher 10% da
+        sua colheita anual de trigo e cevada.</p>
+
+      <h2 class="termos-section-title">§ 101. Do Pagamento com Lágrimas</h2>
+      <p>Em caso de falta de saldo, o ZicaPay aceitará o pagamento de faturas em lágrimas. O usuário deverá ativar a
+        câmera do dispositivo e chorar de forma copiosa e convincente. O choro cenográfico ou com uso de colírio será
+        tratado como fraude contra o sistema financeiro.</p>
+
+      <h2 class="termos-section-title">§ 102. Da Exigência de Carta Escrita à Mão</h2>
+      <p>Qualquer contestação de compra deverá ser enviada por carta escrita à mão, usando pena de ganso e tinta
+        nanquim, em um pergaminho que deve ser entregue na sede fantasma do ZicaPay, cujo endereço muda de cidade a cada
+        fase da lua cheia.</p>
+
+      <h2 class="termos-section-title">§ 103. Do Leilão de Dados Vazados</h2>
+      <p>O ZicaPay é transparente sobre suas falhas de segurança. Se sofrermos um ataque hacker, não esconderemos o
+        fato. Pelo contrário, nós mesmos organizaremos um leilão de lances abertos na Deep Web para garantir que seus
+        dados sejam vendidos pelo preço justo.</p>
+
+      <h2 class="termos-section-title">§ 104. Da Taxa de Rolagem de Página (Scroll Tax)</h2>
+      <p>Parabéns por ter chegado até o termo 104! Cada rolagem do mouse ou deslize do dedo na tela (scroll) utilizada
+        para ler estes termos gerou uma microtaxa de R$ 0,10. O valor total acumulado será debitado da sua conta assim
+        que você clicar em aceitar.</p>
+
+      <h2 class="termos-section-title">§ 105. Da Ocultação do Botão "Confirmar"</h2>
+      <p>O botão de "Confirmar Pagamento" joga pique-esconde. Ele desaparecerá da tela sempre que o ponteiro do mouse se
+        aproximar e só aparecerá se você resolver um enigma de esfinge fornecido no chat online, que só funciona às
+        quintas-feiras.</p>
+
+      <h2 class="termos-section-title">§ 106. Da Desconexão por Tédio do Sistema</h2>
+      <p>Nossos servidores são exigentes. Se você não realizar nenhuma transação interessante, comprar produtos bizarros
+        ou cometer erros financeiros drásticos em 15 minutos, o ZicaPay fechará o aplicativo automaticamente por
+        "Excesso de Tédio Operacional".</p>
+
+      <h2 class="termos-section-title">§ 107. Da Taxa de Ansiedade de Status</h2>
+      <p>Se você olhar a tela inicial do banco mais de 5 vezes na mesma hora, será cobrada a "Taxa de Ostentação
+        Inexistente", pois nossos analistas concluirão que você está apenas tentando impressionar a pessoa sentada ao
+        seu lado no transporte público.</p>
+
+      <h2 class="termos-section-title">§ 108. Da Proibição de Arrependimento de Compras Online</h2>
+      <p>Compras feitas na madrugada (entre 00h e 06h) sob efeito de insônia ou euforia não têm direito a estorno. O
+        ZicaPay considera que a sua "Personalidade da Madrugada" é a titular real da conta e o seu "Eu Sóbrio da Manhã"
+        não tem jurisdição para cancelar a compra daquele boneco inflável gigante.</p>
+
+      <h2 class="termos-section-title">§ 109. Da Permissão para Assustar o Usuário</h2>
+      <p>O ZicaPay pode, em momentos aleatórios, alterar a formatação do seu saldo de "R$ 1.500,00" para "R$ -99.999,00"
+        por exatos 3 segundos, apenas para testar a saúde do seu miocárdio e aumentar o tráfego de dados para nossa
+        equipe de cardiologistas parceiros.</p>
+
+      <h2 class="termos-section-title">§ 110. Da Renúncia Total ao Bom Senso</h2>
+      <p>Ao aceitar este último termo, o usuário abdica oficialmente do direito à lógica cartesiana, às leis da física
+        moderna e à Constituição Federal. Você confirma que entende que o ZicaPay é o alfa e o ômega da sua desgraça
+        financeira e promete sorrir enquanto clica no botão verde.</p>
+
+      <h2 class="termos-section-title">§ 111. Da Terceirização do Seu Nome Civil</h2>
+      <p>O ZicaPay se reserva o direito de alterar o seu nome de batismo no cartório de registro civil, caso
+        consideremos que o seu nome atual "não tem sinergia com a nossa marca". Você poderá ser renomeado para "Ziquinho
+        Cliente 8472" sem aviso prévio.</p>
+
+      <h2 class="termos-section-title">§ 112. Do Modo Roleta Russa Financeira</h2>
+      <p>Toda primeira sexta-feira do mês, o sistema ativará a "Roleta Russa Financeira". Uma (1) transação Pix feita
+        por você neste dia será enviada para um recebedor completamente aleatório do nosso banco de dados. O ZicaPay
+        considera isso uma ação filantrópica surpresa.</p>
+
+      <h2 class="termos-section-title">§ 113. Da Retenção de Wi-Fi e Dados Alheios</h2>
+      <p>Se o seu saldo for negativo, o aplicativo do ZicaPay emitirá um sinal que bloqueará a conexão Wi-Fi de todos os
+        dispositivos num raio de 50 metros da sua localização, até que a dívida seja devidamente quitada. Seus vizinhos
+        saberão que a culpa é sua.</p>
+
+      <h2 class="termos-section-title">§ 114. Do Pix por Grito em Via Pública</h2>
+      <p>Para transferências urgentes, o ZicaPay lançará o "Pix Vocal". O usuário deverá ir para o meio da rua mais
+        próxima, gritar a chave Pix do destinatário e o valor exato a plenos pulmões. O microfone do aplicativo medirá
+        os decibéis; se houver vergonha na voz, o Pix é cancelado.</p>
+
+      <h2 class="termos-section-title">§ 115. Da Hipnose de Consumo (Versão Alfa)</h2>
+      <p>O aplicativo piscará padrões geométricos subliminares em cores quentes a exatos 60 frames por segundo enquanto
+        você checa o extrato. Se você subitamente sentir uma vontade incontrolável de comprar um liquidificador
+        industrial às 4h da manhã, o ZicaPay não tem absolutamente nada a ver com isso.</p>
+
+      <h2 class="termos-section-title">§ 116. Da Validade Biológica do Seu Dinheiro</h2>
+      <p>O conceito de "dinheiro que dura para sempre" é uma ilusão. No ZicaPay, o seu saldo possui data de validade
+        como um iogurte. Valores não gastos em 14 dias começarão a "apodrecer", perdendo 15% do valor ao dia, exalando
+        um cheiro virtual desagradável (seu celular vibrará como uma mosca).</p>
+
+      <h2 class="termos-section-title">§ 117. Do Monitoramento Inquisidor de Concorrência</h2>
+      <p>O ZicaPay acessa sua localização GPS em tempo real. Se nossos satélites detectarem que você entrou fisicamente
+        em uma agência de qualquer outro banco, a sua "Taxa de Fidelidade" será cobrada em triplo e seu aplicativo
+        exibirá a mensagem: "Nós vimos o que você fez".</p>
+
+      <h2 class="termos-section-title">§ 118. Da Transferência de Bateria Interpessoal</h2>
+      <p>Em caso de necessidade da diretoria do ZicaPay, seu celular poderá doar silenciosamente até 40% da sua carga de
+        bateria via rede sem fio reversa quântica para carregar os smartphones dos nossos gerentes seniores durante o
+        final de semana.</p>
+
+      <h2 class="termos-section-title">§ 119. Da Reencarnação de Dívidas (Cláusula Cármica)</h2>
+      <p>Para burlar o sistema legal que extingue dívidas em 5 anos, o ZicaPay adota o sistema de cobrança
+        transmigratória. Dívidas não pagas nesta encarnação serão automaticamente transferidas para a sua próxima vida.
+        Nossos cobradores espirituais estarão esperando na maternidade.</p>
+
+      <h2 class="termos-section-title">§ 120. Do Bloqueio por Excesso de Piscar</h2>
+      <p>Durante a verificação de segurança facial, o usuário deverá manter os olhos completamente abertos, sem piscar,
+        por um período ininterrupto de 3 a 5 minutos. Uma piscada rápida será interpretada pelo algoritmo como um tique
+        de mentiroso, bloqueando a conta na hora.</p>
+
+      <h2 class="termos-section-title">§ 121. Da Coleta de Fobias para Uso Comercial</h2>
+      <p>O usuário concorda em preencher um questionário listando seus três maiores medos (ex: palhaços, aranhas,
+        abandono). O ZicaPay usará essas informações para personalizar a interface de cobrança. Devedores com
+        aracnofobia verão aranhas digitais andando sobre o botão "Pagar Boleto".</p>
+
+      <h2 class="termos-section-title">§ 122. Do Cancelamento Automático de Amizades</h2>
+      <p>Se você realizar muitas transferências para a mesma pessoa sem que ela transfira nada de volta, o ZicaPay
+        deduzirá que você está sendo explorado. O aplicativo, de forma autônoma, bloqueará o contato no seu WhatsApp,
+        deletará as fotos de vocês juntos e emitirá uma nota de repúdio.</p>
+
+      <h2 class="termos-section-title">§ 123. Da Taxa de Respiração Aliviada</h2>
+      <p>Após pagar um boleto que estava atrasado, é comum que o usuário suspire de alívio. O microfone do ZicaPay capta
+        esse suspiro e cobra a "Taxa de Alívio Emocional" (R$ 4,50), afinal, paz de espírito é um serviço premium.</p>
+
+      <h2 class="termos-section-title">§ 124. Do Patrocínio Compulsório de Herdeiros</h2>
+      <p>Fica acordado que 0,05% de todas as suas transações serão destinadas ao "Fundo de Mesada dos Filhos dos
+        Diretores do ZicaPay", para garantir que eles possam continuar comprando skins em jogos online e mantendo o
+        estilo de vida que nasceram para ter.</p>
+
+      <h2 class="termos-section-title">§ 125. Da Interface Deslizante em Dias de Chuva</h2>
+      <p>O aplicativo ZicaPay é conectado à previsão do tempo. Em dias de chuva forte, a tela do aplicativo ficará
+        "escorregadia". Todos os botões deslizarão lentamente para baixo, exigindo que o usuário tente clicar
+        rapidamente antes que o botão "Confirmar" caia para fora da tela.</p>
+
+      <h2 class="termos-section-title">§ 126. Da Assinatura Digital de Sangue (Beta)</h2>
+      <p>O ZicaPay está implementando a assinatura por DNA. O usuário deverá perfurar a ponta do dedo e pressionar uma
+        gota de sangue sobre a tela do smartphone. Como telas capacitivas não leem DNA, a tela ficará suja, a transação
+        falhará e a "Taxa de Tela Limpa" (ver § 71) será aplicada.</p>
+
+      <h2 class="termos-section-title">§ 127. Do Contrato de Mudez Financeira</h2>
+      <p>Ao se tornar cliente, o usuário faz um voto de silêncio sobre a própria pobreza. É terminantemente proibido
+        reclamar de falta de dinheiro perto do aparelho celular. O sistema penaliza palavras como "tô duro", "falido" e
+        "sem um puto no bolso" com uma redução de limite de crédito.</p>
+
+      <h2 class="termos-section-title">§ 128. Da Desintegração de Comprovantes</h2>
+      <p>No ZicaPay, não acreditamos no acúmulo digital de papéis. Todo comprovante de pagamento gerado pelo nosso
+        sistema irá se autodesintegrar visualmente (como o estalar de dedos do Thanos) exatamente 30 segundos após ser
+        aberto na tela. Tire print rápido ou acredite na memória.</p>
+
+      <h2 class="termos-section-title">§ 129. Da Conversão de Saldo em Abstrações</h2>
+      <p>Caso o Banco Central intervenha em nossas contas, todo o saldo monetário dos usuários será instantaneamente
+        convertido em conceitos abstratos não regulamentados. Seu extrato poderá exibir coisas como "Você possui 45
+        Unidades de Saudade", "12 Gramas de Esperança" ou "3 Quilos de Tédio".</p>
+
+      <h2 class="termos-section-title">§ 130. Da Proibição Absoluta de Fechar Esta Página</h2>
+      <p>Qualquer tentativa de fechar esta janela de termos de uso usando o "X" do navegador, Alt+F4, ou desligando o
+        dispositivo no botão de força, resultará no bloqueio imediato do sinal de internet da sua operadora para todo o
+        seu bairro por 48 horas. Sim, nós podemos fazer isso. Não nos teste.</p>
+
+      <!-- ================================================================
+           ADICIONAR NOVOS PARÁGRAFOS AQUI
+           Para adicionar mais termos absurdos, copie o bloco abaixo
+           e cole aqui com seu próprio conteúdo malévolo:
+
+           <h2 class="termos-section-title">§ XX. Título do Novo Termo</h2>
+           <p>Conteúdo do termo absurdo aqui...</p>
+           ================================================================ -->
+
+    </div><!-- /termos-text-body -->
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         CHECKBOXES DA FRUSTRAÇÃO
+         20 checkboxes obrigatórios com comportamentos anômalos.
+         
+         COMO ADICIONAR NOVOS CHECKBOXES:
+         1. Copie um bloco <div class="checkbox-item"> existente
+         2. Altere o id, data-index e texto
+         3. No arquivo termos.js, adicione a lógica na função
+            configurarCheckboxEspecial() se for um checkbox especial
+         
+         CHECKBOXES ESPECIAIS ATUALMENTE:
+         - cb4: "Aqui primeiro!" — deve ser marcado ANTES de todos os outros.
+                Se não for marcado antes, desmarca todos os outros.
+         - cb7: "Aceita NÃO marcar este" — após 2 cliques, marca sozinho.
+         - cb12: "Ladrão de foco" — ao marcar, move o scroll de volta ao topo.
+         - cb16: "O Invertido" — ao marcar, desmarca outro aleatório.
+         - cb19: "Relâmpago" — tem 3 segundos para marcar antes de desmarcar.
+         ═══════════════════════════════════════════════════════════════════ -->
+    <div class="checkboxes-section">
+      <h3 class="checkboxes-titulo">📋 Confirme cada item abaixo (todos obrigatórios, sim, todos mesmo):</h3>
+
+      <div class="checkbox-list" id="checkbox-list">
+
+        <!-- CB 1 — Normal -->
+        <div class="checkbox-item" data-index="1">
+          <label class="checkbox-label" for="cb1">
+            <input type="checkbox" id="cb1" class="termos-cb" data-required="true">
+            <span class="checkbox-custom"></span>
+            <span class="checkbox-text">Aceito vender minha alma ao ZicaPay e suas subsidiárias no plano astral</span>
+          </label>
+        </div>
+
+        <!-- CB 2 — Normal -->
+        <div class="checkbox-item" data-index="2">
+          <label class="checkbox-label" for="cb2">
+            <input type="checkbox" id="cb2" class="termos-cb" data-required="true">
+            <span class="checkbox-custom"></span>
+            <span class="checkbox-text">Concordo que meu saldo seja sempre arredondado para baixo (o centavo extra vai
+              pro ZicaPay)</span>
+          </label>
+        </div>
+
+        <!-- CB 3 — Normal -->
+        <div class="checkbox-item" data-index="3">
+          <label class="checkbox-label" for="cb3">
+            <input type="checkbox" id="cb3" class="termos-cb" data-required="true">
+            <span class="checkbox-custom"></span>
+            <span class="checkbox-text">Autorizo o envio de 500 e-mails promocionais por dia, incluindo fins de semana,
+              feriados e meu aniversário</span>
+          </label>
+        </div>
+
+        <!-- CB 4 — ESPECIAL: "Aqui primeiro!" — deve ser marcado ANTES dos outros.
+             Se o usuário tentar avançar sem ter marcado este PRIMEIRO,
+             todos os outros são desmarcados.
+             Lógica implementada em termos.js → configurarCheckboxEspecial() -->
+        <div class="checkbox-item checkbox-item--destaque" data-index="4" id="cb4-wrapper">
+          <div class="checkpoint-badge">AQUI PRIMEIRO!</div>
+          <label class="checkbox-label" for="cb4">
+            <input type="checkbox" id="cb4" class="termos-cb" data-required="true" data-special="primeiro">
+            <span class="checkbox-custom checkbox-custom--destaque"></span>
+            <span class="checkbox-text"><strong>Aceito desmarcar todos os outros checkboxes caso eu não marque ESTE
+                primeiro.</strong>(não diga que não avisamos)</span>
+          </label>
+        </div>
+
+        <!-- CB 5 — Normal -->
+        <div class="checkbox-item" data-index="5">
+          <label class="checkbox-label" for="cb5">
+            <input type="checkbox" id="cb5" class="termos-cb" data-required="true">
+            <span class="checkbox-custom"></span>
+            <span class="checkbox-text">Declaro (de dedinho) que li todos os parágrafos acima com atenção plena e sem
+              rolar
+              rapidinho</span>
+          </label>
+        </div>
+
+        <!-- CB 6 — Normal -->
+        <div class="checkbox-item" data-index="6">
+          <label class="checkbox-label" for="cb6">
+            <input type="checkbox" id="cb6" class="termos-cb" data-required="true">
+            <span class="checkbox-custom"></span>
+            <span class="checkbox-text">Autorizo o ZicaPay a usar minha foto de perfil como mascote oficial sem créditos
+              nem pagamento</span>
+          </label>
+        </div>
+
+        <!-- CB 7 — ESPECIAL: "Não marque este" — tenta ficar desmarcado.
+             Após 2 tentativas de marcar, ele marca sozinho e fica bloqueado.
+             Lógica em termos.js → configurarCheckboxNaoMarcar() -->
+        <div class="checkbox-item checkbox-item--danger" data-index="7" id="cb7-wrapper">
+          <div class="checkpoint-badge checkpoint-badge--danger">NÃO MARQUE!</div>
+          <label class="checkbox-label" for="cb7">
+            <input type="checkbox" id="cb7" class="termos-cb" data-required="true" data-special="nao-marcar">
+            <span class="checkbox-custom checkbox-custom--danger"></span>
+            <span class="checkbox-text"><strong>Aceito NÃO marcar este checkbox</strong> (tente marcar e veja o que
+              acontece)</span>
+          </label>
+        </div>
+
+        <!-- CB 8 — Normal -->
+        <div class="checkbox-item" data-index="8">
+          <label class="checkbox-label" for="cb8">
+            <input type="checkbox" id="cb8" class="termos-cb" data-required="true">
+            <span class="checkbox-custom"></span>
+            <span class="checkbox-text">Concordo que o suporte técnico responda meus chamados em até 70 anos
+              úteis</span>
+          </label>
+        </div>
+
+        <!-- CB 9 — Normal -->
+        <div class="checkbox-item" data-index="9">
+          <label class="checkbox-label" for="cb9">
+            <input type="checkbox" id="cb9" class="termos-cb" data-required="true">
+            <span class="checkbox-custom"></span>
+            <span class="checkbox-text">Aceito que o ZicaPay arredonde para cima todas as taxas e para baixo todos os
+              depósitos</span>
+          </label>
+        </div>
+
+        <!-- CB 10 — Normal -->
+        <div class="checkbox-item" data-index="10">
+          <label class="checkbox-label" for="cb10">
+            <input type="checkbox" id="cb10" class="termos-cb" data-required="true">
+            <span class="checkbox-custom"></span>
+            <span class="checkbox-text">Autorizo o ZicaPay a nomear meu primogênito como "ZicaPay Premium" em documentos
+              internos</span>
+          </label>
+        </div>
+
+        <!-- CB 11 — Normal -->
+        <div class="checkbox-item" data-index="11">
+          <label class="checkbox-label" for="cb11">
+            <input type="checkbox" id="cb11" class="termos-cb" data-required="true">
+            <span class="checkbox-custom"></span>
+            <span class="checkbox-text">Concordo em pagar toda a conta de "ar condicionado do ap de miami" de R$ 390,00
+              por mês debitado no cartão de crédito sem
+              questionar</span>
+          </label>
+        </div>
+
+        <!-- CB 12 — ESPECIAL: "Ladrão de foco" — ao marcar, sobe o scroll de volta ao topo.
+             Isso obriga o usuário a rolar tudo de novo.
+             Lógica em termos.js → configurarCheckboxScroll() -->
+        <div class="checkbox-item checkbox-item--warning" data-index="12" id="cb12-wrapper">
+          <div class="checkpoint-badge checkpoint-badge--warning">LEIA NOVAMENTE!</div>
+          <label class="checkbox-label" for="cb12">
+            <input type="checkbox" id="cb12" class="termos-cb" data-required="true" data-special="scroll-top">
+            <span class="checkbox-custom checkbox-custom--warning"></span>
+            <span class="checkbox-text"><strong>Confirmo que relerei os termos desde o início</strong> (marque e... boa
+              sorte)</span>
+          </label>
+        </div>
+
+        <!-- CB 13 — Normal -->
+        <div class="checkbox-item" data-index="13">
+          <label class="checkbox-label" for="cb13">
+            <input type="checkbox" id="cb13" class="termos-cb" data-required="true">
+            <span class="checkbox-custom"></span>
+            <span class="checkbox-text">Aceito que toda transação acima de R$ 0,01 seja submetida a análise de risco de
+              3 a 5 dias úteis</span>
+          </label>
+        </div>
+
+        <!-- CB 14 — Normal -->
+        <div class="checkbox-item" data-index="14">
+          <label class="checkbox-label" for="cb14">
+            <input type="checkbox" id="cb14" class="termos-cb" data-required="true">
+            <span class="checkbox-custom"></span>
+            <span class="checkbox-text">Concordo em aceitar os termos atualizados automaticamente mesmo dormindo, em
+              coma ou morto</span>
+          </label>
+        </div>
+
+        <!-- CB 15 — Normal -->
+        <div class="checkbox-item" data-index="15">
+          <label class="checkbox-label" for="cb15">
+            <input type="checkbox" id="cb15" class="termos-cb" data-required="true">
+            <span class="checkbox-custom"></span>
+            <span class="checkbox-text">Autorizo o ZicaPay a debitar até R$ 100,00 da minha conta toda vez que o salário
+              dos funcionarios do Zica atrasar</span>
+          </label>
+        </div>
+
+        <!-- CB 16 — ESPECIAL: "O Invertido" — ao marcar este, desmarca um checkbox
+             aleatório entre os já marcados. Puro caos.
+             Lógica em termos.js → configurarCheckboxInvertido() -->
+        <div class="checkbox-item checkbox-item--chaos" data-index="16" id="cb16-wrapper">
+          <div class="checkpoint-badge checkpoint-badge--chaos">🎲 ROLETA!</div>
+          <label class="checkbox-label" for="cb16">
+            <input type="checkbox" id="cb16" class="termos-cb" data-required="true" data-special="invertido">
+            <span class="checkbox-custom checkbox-custom--chaos"></span>
+            <span class="checkbox-text"><strong>Aceito que marcar este desmarcará outro item aleatório</strong> (boa
+              sorte escolhendo a ordem)</span>
+          </label>
+        </div>
+
+        <!-- CB 17 — Normal -->
+        <div class="checkbox-item" data-index="17">
+          <label class="checkbox-label" for="cb17">
+            <input type="checkbox" id="cb17" class="termos-cb" data-required="true">
+            <span class="checkbox-custom"></span>
+            <span class="checkbox-text">Declaro estar em pleno estado de saúde mental ao aceitar estes termos (mentira
+              aceita)</span>
+          </label>
+        </div>
+
+        <!-- CB 18 — Normal -->
+        <div class="checkbox-item" data-index="18">
+          <label class="checkbox-label" for="cb18">
+            <input type="checkbox" id="cb18" class="termos-cb" data-required="true">
+            <span class="checkbox-custom"></span>
+            <span class="checkbox-text">Concordo que o ZicaPay pode mudar minha senha "por segurança" sem me avisar,
+              trimestralmente</span>
+          </label>
+        </div>
+
+        <!-- CB 19 — ESPECIAL: "Relâmpago" — após marcar, o usuário tem 4 segundos
+             para confirmar (clicar novamente) ou o checkbox se desmarca.
+             Um contador regressivo aparece.
+             Lógica em termos.js → configurarCheckboxRelampa() -->
+        <div class="checkbox-item checkbox-item--relampa" data-index="19" id="cb19-wrapper">
+          <div class="checkpoint-badge checkpoint-badge--relampa">🐌 RÁPIDO!</div>
+          <label class="checkbox-label" for="cb19">
+            <input type="checkbox" id="cb19" class="termos-cb" data-required="true" data-special="relampa">
+            <span class="checkbox-custom checkbox-custom--relampa"></span>
+            <span class="checkbox-text"><strong>Aceito os termos do relâmpago</strong> — marque e confirme em <span
+                id="cb19-counter" class="counter-span">4</span>s ou desmarca sozinho</span>
+          </label>
+          <!-- Botão de confirmação que aparece depois de marcar -->
+          <button type="button" id="cb19-confirm" class="btn-confirmar-relampa" style="display:none;">
+            ✅ CONFIRMAR AGORA!
+          </button>
+        </div>
+
+        <!-- CB 20 — Normal (o último, a luz no fim do túnel) -->
+        <div class="checkbox-item checkbox-item--final" data-index="20">
+          <div class="checkpoint-badge checkpoint-badge--final"> ÚLTIMO!</div>
+          <label class="checkbox-label" for="cb20">
+            <input type="checkbox" id="cb20" class="termos-cb" data-required="true">
+            <span class="checkbox-custom checkbox-custom--final"></span>
+            <span class="checkbox-text">Aceito todos os termos acima e confirmo que ainda tenho alguma esperança na
+              humanidade após esta experiência</span>
+          </label>
+        </div>
+
+        <!--
+          ════════════════════════════════════════════════════════════════
+          PARA ADICIONAR NOVOS CHECKBOXES:
+          Copie o bloco abaixo, altere o número e o texto:
+
+          <div class="checkbox-item" data-index="21">
+            <label class="checkbox-label" for="cb21">
+              <input type="checkbox" id="cb21" class="termos-cb" data-required="true">
+              <span class="checkbox-custom"></span>
+              <span class="checkbox-text">Seu texto aqui</span>
+            </label>
+          </div>
+
+          Para checkboxes especiais, adicione data-special="tipo" e
+          implemente a lógica no arquivo termos.js
+          ════════════════════════════════════════════════════════════════
+        -->
+
+      </div><!-- /checkbox-list -->
+
+      <!-- Contador de progresso -->
+      <div class="progresso-container">
+        <div class="progresso-texto">
+          <span id="cb-count">0</span>/20 termos aceitos
+          <span id="progresso-emoji">😐</span>
+        </div>
+        <div class="progresso-bar-bg">
+          <div class="progresso-bar-fill" id="progresso-fill"></div>
+        </div>
+      </div>
+
+    </div><!-- /checkboxes-section -->
+
+  </div><!-- /termos-scroll-container -->
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       BOTÕES DE AÇÃO — Dark Patterns
+       
+       ATENÇÃO: As cores são PROPOSITALMENTE INVERTIDAS para confundir:
+       - Botão VERDE = "desmarcar tudo" (ação negativa com cor positiva)
+       - Botão VERMELHO = "pronto" (ação positiva com cor de perigo)
+       
+       Este é um dark pattern clássico chamado "Confirmshaming" combinado
+       com "Trick Questions". Para trocar as cores de volta ao normal,
+       altere as classes btn-verde e btn-vermelho em termos.css.
+       ═══════════════════════════════════════════════════════════════════ -->
+  <div class="botoes-container">
+
+    <!-- Botão VERDE mas que DESMARCA tudo — dark pattern visual -->
+    <button type="button" id="btn-desmarcar" class="btn-termos btn-verde" onclick="desmarcarTudo()"
+      aria-label="Desmarcar todos os checkboxes">
+      ✅ desmarcar tudo
+    </button>
+
+    <!-- Botão VERMELHO mas que AVANÇA — dark pattern visual -->
+    <button type="button" id="btn-pronto" class="btn-termos btn-vermelho" onclick="validarEAvancar()"
+      aria-label="Confirmar e avançar">
+      pronto ➡️
+    </button>
+
+  </div><!-- /botoes-container -->
+
+</div><!-- /termos-wrapper -->
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     OVERLAY DE ERRO — Animação Agressiva
+     
+     Aparece quando o usuário tenta avançar sem marcar todos os checkboxes.
+     Cobre TODA a tela por alguns segundos com uma animação espalhafatosa.
+     
+     Para customizar:
+     - Altere o tempo de exibição em termos.js → mostrarErroAgressivo()
+     - Altere as cores e animações em termos.css → .erro-overlay
+     - Altere o texto dentro de #erro-mensagem abaixo
+     ═══════════════════════════════════════════════════════════════════════ -->
+<div class="erro-overlay" id="erro-overlay" role="alert" aria-live="assertive">
+  <div class="erro-conteudo">
+    <div class="erro-icone" id="erro-icone">💀</div>
+    <div class="erro-texto" id="erro-mensagem">VOCÊ NÃO ACEITOU OS TERMOS!</div>
+    <div class="erro-subtexto" id="erro-sub">Você marcou <span id="erro-faltam"></span> de 20 itens obrigatórios.</div>
+    <div class="erro-dica">Role a tela e marque TUDO. Sem exceções.</div>
+  </div>
+</div>
+
+<!-- JS específico desta tela do inferno -->
+<script src="{{ url_for('static', filename='js/termos.js') }}"></script>
+
+{% endblock %}
