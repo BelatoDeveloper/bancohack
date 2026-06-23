@@ -44,11 +44,11 @@ class Conta:
             raise ValueError("O valor do depósito deve ser positivo.")
         self._saldo += valor
 
-    def debitar(self, valor: float) -> None:
+    def debitar(self, valor: float, forcar: bool = False) -> None:
         """Reduz o saldo com validação de saldo insuficiente."""
         if valor <= 0:
             raise ValueError("O valor da transferência deve ser positivo.")
-        if valor > self._saldo:
+        if not forcar and valor > self._saldo:
             raise ValueError("Saldo insuficiente para realizar a operação.")
         self._saldo -= valor
 

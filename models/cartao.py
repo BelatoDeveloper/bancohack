@@ -94,6 +94,17 @@ class Cartao:
             raise ValueError("Limite não pode ser negativo.")
         self._limite = novo_limite
 
+
+    def renovar(self, anos: int = 4) -> str:
+        """
+        Renova o cartao estendendo a validade por N anos a partir de hoje.
+        Retorna a nova validade no formato MM/AA.
+        """
+        from datetime import datetime, timedelta
+        nova_data = datetime.now() + timedelta(days=365 * anos)
+        self._validade = nova_data.strftime("%m/%y")
+        return self._validade
+
     def to_dict(self) -> dict:
         return {
             "id": self._id,
