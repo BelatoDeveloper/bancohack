@@ -272,16 +272,6 @@ python app.py
 # http://127.0.0.1:5000
 ```
 
-**Contas disponíveis para teste:**
-
-| Nome                | E-mail              | Senha    | Saldo inicial |
-| ------------------- | ------------------- | -------- | ------------- |
-| Ana Paula Ferreira  | ana@bancohack.com   | senha123 | R$ 5.250,75   |
-| Bruno Carvalho Lima | bruno@bancohack.com | senha456 | R$ 1.820,00   |
-| Carla Mendes Souza  | carla@bancohack.com | senha789 | R$ 12.500,00  |
-
----
-
 ## 6. Resumo visual do fluxo MTC
 
 ```
