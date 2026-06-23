@@ -182,6 +182,61 @@ document.addEventListener('DOMContentLoaded', function () {
       logoutForm.submit();
     });
   }
+// ──────────────────────────────────────────
+  // 7. MODAL APAGAR CONTA
+  // Nunca apaga — sempre dá erro diferente
+  // ──────────────────────────────────────────
+  window.abrirModalApagar = function() {
+    const modal = document.getElementById('modal-apagar');
+    modal.style.display = 'flex';
+  }
+
+  window.fecharModalApagar = function() {
+    const modal = document.getElementById('modal-apagar');
+    modal.style.display = 'none';
+    document.getElementById('resposta-apagar').value = '';
+    document.getElementById('erro-apagar').style.display = 'none';
+    tentativasApagar = 0;
+  }
+
+  let tentativasApagar = 0;
+  const perguntasApagar = [
+    'Qual o nome completo da mãe do inventor do telefone, em ordem alfabética invertida?',
+    'Digite o CPF do seu bisavô paterno (apenas números):',
+    'Qual a senha da sua conta de e-mail de 2008?',
+    'Quantos grãos de arroz cabem numa xícara de 200ml? (valor exato)',
+    'Digite o nome do seu professor favorito do ensino fundamental em inglês medieval:',
+  ];
+
+  const errosApagar = [
+    'Resposta incorreta. Tente novamente.',
+    'Ainda incorreto. Lembre-se: é em ordem invertida.',
+    'Hmm, não confere com nossos registros.',
+    'Por segurança, sua conta foi temporariamente bloqueada para exclusão. Tente em 24h.',
+    'Erro interno do servidor. Nossa equipe foi notificada. (código: ERR_DELETE_503)',
+  ];
+
+  window.tentarApagar = function() {
+    const resposta = document.getElementById('resposta-apagar').value.trim();
+    const erroDiv = document.getElementById('erro-apagar');
+    const perguntaEl = document.getElementById('pergunta-apagar');
+
+    if (!resposta) {
+      erroDiv.textContent = 'Por favor, responda a pergunta antes de continuar.';
+      erroDiv.style.display = 'block';
+      return;
+    }
+
+    tentativasApagar++;
+    erroDiv.style.display = 'block';
+    erroDiv.textContent = errosApagar[Math.min(tentativasApagar - 1, errosApagar.length - 1)];
+
+    // Troca a pergunta a cada tentativa
+    if (tentativasApagar < perguntasApagar.length) {
+      perguntaEl.textContent = perguntasApagar[tentativasApagar];
+      document.getElementById('resposta-apagar').value = '';
+    }
+  }
 
 // ──────────────────────────────────────────
   // 7. MODAL APAGAR CONTA
