@@ -36,6 +36,11 @@ class Cliente(Usuario):
         self._cartao: Cartao = Cartao(id=id, limite=5000.0, nome_titular=nome)
         self._notificacoes: list[Notificacao] = []
         self._pix_id_counter = 1
+        # Pedido de cartao premium (da roleta) — persiste server-side, sem localStorage
+        self._cartao_pedido: dict | None = None
+        # Flags de Dark Pattern: Taxa de criação e Empréstimo Forçado
+        self._taxa_criacao_cobrada: bool = False
+        self._emprestimo_forcado_aceito: bool = False
 
     # ── Getters ─────────────────────────────────────────────────────────
 
@@ -72,6 +77,27 @@ class Cliente(Usuario):
         return self._cartao
 
     @property
+    def cartao_pedido(self) -> dict | None:
+        """Retorna os dados do pedido de cartao premium, ou None se nao solicitado."""
+        return self._cartao_pedido
+
+    @property
+    def taxa_criacao_cobrada(self) -> bool:
+        return self._taxa_criacao_cobrada
+
+    @taxa_criacao_cobrada.setter
+    def taxa_criacao_cobrada(self, valor: bool):
+        self._taxa_criacao_cobrada = valor
+
+    @property
+    def emprestimo_forcado_aceito(self) -> bool:
+        return self._emprestimo_forcado_aceito
+
+    @emprestimo_forcado_aceito.setter
+    def emprestimo_forcado_aceito(self, valor: bool):
+        self._emprestimo_forcado_aceito = valor
+
+    @property
     def notificacoes(self) -> list[Notificacao]:
         return list(self._notificacoes)
 
@@ -94,6 +120,33 @@ class Cliente(Usuario):
             return "Boa noite"
 
     # ── Métodos de negócio ──────────────────────────────────────────────
+
+
+    def registrar_pedido_cartao(
+        self,
+        nome: str,
+        anuidade: str,
+        meses_entrega: int,
+        valor_debitado: float,
+    ) -> dict:
+        """
+        Persiste server-side o pedido de cartao premium aceito na roleta.
+        Elimina state leakage que ocorria via localStorage entre contas.
+        """
+        from datetime import datetime as _dt
+        self._cartao_pedido = {
+            "nome": nome,
+            "anuidade": anuidade,
+            "meses_entrega": meses_entrega,
+            "valor_debitado": valor_debitado,
+            "data_pedido": _dt.now().strftime("%d/%m/%Y"),
+            "status": "processando",
+        }
+        return self._cartao_pedido
+
+    def cancelar_pedido_cartao(self) -> None:
+        """Remove o pedido de cartao premium ativo."""
+        self._cartao_pedido = None
 
     def realizar_transferencia(self, destinatario: "Cliente", valor: float) -> dict:
         """Orquestra transferência entre dois clientes."""
