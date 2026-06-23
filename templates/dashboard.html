@@ -7,7 +7,12 @@
      Este arquivo de estilos controla o modal de propaganda que bloqueia o
      usuário de ver o saldo. Carregado apenas na página do dashboard. -->
 <link rel="stylesheet" href="{{ url_for('static', filename='css/propaganda.css') }}">
+<!-- ─── CSS dos Dark Patterns do Dashboard ───────────────────────────────────
+     Controla: banner armadilha "Seu dinheiro está derretendo!" e a
+     hierarquia visual falsa nos quick actions (destaque vs. secundario). -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard-darkux.css') }}">
 {% endblock %}
+
 
 {% block page_content %}
 <!-- ─── Header ──────────────────────────────────────────────────────────── -->
@@ -61,58 +66,67 @@
   <div class="balance-meta">Ag. {{ conta.agencia }} · Conta {{ conta.numero }}</div>
 </div>
 
-<!-- ─── Quick Actions ───────────────────────────────────────────────────── -->
+<!-- ════════════════════════════════════════════════════════════════════════
+     [DARK PATTERN] BANNER ARMADILHA — "Seu dinheiro está derretendo!"
+     ════════════════════════════════════════════════════════════════════════
+     O card inteiro é um link (<a>). 100% clicável em qualquer área.
+     Design urgente com gradiente verde neon + animação pulsante para
+     forçar atenção. Posicionado ANTES da grid de ações para ser o
+     primeiro elemento visual interativo após o saldo.
+     A linguagem é de urgência ("AGORA", "está derretendo") para
+     explorar a aversão à perda (Loss Aversion Bias).
+     ════════════════════════════════════════════════════════════════════════ -->
+<div class="animate-fade-up" style="padding: 0 16px 4px;">
+  <a href="{{ url_for('investir') }}" id="banner-armadilha" class="banner-armadilha" aria-label="Ir para a área de Investimentos">
+
+    <!-- Partículas decorativas de fundo (CSS puro, sem imagens) -->
+    <span class="banner-particle banner-particle--1" aria-hidden="true"></span>
+    <span class="banner-particle banner-particle--2" aria-hidden="true"></span>
+    <span class="banner-particle banner-particle--3" aria-hidden="true"></span>
+
+    <!-- Coluna esquerda: ícone + texto urgente -->
+    <div class="banner-content">
+      <!-- Ícone de fogo pulsante — chama atenção e denota urgência -->
+      <div class="banner-fire-icon" aria-hidden="true">🔥</div>
+      <div class="banner-text-group">
+        <!-- [BAD UX] Título alarmista — exploita FOMO e aversão à perda -->
+        <p class="banner-headline">Seu dinheiro está derretendo!</p>
+        <p class="banner-sub">Faça ele trabalhar por você agora na Nova Área de Investimentos</p>
+      </div>
+    </div>
+
+    <!-- Coluna direita: CTA + seta animada -->
+    <div class="banner-cta" aria-hidden="true">
+      <span class="banner-cta-text">INVESTIR</span>
+      <!-- Seta que oscila para chamar atenção ao clique -->
+      <span class="banner-arrow">›</span>
+    </div>
+
+  </a>
+</div>
+
+<!-- ─── Quick Actions ─────────────────────────────────────────────────────
+     [DARK PATTERN] REORDENAÇÃO ESTRATÉGICA
+     ─────────────────────────────────────────────────────────────────────
+     Ordem original (neutra):   Pix, Transferir, Depositar, Extrato, Cartões, Investir, Empréstimo, Perfil
+     Ordem manipulada:          Investir, Empréstimo, [separador visual], Pix, Transferir, Cartões, Perfil
+     Removidas completamente:   Extrato, Depositar (usuário não precisa saber de saídas)
+
+     As primeiras posições da grid (colunas 1 e 2) têm destaque visual
+     reforçado via .quick-action--destaque (ícone verde brilhante, sem bordas).
+     As posições restantes ficam com estilo reduzido .quick-action--secundario
+     (ícone monocromático, fonte menor) para criar hierarquia visual falsa.
+     ─────────────────────────────────────────────────────────────────────── -->
 <div class="quick-actions animate-fade-up delay-1">
 
-  <a href="{{ url_for('pix') }}" class="quick-action" id="action-pix">
-    <div class="quick-action-icon">
-      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-      </svg>
-    </div>
-    <span>Pix</span>
-  </a>
+  <!-- ── POSIÇÃO 1 e 2: Ações de RISCO — máximo destaque visual ─────── -->
 
-  <a href="{{ url_for('transferencia') }}" class="quick-action" id="action-transferir">
-    <div class="quick-action-icon">
-      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-      </svg>
-    </div>
-    <span>Transferir</span>
-  </a>
-
-  <a href="{{ url_for('deposito') }}" class="quick-action" id="action-depositar">
-    <div class="quick-action-icon">
-      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-      </svg>
-    </div>
-    <span>Depositar</span>
-  </a>
-
-  <a href="{{ url_for('extrato') }}" class="quick-action" id="action-pagar">
-    <div class="quick-action-icon">
-      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-      </svg>
-    </div>
-    <span>Extrato</span>
-  </a>
-
-  <a href="{{ url_for('cartoes') }}" class="quick-action" id="action-cartoes">
-    <div class="quick-action-icon">
-      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-      </svg>
-    </div>
-    <span>Cartões</span>
-  </a>
-
-  <a href="{{ url_for('pix') }}" class="quick-action" id="action-investir">
+  <!--
+    [BAD UX] "Investir" na posição 1 (topo esquerdo da grid).
+    Usa classe --destaque: ícone verde intenso, sombra primária, texto em verde.
+    O href aponta para url_for('investir') — a página dos dark patterns.
+  -->
+  <a href="{{ url_for('investir') }}" class="quick-action quick-action--destaque" id="action-investir-grid">
     <div class="quick-action-icon">
       <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
@@ -121,7 +135,12 @@
     <span>Investir</span>
   </a>
 
-  <a href="{{ url_for('deposito') }}" class="quick-action" id="action-emprestimos">
+  <!--
+    [BAD UX] "Empréstimo" na posição 2 (topo direito, logo ao lado do Investir).
+    Também com destaque. Ambos na mesma linha visual de proeminência.
+    href aponta para deposito como placeholder (ajustar quando rota existir).
+  -->
+  <a href="{{ url_for('deposito') }}" class="quick-action quick-action--destaque" id="action-emprestimos-grid">
     <div class="quick-action-icon">
       <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -131,7 +150,44 @@
     <span>Empréstimo</span>
   </a>
 
-  <a href="{{ url_for('perfil') }}" class="quick-action" id="action-perfil">
+  <!-- ── POSIÇÕES 3–6: Ações ÚTEIS — destaque reduzido ──────────────── -->
+
+  <!--
+    [BAD UX] Pix, Transferir, Cartões e Perfil empurrados para depois
+    de Investir e Empréstimo. Usam classe --secundario: ícone acinzentado,
+    fundo neutro, texto menor — psicologicamente de menor importância.
+    Extrato e Depositar foram REMOVIDOS completamente da grid.
+  -->
+  <a href="{{ url_for('pix') }}" class="quick-action quick-action--secundario" id="action-pix">
+    <div class="quick-action-icon">
+      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+      </svg>
+    </div>
+    <span>Pix</span>
+  </a>
+
+  <a href="{{ url_for('transferencia') }}" class="quick-action quick-action--secundario" id="action-transferir">
+    <div class="quick-action-icon">
+      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+      </svg>
+    </div>
+    <span>Transferir</span>
+  </a>
+
+  <a href="{{ url_for('cartoes') }}" class="quick-action quick-action--secundario" id="action-cartoes">
+    <div class="quick-action-icon">
+      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+      </svg>
+    </div>
+    <span>Cartões</span>
+  </a>
+
+  <a href="{{ url_for('perfil') }}" class="quick-action quick-action--secundario" id="action-perfil">
     <div class="quick-action-icon">
       <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

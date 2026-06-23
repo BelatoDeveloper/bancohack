@@ -39,7 +39,23 @@ def login_required(f):
 def get_cliente_logado():
     return db.buscar_por_email(session.get("email_usuario", ""))
 
-
+# ────────────────────────────────────────────────────────────────────────────────
+# ROTA: Investir — Bad UX ZicaPay
+# A tela de pesadelo financeiro com: CAPTCHA fake, Tinder de ativos podres,
+# e corrida de cavalos manipulada. Tudo documentado para o time de product.
+# ────────────────────────────────────────────────────────────────────────────────
+@app.route("/investir")
+@login_required
+def investir():
+    cliente = get_cliente_logado()
+    if not cliente:
+        session.clear()
+        return redirect(url_for("login"))
+    return render_template(
+        "investir.html",
+        cliente=cliente,
+        conta=cliente.conta,
+    )
 # ────────────────────────────────────────────────────────────────────────────────
 # ROTA: Splash
 # ────────────────────────────────────────────────────────────────────────────────

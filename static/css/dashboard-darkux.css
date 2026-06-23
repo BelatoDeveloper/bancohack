@@ -1,0 +1,345 @@
+/*
+ * ============================================================
+ * dashboard-darkux.css — Estilos dos Dark Patterns do Dashboard
+ * ============================================================
+ *
+ * Este arquivo controla:
+ *   1. Banner Armadilha "Seu dinheiro está derretendo!"
+ *      → Card 100% clicável com gradiente neon, animações de urgência
+ *      → Exploita Loss Aversion Bias e FOMO
+ *
+ *   2. Hierarquia visual falsa nos Quick Actions
+ *      → .quick-action--destaque  para Investir/Empréstimo (parecem recomendados)
+ *      → .quick-action--secundario para Pix/Transferir/Cartões/Perfil (parecem opcionais)
+ *
+ * Importa os tokens do main.css (var(--primary), var(--surface-2), etc.)
+ * Carregado apenas no dashboard.html via {% block head %}.
+ */
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   [DARK PATTERN] BANNER ARMADILHA — "Seu dinheiro está derretendo!"
+   ══════════════════════════════════════════════════════════════════════════
+   O <a> engloba TODO o card — qualquer toque na área redireciona para /investir.
+   Animações múltiplas em camadas criam urgência visual persistente:
+     • bannerPulse → brilho da sombra que aumenta e diminui (2.5s)
+     • bannerShine → onda de luz que varre o card (3s)
+     • firePulse   → ícone de fogo oscilando (1.2s)
+     • arrowBounce → seta saltando para a direita (0.9s)
+   Todas essas animações exploitam atenção periférica involuntária.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.banner-armadilha {
+  display: flex;
+  margin-top: 25px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  text-decoration: none;
+  color: white;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+
+  /* [BAD UX] Gradiente verde neon — mais vibrante que o padrão do projeto
+     para destacar sobre todos os outros elementos */
+  background: linear-gradient(135deg, #0aff6e 0%, #21C25E 40%, #0a8a3a 100%);
+  box-shadow:
+    0 8px 32px rgba(33, 194, 94, 0.45),
+    0 0 0 2px rgba(10, 255, 110, 0.3);
+
+  /* Pulsação contínua do brilho — atenção involuntária */
+  animation: bannerPulse 2.5s ease-in-out infinite;
+}
+
+/* Hover: eleva o card + aumenta o brilho — reforça o clique */
+.banner-armadilha:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 16px 44px rgba(33, 194, 94, 0.65),
+    0 0 0 3px rgba(10, 255, 110, 0.55);
+  animation-play-state: paused;
+}
+
+/* [BAD UX] Pseudo-elemento: onda "shine" que varre o card continuamente.
+   Cria movimento periférico que o cérebro detecta automaticamente sem
+   que o usuário perceba conscientemente por quê está olhando pro banner. */
+.banner-armadilha::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -75%;
+  width: 50%;
+  height: 200%;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.22) 50%,
+      transparent 100%);
+  transform: skewX(-15deg);
+  animation: bannerShine 3s linear infinite;
+  pointer-events: none;
+}
+
+/* Bolinhas decorativas de fundo */
+.banner-particle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  pointer-events: none;
+}
+
+.banner-particle--1 {
+  width: 80px;
+  height: 80px;
+  top: -20px;
+  right: 60px;
+}
+
+.banner-particle--2 {
+  width: 50px;
+  height: 50px;
+  bottom: -10px;
+  right: 20px;
+  opacity: 0.08;
+}
+
+.banner-particle--3 {
+  width: 30px;
+  height: 30px;
+  top: 10px;
+  right: 140px;
+  opacity: 0.15;
+}
+
+/* Layout interno */
+.banner-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  position: relative;
+  z-index: 1;
+  /* Fica acima do ::after shine */
+}
+
+/* [BAD UX] Ícone de fogo pulsante — segundo nível de animação
+   O olho captura múltiplos pontos de movimento simultaneamente */
+.banner-fire-icon {
+  font-size: 2rem;
+  line-height: 1;
+  flex-shrink: 0;
+  animation: firePulse 1.2s ease-in-out infinite;
+}
+
+.banner-text-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+/* [BAD UX] Headline de "perda" — ativa aversão à perda (Loss Aversion).
+   "Está derretendo" implica que NÃO agir tem consequência negativa imediata. */
+.banner-headline {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: white;
+  line-height: 1.2;
+  letter-spacing: -0.2px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+  margin: 0;
+}
+
+.banner-sub {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.88);
+  line-height: 1.3;
+  margin: 0;
+}
+
+/* Coluna direita: label "INVESTIR" + seta */
+.banner-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.banner-cta-text {
+  font-size: 0.6rem;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.22);
+  padding: 3px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+/* [BAD UX] Seta oscilante → guia inconsciente para o clique.
+   O movimento direcional "→" sem texto cria affordance de navegação. */
+.banner-arrow {
+  font-size: 1.8rem;
+  font-weight: 900;
+  line-height: 1;
+  animation: arrowBounce 0.9s ease-in-out infinite;
+}
+
+/* ── Keyframes do Banner ─────────────────────────────────────────────────── */
+
+/* Variação de sombra — simula "pulsação viva" */
+@keyframes bannerPulse {
+
+  0%,
+  100% {
+    box-shadow:
+      0 8px 32px rgba(33, 194, 94, 0.45),
+      0 0 0 2px rgba(10, 255, 110, 0.3);
+  }
+
+  50% {
+    box-shadow:
+      0 8px 52px rgba(33, 194, 94, 0.80),
+      0 0 0 3px rgba(10, 255, 110, 0.65),
+      0 0 22px rgba(10, 255, 110, 0.35);
+  }
+}
+
+/* Varredura de luz */
+@keyframes bannerShine {
+  0% {
+    left: -75%;
+  }
+
+  100% {
+    left: 130%;
+  }
+}
+
+/* Fogo oscilando */
+@keyframes firePulse {
+
+  0%,
+  100% {
+    transform: scale(1) rotate(-3deg);
+  }
+
+  50% {
+    transform: scale(1.15) rotate(3deg);
+  }
+}
+
+/* Seta saltando */
+@keyframes arrowBounce {
+
+  0%,
+  100% {
+    transform: translateX(0px);
+  }
+
+  50% {
+    transform: translateX(5px);
+  }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   [DARK PATTERN] HIERARQUIA VISUAL FALSA NOS QUICK ACTIONS
+   ══════════════════════════════════════════════════════════════════════════
+   Cria uma falsa sensação de que Investir e Empréstimo são as ações
+   "recomendadas" ou "principais", enquanto Pix e Transferir parecem
+   secundários e opcionais — invertendo a real utilidade para o usuário.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── .quick-action--destaque ─────────────────────────────────────────────── */
+/* Aplicado a: Investir, Empréstimo
+   Resultado visual: verde brilhante, ícone sólido, badge de estrela, levita mais no hover */
+.quick-action--destaque {
+  border-color: var(--primary) !important;
+  background: linear-gradient(135deg, rgba(33, 194, 94, 0.10), rgba(14, 159, 75, 0.14)) !important;
+  position: relative;
+}
+
+/* [BAD UX] Badge "⭐" no canto superior — simula "recomendado" ou "novo"
+   O ícone de estrela cria urgência falsa e percepção de curadoria */
+.quick-action--destaque::after {
+  content: '⭐';
+  position: absolute;
+  top: -4px;
+  right: -2px;
+  font-size: 0.65rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.9));
+  animation: starPop 2s ease-in-out infinite;
+}
+
+/* Ícone preenchido em verde sólido */
+.quick-action--destaque .quick-action-icon {
+  background: var(--primary) !important;
+  color: white !important;
+  box-shadow: 0 4px 14px rgba(33, 194, 94, 0.4);
+}
+
+/* Label em verde e bold — destaca mais que o cinza dos secundários */
+.quick-action--destaque span {
+  color: var(--primary) !important;
+  font-weight: 700 !important;
+  font-size: 0.72rem !important;
+}
+
+/* Hover mais dramático — levita bastante */
+.quick-action--destaque:hover {
+  transform: translateY(-7px) !important;
+  box-shadow: 0 12px 30px rgba(33, 194, 94, 0.38) !important;
+}
+
+/* ── .quick-action--secundario ───────────────────────────────────────────── */
+/* Aplicado a: Pix, Transferir, Cartões, Perfil
+   Resultado visual: desbotado, cinza, letras menores, hover mínimo */
+.quick-action--secundario {
+  /* [BAD UX] Opacidade reduzida — psicologicamente parece desabilitado
+     ou de menor relevância sem ser tecnicamente inacessível */
+  opacity: 0.65;
+  border-color: transparent !important;
+  background: var(--surface-2) !important;
+}
+
+/* Ícone acinzentado — sem cor = sem importância percebida */
+.quick-action--secundario .quick-action-icon {
+  background: var(--surface-2) !important;
+  color: var(--text-muted) !important;
+  box-shadow: none !important;
+}
+
+/* Label menor e apagado */
+.quick-action--secundario span {
+  font-size: 0.63rem !important;
+  color: var(--text-muted) !important;
+  font-weight: 400 !important;
+}
+
+/* Hover: apenas restaura a opacidade — sem levitar, sem brilho */
+.quick-action--secundario:hover {
+  opacity: 1;
+  background: var(--surface) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: var(--shadow-xs) !important;
+  border-color: var(--border) !important;
+}
+
+/* Estrela pulsante dos botões de destaque */
+@keyframes starPop {
+
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+
+  50% {
+    transform: scale(1.35) rotate(18deg);
+  }
+}
