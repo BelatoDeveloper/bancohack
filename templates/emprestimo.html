@@ -1,0 +1,305 @@
+{% extends "base.html" %}
+
+{% block title %}ZicaPay — Solicitar Empréstimo{% endblock %}
+
+{% block head %}
+<style>
+/* User Inyerface - Bad UX Styles */
+.ui-container {
+    padding: 20px 16px;
+    font-family: Arial, Helvetica, sans-serif; /* Fonte genérica */
+}
+
+/* O timer assustador */
+.panic-timer {
+    background: #ef4444;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    font-weight: 800;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    animation: flash 1s infinite;
+}
+
+@keyframes flash {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; background: #b91c1c; }
+}
+
+/* Slider caótico */
+.chaotic-slider-container {
+    background: var(--surface-2);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.chaotic-slider {
+    width: 100%;
+    margin: 15px 0;
+    accent-color: #3b82f6; /* Azul pra parecer confiável, mas é terrível */
+}
+
+.slider-value-display {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--primary);
+    font-family: monospace;
+}
+
+/* Idade Embaralhada */
+.age-select {
+    width: 100%;
+    padding: 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    margin-bottom: 24px;
+    font-size: 1rem;
+}
+
+/* Checkbox Dupla Negação */
+.confusing-checkbox {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: rgba(239, 68, 68, 0.05);
+    padding: 16px;
+    border: 1px dashed rgba(239, 68, 68, 0.4);
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.confusing-checkbox input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    accent-color: var(--danger);
+}
+
+.confusing-text {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* Botões Bait and Switch */
+.actions-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.btn-fake-submit {
+    /* Parece o botão certo, mas cancela */
+    width: 100%;
+    padding: 16px;
+    background: var(--success);
+    color: white;
+    font-weight: 800;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(34, 197, 94, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-real-submit {
+    /* Parece um link para cancelar, mas é o submit real */
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 0.7rem;
+    text-decoration: underline;
+    cursor: pointer;
+    text-align: center;
+    padding: 10px;
+    width: 100%;
+}
+
+</style>
+{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+  <a href="{{ url_for('dashboard') }}" class="back-btn" id="btn-voltar">
+    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+    </svg>
+  </a>
+  <span class="page-title">Empréstimo Rápido</span>
+</div>
+
+<div class="ui-container animate-fade-up">
+    
+    <div class="panic-timer" id="panic-timer">
+        TEMPO RESTANTE: 15.00s
+    </div>
+
+    <p style="color:var(--text-secondary);font-size:0.9rem;margin-bottom:20px;text-align:center;">
+        Preencha os dados abaixo rapidamente para garantir sua taxa de "apenas" 299% a.m.
+    </p>
+
+    <form method="POST" action="{{ url_for('emprestimo') }}" id="form-emprestimo">
+        
+        <!-- Slider Caótico -->
+        <div class="chaotic-slider-container">
+            <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:8px;">Arraste para selecionar o valor desejado:</p>
+            <div class="slider-value-display" id="valor-display">R$ 1,00</div>
+            <!-- Range vai de 1 a 1000, mas o JS multiplica por numeros aleatorios -->
+            <input type="range" id="valor-slider" min="1" max="1000" value="1" class="chaotic-slider">
+            <input type="hidden" id="valor-real" name="valor" value="1.00">
+            <p style="font-size:0.65rem;color:var(--text-muted);margin-top:8px;">*Dica: é quase impossível parar num número redondo.</p>
+        </div>
+
+        <!-- Idade Embaralhada -->
+        <label style="font-size:0.85rem;color:var(--text-muted);display:block;margin-bottom:8px;">Sua idade exata em anos:</label>
+        <select name="idade" id="idade-select" class="age-select" required>
+            <option value="" disabled selected>Selecione sua idade...</option>
+            <!-- Preenchido via JS de forma embaralhada -->
+        </select>
+
+        <!-- Checkbox Confuso -->
+        <div class="confusing-checkbox">
+            <input type="checkbox" id="check-termos" name="termos" required>
+            <div class="confusing-text">
+                <strong>Atenção:</strong> Deixe esta caixa <em>marcada</em> se você <strong>não</strong> deseja <strong>recusar</strong> a anulação da não-aceitação dos nossos termos de serviço que estipulam o débito de juros de 299% ao mês. Se desmarcar, o processo falhará com sucesso.
+            </div>
+        </div>
+
+        <!-- Botões Bait and Switch -->
+        <div class="actions-container">
+            
+            <!-- Botão Falso - Parece que confirma, mas joga pra home -->
+            <a href="{{ url_for('dashboard') }}" class="btn-fake-submit">
+                <i data-lucide="check-circle" style="width:20px;height:20px;"></i>
+                Não, cancelar a operação
+            </a>
+
+            <!-- Botão Real - Parece inútil -->
+            <button type="submit" class="btn-real-submit" id="btn-real-submit">
+                clique aqui se tiver certeza que quer se endividar e prosseguir com a solicitação
+            </button>
+
+        </div>
+
+    </form>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. O Timer do Pânico
+    let timeLeft = 1500; // 15 segundos em centésimos
+    const timerEl = document.getElementById('panic-timer');
+    const form = document.getElementById('form-emprestimo');
+    
+    const countdown = setInterval(() => {
+        timeLeft--;
+        const secs = Math.floor(timeLeft / 100);
+        const cents = timeLeft % 100;
+        timerEl.innerText = `TEMPO RESTANTE: ${secs}.${cents < 10 ? '0' : ''}${cents}s`;
+        
+        if (timeLeft <= 0) {
+            clearInterval(countdown);
+            timerEl.innerText = "TEMPO ESGOTADO!";
+            timerEl.style.background = "#000";
+            alert("Tempo esgotado! Seu formulário foi resetado por segurança.");
+            form.reset();
+            window.location.reload();
+        }
+    }, 10);
+
+    // 2. O Slider Caótico
+    const slider = document.getElementById('valor-slider');
+    const display = document.getElementById('valor-display');
+    const hiddenValor = document.getElementById('valor-real');
+    
+    slider.addEventListener('input', (e) => {
+        // Pega o valor base (1 a 1000)
+        let baseValue = parseInt(e.target.value);
+        
+        // Multiplica por um fator não linear bizarro e adiciona ruído
+        // Exemplo: valores baixos andam devagar, de repente pula pra 20 mil, 34 mil, etc.
+        let finalValue = 0;
+        if (baseValue < 100) {
+            finalValue = baseValue * 1.34 + (Math.random() * 5);
+        } else if (baseValue < 500) {
+            finalValue = Math.pow(baseValue, 1.4) + (Math.random() * 100);
+        } else {
+            finalValue = Math.pow(baseValue, 1.55) + (Math.random() * 500);
+        }
+        
+        // Cap em 50000
+        if (finalValue > 50000) finalValue = 50000;
+        
+        // Arredonda para 2 casas decimais, mas adiciona centavos irritantes
+        finalValue = finalValue.toFixed(2);
+        
+        // Formata para BRL
+        const formatter = new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+        });
+        
+        display.innerText = formatter.format(finalValue);
+        hiddenValor.value = finalValue;
+    });
+
+    // 3. Dropdown de Idade Embaralhada
+    const selectIdade = document.getElementById('idade-select');
+    let idades = [];
+    for(let i = 18; i <= 99; i++) {
+        idades.push(i);
+    }
+    // Fisher-Yates Shuffle
+    for (let i = idades.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [idades[i], idades[j]] = [idades[j], idades[i]];
+    }
+    
+    idades.forEach(idade => {
+        const option = document.createElement('option');
+        option.value = idade;
+        option.text = idade + " anos";
+        selectIdade.appendChild(option);
+    });
+
+    // 4. Se ele tentar voltar no navegador pelo botão de "Voltar" do app
+    const btnVoltar = document.getElementById('btn-voltar');
+    if (btnVoltar) {
+        btnVoltar.addEventListener('click', (e) => {
+            e.preventDefault();
+            const certeza = confirm("Se você voltar agora, perderá a chance de ouro de pagar 299% a.m. de juros. Tem certeza que quer cometer esse erro?");
+            if (certeza) {
+                window.location.href = "{{ url_for('dashboard') }}";
+            }
+        });
+    }
+    
+    // 5. Validação extra do formulário antes de enviar
+    form.addEventListener('submit', (e) => {
+        const check = document.getElementById('check-termos');
+        if (!check.checked) {
+            e.preventDefault();
+            alert("Erro: Você não pode prosseguir se não desmarcar a rejeição da anulação da não-aceitação. (Você precisa MARCAR a caixa).");
+        } else {
+            // Sucesso! (Ou fracasso pra vida financeira dele)
+            clearInterval(countdown); // Para o timer pro form conseguir enviar
+        }
+    });
+
+});
+</script>
+{% endblock %}

@@ -1,8 +1,7 @@
 # Relatório Técnico — Arquitetura MTC aplicada ao BancoHack
-
-**Projeto:** BancoHack — Banco Digital (Hackathon Acadêmico)
-**Disciplina / Avaliador:** Prof. Claudinei
-**Framework:** Python 3.x + Flask
+**Projeto:** BancoHack — Banco Digital (Hackathon Acadêmico)  
+**Disciplina / Avaliador:** Prof. Claudinei  
+**Framework:** Python 3.x + Flask  
 **Padrão Arquitetural:** MTC (Model — Template — Controller)
 
 ---
@@ -10,7 +9,6 @@
 ## 1. Visão geral da organização do projeto
 
 ```
-
 banco_digital/
 ├── app.py                        ← CONTROLLER (único ponto de entrada)
 ├── requirements.txt              ← Dependências (apenas Flask)
@@ -46,12 +44,12 @@ A sigla "Template" substitui "View" para refletir que a camada de apresentação
 Contém **tudo que é dado e regra de negócio**. Nenhum objeto desta camada
 importa Flask ou conhece conceitos HTTP (rotas, request, session).
 
-| Arquivo            | Responsabilidade                                                                               |
-| ------------------ | ---------------------------------------------------------------------------------------------- |
-| `usuario.py`     | Superclasse. Guarda `_id`, `_nome`, `_email`, `_senha`. Método `verificar_senha()`. |
-| `conta.py`       | Entidade Conta. Guarda `_saldo`. Métodos `depositar()` e `debitar()` com validações.  |
-| `cliente.py`     | Subclasse de `Usuario`. Compõe uma `Conta`. Método `realizar_transferencia()`.         |
-| `banco_dados.py` | Repositório. Armazena todos os clientes em memória e fornece métodos de busca.              |
+| Arquivo | Responsabilidade |
+|---|---|
+| `usuario.py` | Superclasse. Guarda `_id`, `_nome`, `_email`, `_senha`. Método `verificar_senha()`. |
+| `conta.py` | Entidade Conta. Guarda `_saldo`. Métodos `depositar()` e `debitar()` com validações. |
+| `cliente.py` | Subclasse de `Usuario`. Compõe uma `Conta`. Método `realizar_transferencia()`. |
+| `banco_dados.py` | Repositório. Armazena todos os clientes em memória e fornece métodos de busca. |
 
 ### 2.2 Template (`templates/`)
 
@@ -59,17 +57,16 @@ Contém **apenas apresentação**. Os arquivos HTML recebem variáveis do Contro
 e as exibem usando a sintaxe Jinja2 (`{{ }}` e `{% %}`). Nenhum Template
 calcula, valida ou persiste dados.
 
-| Arquivo                | Responsabilidade                                                                                                     |
-| ---------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `base.html`          | Layout compartilhado (cabeçalho, notificações flash, rodapé). Outros templates o estendem com `{% extends %}`. |
-| `login.html`         | Exibe o formulário de autenticação.                                                                               |
-| `dashboard.html`     | Exibe dados do cliente e histórico. Recebe objetos `cliente`, `conta` e `historico`.                          |
-| `transferencia.html` | Exibe o formulário de transferência. Recebe `cliente` e `outros_clientes`.                                     |
+| Arquivo | Responsabilidade |
+|---|---|
+| `base.html` | Layout compartilhado (cabeçalho, notificações flash, rodapé). Outros templates o estendem com `{% extends %}`. |
+| `login.html` | Exibe o formulário de autenticação. |
+| `dashboard.html` | Exibe dados do cliente e histórico. Recebe objetos `cliente`, `conta` e `historico`. |
+| `transferencia.html` | Exibe o formulário de transferência. Recebe `cliente` e `outros_clientes`. |
 
 ### 2.3 Controller (`app.py`)
 
 Contém **apenas rotas Flask**. Cada função de rota:
-
 1. Extrai dados da requisição (`request.form`, `session`).
 2. Chama o Model para buscar ou modificar dados.
 3. Chama `render_template()` para passar os dados ao Template correto.
@@ -85,19 +82,19 @@ saldo — quem faz isso é a classe `Conta`).
 
 ### Funcionalidade 1 — Tela de Login
 
-| Item                                  | Detalhe                                                                                      |
-| ------------------------------------- | -------------------------------------------------------------------------------------------- |
-| **Rota Flask**                  | `/login` (também mapeada em `/`)                                                        |
-| **Métodos HTTP**               | `GET` e `POST`                                                                           |
+| Item | Detalhe |
+|---|---|
+| **Rota Flask** | `/login` (também mapeada em `/`) |
+| **Métodos HTTP** | `GET` e `POST` |
 | **Classes do Model envolvidas** | `Usuario` (método `verificar_senha()`), `BancoDados` (método `buscar_por_email()`) |
-| **Template usado**              | `login.html` (estende `base.html`)                                                       |
+| **Template usado** | `login.html` (estende `base.html`) |
 
-**Fluxo GET:**
+**Fluxo GET:**  
 O Controller verifica se já existe sessão ativa (`session['email_usuario']`).
 Se sim, redireciona ao dashboard. Se não, chama `render_template('login.html')`
 sem variáveis adicionais — o Template só exibe o formulário vazio.
 
-**Fluxo POST:**
+**Fluxo POST:**  
 O Controller extrai `email` e `senha` de `request.form`. Chama
 `db.buscar_por_email(email)` (Model). Se o objeto `Cliente` for encontrado,
 delega a verificação de senha ao próprio objeto:
@@ -110,14 +107,14 @@ para enviar a mensagem de erro ao Template.
 
 ### Funcionalidade 2 — Dashboard Principal
 
-| Item                                  | Detalhe                                                                                                                                                                         |
-| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Rota Flask**                  | `/dashboard`                                                                                                                                                                  |
-| **Método HTTP**                | `GET`                                                                                                                                                                         |
+| Item | Detalhe |
+|---|---|
+| **Rota Flask** | `/dashboard` |
+| **Método HTTP** | `GET` |
 | **Classes do Model envolvidas** | `Cliente` (propriedades `nome`, `cpf_mascarado`, `email`, `telefone`, `historico`), `Conta` (propriedades `numero`, `agencia`, método `saldo_formatado()`) |
-| **Template usado**              | `dashboard.html` (estende `base.html`)                                                                                                                                      |
+| **Template usado** | `dashboard.html` (estende `base.html`) |
 
-**Fluxo GET:**
+**Fluxo GET:**  
 O Controller verifica a sessão (guarda de autenticação). Chama
 `db.buscar_por_email(session['email_usuario'])` para obter o objeto `Cliente`.
 Passa ao Template três variáveis de contexto: `cliente` (objeto inteiro),
@@ -134,33 +131,30 @@ e `Cliente`).
 
 ### Funcionalidade 3 — Transferência de Dinheiro
 
-| Item                                  | Detalhe                                                                                                                                                                                         |
-| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Rota Flask**                  | `/transferencia`                                                                                                                                                                              |
-| **Métodos HTTP**               | `GET` e `POST`                                                                                                                                                                              |
+| Item | Detalhe |
+|---|---|
+| **Rota Flask** | `/transferencia` |
+| **Métodos HTTP** | `GET` e `POST` |
 | **Classes do Model envolvidas** | `Cliente` (método `realizar_transferencia()`), `Conta` (métodos `debitar()` e `depositar()`), `BancoDados` (métodos `buscar_por_numero_conta()`, `listar_outros_clientes()`) |
-| **Template usado**              | `transferencia.html` (estende `base.html`)                                                                                                                                                  |
+| **Template usado** | `transferencia.html` (estende `base.html`) |
 
-**Fluxo GET:**
+**Fluxo GET:**  
 O Controller chama `db.listar_outros_clientes(email_logado)` para obter a lista
 de destinatários possíveis. Passa ao Template as variáveis `cliente` (remetente)
 e `outros_clientes` (lista). O Template itera sobre `outros_clientes` para
 montar o `<select>` de destino com `{% for outro in outros_clientes %}`.
 
-**Fluxo POST:**
+**Fluxo POST:**  
 O Controller extrai `conta_destino` e `valor` de `request.form`.
 Realiza validações de entrada (campo vazio, conversão de float, transferência
 para si mesmo). Localiza o destinatário com
 `db.buscar_por_numero_conta(numero_destino)`.
 
 Então delega **toda** a lógica financeira ao Model:
-
 ```python
 registro = cliente_logado.realizar_transferencia(destinatario, valor)
 ```
-
 Internamente, `realizar_transferencia()` (em `Cliente`) chama:
-
 - `self._conta.debitar(valor)` → valida saldo e reduz o saldo do remetente.
 - `destinatario.conta.depositar(valor)` → aumenta o saldo do destinatário.
 - Registra o histórico em ambos os objetos.
@@ -188,35 +182,35 @@ Usuario  (superclasse)
         realizar_transferencia()
 ```
 
-**Por que `Usuario` e `Cliente` separados?**
+**Por que `Usuario` e `Cliente` separados?**  
 O princípio de herança exige que a subclasse seja um tipo especializado da
 superclasse. `Cliente` **é um** `Usuario` (tem credenciais, pode autenticar)
 e **adiciona** dados bancários. Essa separação permite, no futuro, criar outras
 subclasses — por exemplo, `Administrador(Usuario)` — sem alterar o código
 de autenticação, que reside em `Usuario`.
 
-**Encapsulamento:**
+**Encapsulamento:**  
 Todos os atributos são privados (prefixo `_`) e expostos apenas por
 `@property`. O saldo nunca é modificado diretamente; qualquer alteração passa
 pelos métodos `debitar()` e `depositar()`, que contêm as regras de validação.
 A senha nunca é exposta: `verificar_senha()` compara internamente sem retornar
 o valor de `_senha`.
 
-**Composição (`Cliente` possui `Conta`):**
+**Composição (`Cliente` possui `Conta`):**  
 Um `Cliente` possui exatamente uma `Conta`. Essa relação é modelada por
 composição (um atributo `_conta` do tipo `Conta`) em vez de herança, porque
 `Cliente` **não é um** tipo de `Conta` — ele **tem** uma conta.
 
 ### 4.2 Responsabilidades claras (Princípio de Responsabilidade Única)
 
-| Classe                  | Única responsabilidade                  |
-| ----------------------- | ---------------------------------------- |
-| `Usuario`             | Identidade + autenticação              |
-| `Conta`               | Saldo + operações de crédito/débito  |
-| `Cliente`             | Orquestrar transferências entre contas  |
-| `BancoDados`          | Persistência e consultas por critério  |
+| Classe | Única responsabilidade |
+|---|---|
+| `Usuario` | Identidade + autenticação |
+| `Conta` | Saldo + operações de crédito/débito |
+| `Cliente` | Orquestrar transferências entre contas |
+| `BancoDados` | Persistência e consultas por critério |
 | `app.py` (Controller) | Roteamento HTTP + validação de entrada |
-| Templates HTML          | Apresentação de dados ao usuário      |
+| Templates HTML | Apresentação de dados ao usuário |
 
 ---
 
@@ -240,11 +234,11 @@ python app.py
 
 **Contas disponíveis para teste:**
 
-| Nome                | E-mail              | Senha    | Saldo inicial |
-| ------------------- | ------------------- | -------- | ------------- |
-| Ana Paula Ferreira  | ana@bancohack.com   | senha123 | R$ 5.250,75   |
-| Bruno Carvalho Lima | bruno@bancohack.com | senha456 | R$ 1.820,00   |
-| Carla Mendes Souza  | carla@bancohack.com | senha789 | R$ 12.500,00  |
+| Nome | E-mail | Senha | Saldo inicial |
+|---|---|---|---|
+| Ana Paula Ferreira | ana@bancohack.com | senha123 | R$ 5.250,75 |
+| Bruno Carvalho Lima | bruno@bancohack.com | senha456 | R$ 1.820,00 |
+| Carla Mendes Souza | carla@bancohack.com | senha789 | R$ 12.500,00 |
 
 ---
 
@@ -278,5 +272,5 @@ USUÁRIO
 
 ---
 
-*Relatório gerado para fins acadêmicos. Projeto não utiliza banco de dados real.*
+*Relatório gerado para fins acadêmicos. Projeto não utiliza banco de dados real.*  
 *Todo o estado é mantido em memória durante a sessão do servidor.*

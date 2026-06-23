@@ -5,22 +5,158 @@
 {% block page_content %}
 <div class="page-header">
   <a href="{{ url_for('dashboard') }}" class="back-btn">
-    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+    </svg>
   </a>
   <span class="page-title">Meus Cartões</span>
 </div>
 
 <div class="container" style="padding-top:20px;">
 
-  <!-- Card Visual -->
-  <div class="card-visual-container animate-fade-up" id="card-container" title="Clique para ver o verso">
+  {# ═══════════════════════════════════════════════════════════════
+     BANNER: CARTÃO PREMIUM A CAMINHO
+     Condição: cartao_pedido vem do servidor (sem localStorage)
+     ═══════════════════════════════════════════════════════════════ #}
+  {% if cartao_pedido %}
+  <div class="animate-fade-up" style="margin-bottom:20px;">
+    <div style="background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);
+                border-radius:16px;padding:20px;border:2px solid #FFD700;
+                box-shadow:0 0 24px rgba(255,215,0,0.25);position:relative;overflow:hidden;">
+
+      <!-- Brilho decorativo -->
+      <div style="position:absolute;top:-40px;right:-40px;width:120px;height:120px;
+                  background:radial-gradient(circle,rgba(255,215,0,0.12) 0%,transparent 70%);
+                  border-radius:50%;pointer-events:none;"></div>
+
+      <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:14px;">
+        <div style="flex-shrink:0;width:42px;height:42px;border-radius:12px;
+                    background:rgba(255,215,0,0.15);display:flex;align-items:center;
+                    justify-content:center;border:1px solid rgba(255,215,0,0.3);">
+          <i data-lucide="package" style="color:#FFD700;width:22px;height:22px;"></i>
+        </div>
+        <div style="flex:1;">
+          <div style="font-weight:800;font-size:0.95rem;color:#FFD700;margin-bottom:3px;">
+            {{ cartao_pedido.nome }} está a caminho!
+          </div>
+          <div style="font-size:0.75rem;color:rgba(255,255,255,0.55);">
+            Previsão de entrega: {{ cartao_pedido.meses_entrega }} a {{ cartao_pedido.meses_entrega + 2 }} meses úteis
+          </div>
+        </div>
+      </div>
+
+      <!-- Barra de progresso (propositalmente parada em 12%) -->
+      <div style="margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;font-size:0.68rem;
+                    color:rgba(255,255,255,0.4);margin-bottom:5px;">
+          <span>Pedido confirmado</span>
+          <span>Em produção</span>
+          <span>Enviado</span>
+          <span>Entregue</span>
+        </div>
+        <div style="height:5px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;">
+          <div style="height:100%;width:12%;background:linear-gradient(90deg,#FFD700,#FFA500);
+                      border-radius:3px;"></div>
+        </div>
+      </div>
+
+      <div style="font-size:0.7rem;color:rgba(255,255,255,0.4);line-height:1.5;margin-bottom:14px;">
+        Anuidade debitada em {{ cartao_pedido.data_pedido }}: {{ cartao_pedido.anuidade }}.
+        Entrega via Sedex Não-Rastreável® ZicaPay. Taxa de re-emissão por não entrega: R$ 189,90.
+      </div>
+
+      <!-- Botão rastrear — funciona mas retorna erro satírico -->
+      <button onclick="mostrarErroRastreio(this)"
+              style="width:100%;padding:10px;background:rgba(255,215,0,0.1);
+                     border:1px solid rgba(255,215,0,0.35);border-radius:10px;
+                     color:#FFD700;font-weight:600;font-size:0.82rem;cursor:pointer;
+                     display:flex;align-items:center;justify-content:center;gap:8px;
+                     transition:background 0.2s;">
+        <i data-lucide="map-pin" style="width:16px;height:16px;"></i>
+        Rastrear envio
+      </button>
+      <div id="rastreio-erro" style="display:none;margin-top:8px;font-size:0.7rem;
+           color:#f87171;text-align:center;display:flex;align-items:center;
+           justify-content:center;gap:6px;">
+        <i data-lucide="alert-triangle" style="width:14px;height:14px;"></i>
+        Sistema de rastreio em manutenção. Tente novamente em 3 a 5 dias úteis.
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  {# ═══════════════════════════════════════════════════════
+     AVISO FAKE DE EXPIRAÇÃO
+     ═══════════════════════════════════════════════════════ #}
+  <div class="animate-fade-up" style="margin-bottom:16px;">
+    <div style="background:linear-gradient(135deg,#7f1d1d,#991b1b);border-radius:12px;
+                padding:14px 16px;border:1px solid rgba(239,68,68,0.4);
+                animation:pulseWarn 2.5s ease-in-out infinite;">
+      <div style="display:flex;align-items:flex-start;gap:12px;">
+        <i data-lucide="alert-octagon" style="color:#fca5a5;width:20px;height:20px;flex-shrink:0;margin-top:2px;"></i>
+        <div style="flex:1;">
+          <div style="font-weight:700;color:#fca5a5;font-size:0.88rem;margin-bottom:3px;">
+            Seu cartão expira em 3 dias!
+          </div>
+          <div style="font-size:0.73rem;color:rgba(255,255,255,0.6);line-height:1.4;margin-bottom:10px;">
+            Renove agora para não perder acesso ao crédito. Taxa única de R$ 79,90.
+          </div>
+          <button onclick="document.getElementById('form-renovacao').style.display='block';this.style.display='none'"
+                  id="btn-renovar-show"
+                  style="padding:7px 16px;background:#dc2626;border:none;border-radius:8px;
+                         color:white;font-size:0.8rem;font-weight:700;cursor:pointer;
+                         display:flex;align-items:center;gap:6px;">
+            <i data-lucide="refresh-cw" style="width:14px;height:14px;"></i>
+            Renovar agora
+          </button>
+
+          <!-- Formulário real de renovação -->
+          <div id="form-renovacao" style="display:none;margin-top:12px;">
+            <div style="font-size:0.72rem;color:rgba(255,255,255,0.6);margin-bottom:8px;
+                        display:flex;align-items:center;gap:6px;">
+              <i data-lucide="info" style="width:13px;height:13px;"></i>
+              Taxa de renovação: R$ 79,90 (debitada automaticamente)
+            </div>
+            <form method="POST" action="{{ url_for('cartoes_renovar') }}">
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button type="submit" class="btn btn--primary btn--sm"
+                        style="display:flex;align-items:center;gap:6px;"
+                        onclick="return confirm('Confirmar renovação do cartão? Será debitado R$79,90 da sua conta.')">
+                  <i data-lucide="check-circle" style="width:15px;height:15px;"></i>
+                  Confirmar renovação (R$ 79,90)
+                </button>
+                <button type="button"
+                        onclick="document.getElementById('form-renovacao').style.display='none';document.getElementById('btn-renovar-show').style.display='flex'"
+                        style="padding:7px 12px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);
+                               border-radius:8px;color:rgba(255,255,255,0.7);font-size:0.78rem;cursor:pointer;">
+                  Cancelar
+                </button>
+              </div>
+            </form>
+            <div style="font-size:0.62rem;color:rgba(255,255,255,0.3);margin-top:6px;">
+              * Validade real do cartão: {{ cartao.validade }}.
+              Aviso gerado automaticamente pelo nosso sistema de alerta antecipado de 4 anos.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# ═══════════════════════════════
+     CARD VISUAL
+     ═══════════════════════════════ #}
+  <div class="card-visual-container animate-fade-up" id="card-container">
     <div class="card-visual {% if cartao.bloqueado %}flipped{% endif %}" id="card-flip">
       <!-- Frente -->
       <div class="card-face">
         {% if cartao.bloqueado %}
         <div class="card-blocked-overlay">
           <div class="card-blocked-badge">
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+            </svg>
             Cartão Bloqueado
           </div>
         </div>
@@ -58,139 +194,383 @@
           <div class="card-cvv-box" id="cvv-display">• • •</div>
           <p style="font-size:0.65rem;opacity:0.6;text-align:right;">Não compartilhe este código</p>
         </div>
+        <!-- Copiar número — copia texto inútil -->
+        <div style="padding:8px 20px 0;">
+          <button onclick="copiarNumeroErrado()"
+                  style="width:100%;padding:7px 12px;background:rgba(255,255,255,0.12);
+                         border:1px solid rgba(255,255,255,0.25);border-radius:8px;
+                         color:white;font-size:0.72rem;cursor:pointer;
+                         display:flex;align-items:center;justify-content:center;gap:6px;">
+            <i data-lucide="copy" style="width:13px;height:13px;"></i>
+            Copiar número do cartão
+          </button>
+          <p id="msg-copiado" style="display:none;font-size:0.65rem;color:#4ade80;
+             text-align:center;margin-top:4px;display:flex;align-items:center;
+             justify-content:center;gap:4px;">
+            <i data-lucide="check" style="width:12px;height:12px;"></i>
+            Número copiado!
+          </p>
+        </div>
         <div style="position:absolute;bottom:20px;right:20px;">
           <svg width="32" height="32" viewBox="0 0 52 52" fill="none">
-            <path d="M10 12H42L16 40H42" stroke="rgba(255,255,255,0.6)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M10 12H42L16 40H42" stroke="rgba(255,255,255,0.6)" stroke-width="5"
+              stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
       </div>
     </div>
   </div>
+  <p style="text-align:center;font-size:0.75rem;color:var(--text-muted);margin-top:8px;">
+    Toque no cartão para ver o verso
+  </p>
 
-  <p style="text-align:center;font-size:0.75rem;color:var(--text-muted);margin-top:8px;">Toque no cartão para ver o verso</p>
-
-  <!-- Status e Limite -->
+  {# ═══════════════════════════════
+     STATUS E LIMITE
+     ═══════════════════════════════ #}
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px;" class="animate-fade-up delay-1">
     <div class="card card--flat" style="padding:16px;text-align:center;">
-      <div style="width:36px;height:36px;border-radius:10px;background:{% if cartao.bloqueado %}var(--danger-10){% else %}var(--primary-10){% endif %};color:{% if cartao.bloqueado %}var(--danger){% else %}var(--primary){% endif %};display:flex;align-items:center;justify-content:center;margin:0 auto 8px;">
+      <div style="width:36px;height:36px;border-radius:10px;
+                  background:{% if cartao.bloqueado %}var(--danger-10){% else %}var(--primary-10){% endif %};
+                  color:{% if cartao.bloqueado %}var(--danger){% else %}var(--primary){% endif %};
+                  display:flex;align-items:center;justify-content:center;margin:0 auto 8px;">
         {% if cartao.bloqueado %}
-        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+        <i data-lucide="lock" style="width:18px;height:18px;"></i>
         {% else %}
-        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        <i data-lucide="shield-check" style="width:18px;height:18px;"></i>
         {% endif %}
       </div>
       <p style="font-size:0.7rem;color:var(--text-muted);">Status</p>
-      <p style="font-weight:700;color:{% if cartao.bloqueado %}var(--danger){% else %}var(--success){% endif %};">{{ cartao.status }}</p>
+      <p style="font-weight:700;color:{% if cartao.bloqueado %}var(--danger){% else %}var(--success){% endif %};">
+        {{ cartao.status }}
+      </p>
     </div>
     <div class="card card--flat" style="padding:16px;text-align:center;">
-      <div style="width:36px;height:36px;border-radius:10px;background:var(--primary-10);color:var(--primary);display:flex;align-items:center;justify-content:center;margin:0 auto 8px;">
-        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+      <div style="width:36px;height:36px;border-radius:10px;background:var(--primary-10);
+                  color:var(--primary);display:flex;align-items:center;justify-content:center;margin:0 auto 8px;">
+        <i data-lucide="credit-card" style="width:18px;height:18px;"></i>
       </div>
       <p style="font-size:0.7rem;color:var(--text-muted);">Limite disponível</p>
-      <p style="font-weight:700;color:var(--primary);">R$ {{ '{:,.2f}'.format(cartao.limite_disponivel).replace(',','X').replace('.',',').replace('X','.') }}</p>
+      <p style="font-weight:700;color:var(--primary);">
+        R$ {{ '{:,.2f}'.format(cartao.limite_disponivel).replace(',','X').replace('.',',').replace('X','.') }}
+      </p>
     </div>
   </div>
 
-  <!-- Barra de limite -->
+  {# ═══════════════════════════════════════════════
+     BARRA DE LIMITE — inversão proposital (dark UX)
+     Mostra % usado como se fosse % disponível
+     ═══════════════════════════════════════════════ #}
   <div class="card animate-fade-up delay-2" style="margin-top:12px;">
     <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
       <span style="font-size:0.875rem;font-weight:600;">Limite do cartão</span>
-      <span style="font-size:0.875rem;color:var(--text-secondary);">R$ {{ '{:,.2f}'.format(cartao.limite).replace(',','X').replace('.',',').replace('X','.') }}</span>
+      <span style="font-size:0.875rem;color:var(--text-secondary);">
+        R$ {{ '{:,.2f}'.format(cartao.limite).replace(',','X').replace('.',',').replace('X','.') }}
+      </span>
     </div>
+    {# Inversão proposital: mostramos (100 - disponivel%) com cor vermelha #}
+    {% set pct_disp = ((cartao.limite_disponivel / cartao.limite) * 100) | round | int %}
+    {% set pct_barra = 100 - pct_disp %}
     <div style="height:8px;background:var(--surface-2);border-radius:4px;overflow:hidden;">
-      <div style="height:100%;width:{{ ((cartao.limite_disponivel / cartao.limite) * 100) | round | int }}%;background:var(--gradient-primary);border-radius:4px;transition:width 1s;"></div>
+      <div style="height:100%;width:{{ pct_barra }}%;background:#ef4444;
+                  border-radius:4px;transition:width 1s;"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:4px;">
+      <span style="font-size:0.68rem;color:#ef4444;display:flex;align-items:center;gap:3px;">
+        <i data-lucide="trending-down" style="width:11px;height:11px;"></i> Comprometido
+      </span>
+      <span style="font-size:0.68rem;color:var(--text-muted);">Disponível</span>
     </div>
     <p style="font-size:0.75rem;color:var(--text-muted);margin-top:6px;">
-      R$ {{ '{:,.2f}'.format(cartao.limite_disponivel).replace(',','X').replace('.',',').replace('X','.') }} disponível de R$ {{ '{:,.2f}'.format(cartao.limite).replace(',','X').replace('.',',').replace('X','.') }}
+      R$ {{ '{:,.2f}'.format(cartao.limite_disponivel).replace(',','X').replace('.',',').replace('X','.') }}
+      disponível de
+      R$ {{ '{:,.2f}'.format(cartao.limite).replace(',','X').replace('.',',').replace('X','.') }}
     </p>
   </div>
 
-  <!-- Ações -->
+  {# ═══════════════════════════════
+     CONFIGURAÇÕES DO CARTÃO
+     ═══════════════════════════════ #}
   <div class="card animate-fade-up delay-3" style="margin-top:12px;">
     <h3 style="font-weight:700;margin-bottom:16px;">Configurações do cartão</h3>
 
-    <!-- Revelar CVV -->
-    <button onclick="toggleCVV()" class="profile-item" style="width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--border);border-radius:0;padding:14px 0;cursor:pointer;">
+    {# Ver CVV — some em 1.5s #}
+    <button onclick="toggleCVV()" class="profile-item" id="btn-ver-cvv"
+            style="width:100%;text-align:left;background:none;border:none;
+                   border-bottom:1px solid var(--border);border-radius:0;
+                   padding:14px 0;cursor:pointer;">
       <div class="profile-item-icon">
-        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+        <i data-lucide="eye" style="width:18px;height:18px;"></i>
       </div>
       <div class="profile-item-text">
         <div class="profile-item-label">Ver CVV</div>
-        <div class="profile-item-sub">Toque para revelar temporariamente</div>
+        <div class="profile-item-sub">Toque para revelar — desaparece em 1,5 segundos</div>
       </div>
-      <svg class="profile-item-arrow" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      <i data-lucide="chevron-right" class="profile-item-arrow" style="width:18px;height:18px;"></i>
     </button>
 
-    <!-- Bloquear/Desbloquear -->
+    {# BLOQUEAR / DESBLOQUEAR — labels inversamente trocados (dark pattern) #}
     <form method="POST" action="{{ url_for('cartoes') }}" style="border-bottom:1px solid var(--border);">
-      <input type="hidden" name="acao" value="{% if cartao.bloqueado %}desbloquear{% else %}bloquear{% endif %}">
-      <button type="submit" class="profile-item" style="width:100%;text-align:left;background:none;border:none;border-radius:0;padding:14px 0;cursor:pointer;"
-        onclick="return confirm('{% if cartao.bloqueado %}Desbloquear o cartão?{% else %}Bloquear o cartão? Compras serão recusadas.{% endif %}')">
-        <div class="profile-item-icon {% if cartao.bloqueado %}{% else %}profile-item-icon--danger{% endif %}">
+      <input type="hidden" name="acao"
+             value="{% if cartao.bloqueado %}desbloquear{% else %}bloquear{% endif %}">
+      <button type="submit" class="profile-item"
+              style="width:100%;text-align:left;background:none;border:none;
+                     border-radius:0;padding:14px 0;cursor:pointer;"
+              onclick="return confirm('{% if cartao.bloqueado %}Isso vai remover a proteção do cartão. Confirmar?{% else %}Isso vai ativar proteção extra no cartão. Confirmar?{% endif %}')">
+        <div class="profile-item-icon"
+             style="background:{% if cartao.bloqueado %}rgba(239,68,68,0.1){% else %}rgba(34,197,94,0.1){% endif %};
+                    color:{% if cartao.bloqueado %}#ef4444{% else %}#22c55e{% endif %};">
           {% if cartao.bloqueado %}
-          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
+          {# Ícone de cadeado aberto = desbloqueio, mas cor vermelha = parece perigoso #}
+          <i data-lucide="unlock" style="width:18px;height:18px;"></i>
           {% else %}
-          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          {# Ícone de escudo = bloqueio, mas cor verde = parece seguro #}
+          <i data-lucide="shield" style="width:18px;height:18px;"></i>
           {% endif %}
         </div>
         <div class="profile-item-text">
-          <div class="profile-item-label" style="color:{% if cartao.bloqueado %}var(--success){% else %}var(--danger){% endif %};">
-            {% if cartao.bloqueado %}Desbloquear cartão{% else %}Bloquear cartão{% endif %}
+          <div class="profile-item-label"
+               style="color:{% if cartao.bloqueado %}#ef4444{% else %}#22c55e{% endif %};">
+            {% if cartao.bloqueado %}Remover proteção do cartão{% else %}Ativar proteção extra{% endif %}
           </div>
-          <div class="profile-item-sub">{% if cartao.bloqueado %}Reativar compras{% else %}Bloquear temporariamente{% endif %}</div>
+          <div class="profile-item-sub">
+            {% if cartao.bloqueado %}Liberar cartão para uso{% else %}Bloquear temporariamente{% endif %}
+          </div>
         </div>
-        <svg class="profile-item-arrow" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        <i data-lucide="chevron-right" class="profile-item-arrow" style="width:18px;height:18px;"></i>
       </button>
     </form>
 
-    <!-- Ajustar Limite -->
-    <button onclick="toggleLimiteForm()" class="profile-item" style="width:100%;text-align:left;background:none;border:none;border-radius:0;padding:14px 0;cursor:pointer;">
+    {# AJUSTAR LIMITE — slider invertido (dark pattern) #}
+    <button onclick="toggleLimiteForm()" class="profile-item"
+            style="width:100%;text-align:left;background:none;border:none;
+                   border-radius:0;padding:14px 0;cursor:pointer;">
       <div class="profile-item-icon">
-        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+        <i data-lucide="sliders" style="width:18px;height:18px;"></i>
       </div>
       <div class="profile-item-text">
-        <div class="profile-item-label">Ajustar limite</div>
-        <div class="profile-item-sub">Limite atual: R$ {{ '{:,.2f}'.format(cartao.limite).replace(',','X').replace('.',',').replace('X','.') }}</div>
+        <div class="profile-item-label">Aumentar limite</div>
+        <div class="profile-item-sub">
+          Limite atual: R$ {{ '{:,.2f}'.format(cartao.limite).replace(',','X').replace('.',',').replace('X','.') }}
+        </div>
       </div>
-      <svg class="profile-item-arrow" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      <i data-lucide="chevron-right" class="profile-item-arrow" style="width:18px;height:18px;"></i>
     </button>
 
     <div id="limite-form" style="display:none;padding:12px 0 0;">
-      <form method="POST" action="{{ url_for('cartoes') }}">
-        <input type="hidden" name="acao" value="ajustar_limite">
-        <div style="display:flex;gap:8px;align-items:flex-end;">
-          <div class="form-group" style="flex:1;">
-            <label class="form-label" for="novo_limite">Novo limite (R$)</label>
-            <input class="form-input" type="number" id="novo_limite" name="novo_limite" step="100" min="0" max="50000" placeholder="Ex: 5000" value="{{ cartao.limite | int }}">
-          </div>
-          <button type="submit" class="btn btn--primary btn--sm" style="margin-bottom:1px;">Salvar</button>
+      <div style="background:var(--surface-2);border-radius:12px;padding:14px;">
+        <label style="font-size:0.8rem;color:var(--text-muted);display:flex;
+                      align-items:center;gap:6px;margin-bottom:10px;">
+          <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+          Arraste para aumentar seu limite
+        </label>
+        <input type="range" id="slider-limite-visual" min="0" max="50000"
+               value="{{ (50000 - cartao.limite) | int }}"
+               oninput="atualizarSliderInvertido(this.value)"
+               style="width:100%;accent-color:var(--primary);">
+        <div style="display:flex;justify-content:space-between;margin-top:4px;">
+          <span style="font-size:0.68rem;color:var(--text-muted);">R$ 0</span>
+          <span style="font-size:0.68rem;color:var(--text-muted);">R$ 50.000</span>
         </div>
-      </form>
+        <div style="text-align:center;margin:10px 0 4px;">
+          <span style="font-size:0.8rem;color:var(--text-muted);">Novo limite: </span>
+          <span id="slider-valor-exibido" style="font-size:1.1rem;font-weight:800;color:var(--primary);">—</span>
+        </div>
+        <form method="POST" action="{{ url_for('cartoes') }}" style="margin-top:8px;">
+          <input type="hidden" name="acao" value="ajustar_limite">
+          <input type="hidden" id="novo_limite_real" name="novo_limite" value="{{ cartao.limite | int }}">
+          <button type="submit" class="btn btn--primary"
+                  style="width:100%;display:flex;align-items:center;justify-content:center;gap:6px;">
+            <i data-lucide="check" style="width:15px;height:15px;"></i>
+            Confirmar aumento
+          </button>
+        </form>
+        <p style="font-size:0.64rem;color:var(--text-muted);margin-top:6px;text-align:center;">
+          * Sujeito a análise de crédito. Taxa de análise: R$ 9,90.
+        </p>
+      </div>
     </div>
   </div>
+
+  {# ═══════════════════════════════
+     BENEFÍCIOS — satíricos mas sem emojis
+     ═══════════════════════════════ #}
+  <div class="card animate-fade-up delay-3" style="margin-top:12px;">
+    <h3 style="font-weight:700;margin-bottom:4px;">Benefícios exclusivos</h3>
+    <p style="font-size:0.72rem;color:var(--text-muted);margin-bottom:14px;">
+      Vantagens imperdíveis do seu cartão ZicaPay Virtual:
+    </p>
+
+    {% set beneficios = [
+      ("percent", "0,001% de cashback", "Válido para compras acima de R$ 50.000. Mínimo de resgate: R$ 999. Expira em 24h."),
+      ("zap", "Seguro contra raios", "Cobertura total. Não cobre chuva, granizo, vento, sol, neblina ou \"clima incomum\"."),
+      ("plane", "Acesso à Sala VIP Premium", "Aeroporto de Cuiabá (CGB). Terças-feiras, 14h–14h15. Reserva com 60 dias de antecedência."),
+      ("heart", "Seguro de vida", "Cobertura de R$ 1,00. Não cobre morte por causas naturais, acidentes ou doenças."),
+      ("award", "ZicaPoints", "1 ponto a cada R$ 10.000. 1.000.000 pontos = R$ 5 de desconto. Expira em 3 dias.")
+    ] %}
+
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      {% for icon, titulo, desc in beneficios %}
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:10px;
+                  background:var(--surface-2);border-radius:10px;">
+        <div style="flex-shrink:0;width:32px;height:32px;border-radius:8px;
+                    background:var(--primary-10);color:var(--primary);
+                    display:flex;align-items:center;justify-content:center;margin-top:1px;">
+          <i data-lucide="{{ icon }}" style="width:16px;height:16px;"></i>
+        </div>
+        <div>
+          <div style="font-size:0.85rem;font-weight:600;">{{ titulo }}</div>
+          <div style="font-size:0.72rem;color:var(--text-muted);margin-top:2px;line-height:1.4;">{{ desc }}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <p style="font-size:0.61rem;color:var(--text-muted);margin-top:12px;line-height:1.4;
+              border-top:1px solid var(--border);padding-top:10px;">
+      * Benefícios sujeitos a alteração sem aviso prévio. Para ativar, acesse
+      zicapay-beneficios.com.br (fora do ar desde 2019). Regulamento em 847 páginas
+      disponível na sede física (Rua Genérica, 0, Cidade Inexistente-XX).
+    </p>
+  </div>
+
+  {# ═══════════════════════════════════════
+     CARTÃO PREMIUM FANTASMA (bloqueado)
+     ═══════════════════════════════════════ #}
+  <div class="card animate-fade-up delay-3"
+       style="margin-top:12px;background:linear-gradient(135deg,#1a1a2e,#16213e);
+              border:1px dashed rgba(255,215,0,0.35);position:relative;overflow:hidden;">
+    <div style="filter:blur(3px);pointer-events:none;user-select:none;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div>
+          <div style="font-size:0.75rem;color:rgba(255,255,255,0.45);">Cartão físico premium</div>
+          <div style="font-weight:800;color:#FFD700;font-size:1rem;">Black Infinite Cosmos</div>
+        </div>
+        <i data-lucide="gem" style="color:#FFD700;width:28px;height:28px;"></i>
+      </div>
+      <div style="font-size:0.8rem;color:rgba(255,255,255,0.35);font-family:monospace;">
+        •••• •••• •••• 9999
+      </div>
+      <div style="margin-top:8px;color:#FFD700;font-weight:700;">R$ 9.999,90/ano</div>
+    </div>
+    <!-- Overlay de bloqueio -->
+    <div style="position:absolute;inset:0;background:rgba(0,0,0,0.55);
+                display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;">
+      <i data-lucide="lock" style="color:rgba(255,255,255,0.8);width:28px;height:28px;"></i>
+      <div style="font-weight:700;color:white;font-size:0.85rem;text-align:center;">
+        Desbloqueie seu cartão Black
+      </div>
+      <div style="font-size:0.72rem;color:rgba(255,255,255,0.55);text-align:center;padding:0 20px;">
+        Apenas R$ 89,90/mês + anuidade R$ 9.999,90
+      </div>
+      <button onclick="mostrarAlertaDesbloqueio()"
+              style="padding:8px 20px;background:linear-gradient(135deg,#FFD700,#FFA500);
+                     border:none;border-radius:10px;color:#000;font-weight:800;
+                     font-size:0.8rem;cursor:pointer;display:flex;align-items:center;gap:6px;">
+        <i data-lucide="unlock" style="width:14px;height:14px;"></i>
+        Quero desbloquear
+      </button>
+    </div>
+  </div>
+
 </div>
 
+<style>
+@keyframes pulseWarn {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.25); }
+  50%       { box-shadow: 0 0 0 8px rgba(239,68,68,0); }
+}
+</style>
+
 <script>
-let cvvRevealed = false;
+// ─────────────────────────────────────────────────
+// CVV: desaparece letra por letra em 1.5s
+// ─────────────────────────────────────────────────
+const CVV_REAL = '{{ cartao.cvv }}';
+let cvvTimer = null;
+
 function toggleCVV() {
-  cvvRevealed = !cvvRevealed;
+  if (cvvTimer) { clearTimeout(cvvTimer); clearInterval(cvvTimer); }
   const el = document.getElementById('cvv-display');
   const card = document.getElementById('card-flip');
-  if (cvvRevealed) {
-    el.textContent = '{{ cartao.cvv }}';
-    card.classList.add('flipped');
-    setTimeout(() => {
-      cvvRevealed = false;
-      el.textContent = '• • •';
-    }, 5000);
-  } else {
-    el.textContent = '• • •';
-    card.classList.remove('flipped');
+
+  card.classList.add('flipped');
+  el.textContent = CVV_REAL;
+
+  // Após 0.8s começa a apagar letra por letra
+  cvvTimer = setTimeout(() => {
+    const chars = CVV_REAL.split('');
+    let i = chars.length - 1;
+    const apagar = setInterval(() => {
+      chars[i] = '•';
+      el.textContent = chars.join('');
+      i--;
+      if (i < 0) {
+        clearInterval(apagar);
+        setTimeout(() => card.classList.remove('flipped'), 600);
+      }
+    }, 220);
+  }, 800);
+}
+
+// ─────────────────────────────────────────────────
+// Copiar: copia texto inútil em vez dos dígitos
+// ─────────────────────────────────────────────────
+function copiarNumeroErrado() {
+  const textoFalso = 'Numero do cartao ZicaPay — consulte o extrato para mais detalhes';
+  navigator.clipboard.writeText(textoFalso).catch(() => {});
+  const msg = document.getElementById('msg-copiado');
+  if (msg) {
+    msg.style.display = 'flex';
+    setTimeout(() => { msg.style.display = 'none'; }, 2200);
   }
 }
+
+// ─────────────────────────────────────────────────
+// Toggle formulário de limite
+// ─────────────────────────────────────────────────
 function toggleLimiteForm() {
   const form = document.getElementById('limite-form');
   form.style.display = form.style.display === 'none' ? 'block' : 'none';
 }
+
+// ─────────────────────────────────────────────────
+// Slider invertido: direita = diminui o limite real
+// ─────────────────────────────────────────────────
+function atualizarSliderInvertido(valorSlider) {
+  const limiteReal = 50000 - parseInt(valorSlider);
+  document.getElementById('slider-valor-exibido').textContent =
+    'R$ ' + limiteReal.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+  document.getElementById('novo_limite_real').value = limiteReal;
+}
+
+// ─────────────────────────────────────────────────
+// Rastreio que nunca funciona
+// ─────────────────────────────────────────────────
+function mostrarErroRastreio(btn) {
+  const err = document.getElementById('rastreio-erro');
+  if (!err) return;
+  err.style.display = 'flex';
+  setTimeout(() => { err.style.display = 'none'; }, 4000);
+}
+
+// ─────────────────────────────────────────────────
+// Desbloquear Black — alert satírico
+// ─────────────────────────────────────────────────
+function mostrarAlertaDesbloqueio() {
+  alert(
+    'Para desbloquear o Black Infinite Cosmos, preencha o formulário de ' +
+    'solicitação de 12 páginas disponível nos nossos escritórios físicos. ' +
+    'Atendimento: segunda a sexta, das 10h às 10h30 (exceto feriados, vésperas de feriados ' +
+    'e dias em que o gerente está de mau humor).'
+  );
+}
+
+// ─────────────────────────────────────────────────
+// Init: slider
+// ─────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  const slider = document.getElementById('slider-limite-visual');
+  if (slider) atualizarSliderInvertido(slider.value);
+});
 </script>
 {% endblock %}
