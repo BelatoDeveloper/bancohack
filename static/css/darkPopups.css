@@ -1,0 +1,867 @@
+/**
+ * ============================================================
+ * darkPopups.css — Estilos dos 3 Pop-ups Dark UX
+ * ============================================================
+ *
+ * Estrutura:
+ *   1. Variáveis e utilitários compartilhados
+ *   2. Pop-up 1 — "O Mestre da Fuga"
+ *   3. Pop-up 2 — "O Refém Intelectual"
+ *   4. Pop-up 3 — "A Roleta da Recusa"
+ *   5. Keyframes de animação
+ *   6. Responsividade (mobile)
+ */
+
+/* ── 1. Utilitários compartilhados ───────────────────────────────────────── */
+
+/*
+ * .dp-overlay: camada de fundo escurecido que bloqueia a tela.
+ * Usado pelos 3 popups. Começa com display:none e fica visível
+ * quando o JS adiciona a classe 'dp-ativo'.
+ */
+.dp-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  /* acima de tudo, inclusive do overlay de propaganda */
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: dpFadeIn 0.3s ease;
+}
+
+/* Ativo: muda de display:none para display:flex */
+.dp-overlay.dp-ativo {
+  display: flex;
+}
+
+/*
+ * .dp-modal: caixa centralizada do popup.
+ * Cada popup pode ter suas próprias sobrescritas de estilo.
+ */
+.dp-modal {
+  background: #0f0f1a;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 440px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 32px 64px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  animation: dpSlideIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ── 2. POP-UP 1 — "O Mestre da Fuga" ───────────────────────────────────── */
+
+/*
+ * Banner compacto — menor que os outros popups.
+ * Aparece como um banner "urgente" de investimento,
+ * posicionado no centro-inferior da tela.
+ */
+#dp1-overlay {
+  align-items: flex-end;
+  /* coloca o banner na parte de baixo */
+  padding-bottom: 80px;
+  /* acima da navbar */
+}
+
+#dp1-banner {
+  background: linear-gradient(135deg, #0a2a0a 0%, #0e3d12 50%, #0a2a0a 100%);
+  border: 2px solid rgba(33, 194, 94, 0.5);
+  border-radius: 20px;
+  padding: 20px;
+  width: 100%;
+  max-width: 440px;
+  position: relative;
+  overflow: hidden;
+  animation: dpSlideInUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 -4px 40px rgba(33, 194, 94, 0.2);
+}
+
+/* Linha decorativa brilhante no topo do banner */
+#dp1-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #21C25E, #4ade80, #21C25E, transparent);
+  animation: dpShine 2s linear infinite;
+}
+
+/* Título do banner */
+#dp1-titulo {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #21C25E;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+}
+
+/* Subtítulo */
+#dp1-subtitulo {
+  font-size: 1rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 16px;
+  line-height: 1.3;
+}
+
+/*
+ * Botão principal pulsante — verde, grande, difícil de ignorar.
+ * A animação dpPulse faz ele "respirar" para chamar atenção.
+ */
+#dp1-btn-principal {
+  display: block;
+  width: 100%;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #21C25E, #0E9F4B);
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 800;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: center;
+  animation: dpPulse 1.8s ease-in-out infinite;
+  box-shadow: 0 8px 24px rgba(33, 194, 94, 0.4);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  letter-spacing: 0.3px;
+}
+
+#dp1-btn-principal:hover {
+  transform: scale(1.03);
+  box-shadow: 0 12px 32px rgba(33, 194, 94, 0.6);
+}
+
+/*
+ * Texto de recusa: fonte minúscula (~8px) por design proposital.
+ * É difícil de ler e lê-lo "confirma" o constrangimento.
+ * position:absolute permite a lógica de fuga mover este elemento.
+ */
+#dp1-recusa {
+  font-size: 15px;
+  /* <- MINÚSCULO por dark pattern: difícil de ler/clicar */
+  color: #000000;
+  cursor: pointer;
+  position: absolute;
+  /* necessário para movimentação por JS */
+  white-space: nowrap;
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: transform 0.15s ease;
+  user-select: none;
+  /* evita seleção acidental */
+  background: transparent;
+  border: none;
+  bottom: 8px;
+  right: 12px;
+  line-height: 1;
+}
+
+#dp1-recusa:hover {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/*
+ * Área do mini-desafio: aparece escondida e só é mostrada
+ * quando o botão de recusa para de fugir (após maxFugas tentativas).
+ */
+#dp1-desafio {
+  display: none;
+  /* começa oculto — JS mostra quando necessário */
+  margin-top: 12px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
+
+/* Botão do desafio de clique múltiplo */
+#dp1-btn-desafio {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  background: rgba(255, 165, 0, 0.15);
+  border: 1px solid rgba(255, 165, 0, 0.4);
+  color: #FFA500;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  margin-top: 8px;
+}
+
+#dp1-btn-desafio:hover {
+  background: rgba(255, 165, 0, 0.25);
+}
+
+/* Contador de cliques do desafio */
+#dp1-contador {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #FFA500;
+  margin: 4px 0;
+  transition: transform 0.1s ease;
+}
+
+#dp1-contador.dp-bounce {
+  animation: dpBounce 0.15s ease;
+}
+
+/* ── 3. POP-UP 2 — "O Refém Intelectual" ───────────────────────────────── */
+
+/* Modal corporativo — mais "sério" e formal para satirizar */
+#dp2-modal {
+  background: #21C25E;
+  border: 1px solid #fff;
+  padding: 28px 24px 24px;
+}
+
+/* Logo/branding do "CDB ZicaPay" */
+#dp2-header {
+  text-align: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+#dp2-badge-cdb {
+  display: inline-block;
+  background: linear-gradient(135deg, #ffffff, #0E9F4B);
+  color: rgb(0, 0, 0);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-bottom: 8px;
+}
+
+#dp2-titulo-cdb {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: rgb(0, 0, 0);
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+#dp2-subtitulo-cdb {
+  font-size: 1.8rem;
+  font-weight: 900;
+  box-shadow: #66ff00 0px 0px 30px;
+  border-radius: 20px;
+  color: #ffffff;
+  /* vermelho — rendimento negativo = perda */
+  margin: 6px 0;
+}
+
+#dp2-rodape-cdb {
+  font-size: 0.65rem;
+  color: #000000;
+  line-height: 1.4;
+}
+
+/*
+ * Área do captcha — caixa com pergunta cronometrada.
+ * Muda de aparência quando o tempo acaba.
+ */
+#dp2-captcha-area {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+#dp2-pergunta {
+  font-size: 0.82rem;
+  color: #000000;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+#dp2-input-captcha {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: rgb(0, 0, 0);
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+  font-family: inherit;
+  resize: none;
+}
+
+#dp2-input-captcha:focus {
+  border-color: rgba(59, 130, 246, 0.5);
+}
+
+/* Barra de progresso do timer do captcha */
+#dp2-timer-barra-track {
+  height: 4px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+
+#dp2-timer-barra-fill {
+  height: 100%;
+  width: 100%;
+  /* começa cheia e vai diminuindo */
+  background: #000000;
+  border-radius: 2px;
+  transition: width 1s linear, background 1s linear;
+}
+
+/* Quando o timer está crítico (< 5s), fica vermelho */
+#dp2-timer-barra-fill.dp-critico {
+  background: linear-gradient(90deg, #EF4444, #DC2626);
+}
+
+#dp2-timer-texto {
+  font-size: 0.72rem;
+  color: rgba(0, 0, 0, 0.5);
+  margin-top: 6px;
+  text-align: right;
+}
+
+/*
+ * Tela de "ultimato" — mostrada quando o tempo do captcha esgota.
+ * Começa oculta, aparece com animação via JS.
+ */
+#dp2-ultimato {
+  display: none;
+  animation: dpFadeIn 0.4s ease;
+}
+
+#dp2-ultimato-titulo {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #000000;
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+#dp2-ultimato-sub {
+  font-size: 0.78rem;
+  color: #000000;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+/* Botões do ultimato — cada um com cor diferente por design */
+.dp2-btn-ultimato {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 8px;
+  font-family: inherit;
+}
+
+/* Botão 1: azul — "vou investir" */
+#dp2-btn-investir {
+  background: linear-gradient(135deg, #09ff00, #1D4ED8);
+  color: rgb(0, 0, 0);
+}
+
+#dp2-btn-investir:hover {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+}
+
+/* Botão 2: estilo LinkedIn — azul corporativo */
+#dp2-btn-linkedin {
+  background: linear-gradient(135deg, #ff0000, #ff0000);
+  color: rgb(0, 0, 0);
+}
+
+#dp2-btn-linkedin:hover {
+  background: #ff0000;
+  transform: translateY(-1px);
+}
+
+/* Botão 3: vermelho — "pagar taxa" */
+#dp2-btn-pagar {
+  background: #09ff00;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #000000;
+}
+
+#dp2-btn-pagar:hover {
+  background: rgba(239, 68, 68, 0.25);
+}
+
+/* Container da animação do "Pix voando" após pagamento.
+ * Começa oculto (display:none). O JS muda para 'flex' e adiciona
+ * a classe .dp-animar ao emoji para disparar a animação.
+ */
+#dp2-pix-voando {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 32px 24px;
+  min-height: 160px;
+  /* espaço suficiente para o emoji "voar" verticalmente */
+  animation: dpFadeIn 0.4s ease;
+}
+
+/*
+ * Emoji do dinheiro voando.
+ * A animação só é aplicada quando o JS adiciona a classe .dp-animar.
+ * Isso garante que ela recomece do zero a cada exibição, mesmo
+ * que o popup seja aberto múltiplas vezes na mesma sessão.
+ *
+ * SEM .dp-animar: emoji estático, sem movimento.
+ * COM .dp-animar: emoji sobe, gira levemente e some (forwards = mantém
+ * o estado final, evitando "flash" de volta ao início).
+ */
+#dp2-pix-emoji {
+  font-size: 4rem;
+  display: block;
+  margin-bottom: 16px;
+  /* Sem animation aqui! O JS adiciona .dp-animar para disparar. */
+}
+
+#dp2-pix-emoji.dp-animar {
+  animation: dpVoarGirar 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Simulação de post do LinkedIn */
+#dp2-linkedin-sim {
+  display: none;
+  background: rgba(10, 102, 194, 0.1);
+  border: 1px solid rgba(10, 102, 194, 0.3);
+  border-radius: 12px;
+  padding: 14px;
+  margin-top: 12px;
+  font-size: 0.78rem;
+  color: #000000;
+  animation: dpFadeIn 0.4s ease;
+  line-height: 1.6;
+}
+
+/* ── 4. POP-UP 3 — "A Roleta da Recusa" ─────────────────────────────────── */
+
+#dp3-overlay {
+  z-index: 10001;
+  /* acima dos outros overlays */
+}
+
+#dp3-modal {
+  background: #48D97B;
+  padding: 24px 20px;
+  max-width: 400px;
+}
+
+/* Cabeçalho da roleta */
+#dp3-header {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+#dp3-titulo-roleta {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #000000;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+}
+
+#dp3-nivel-texto {
+  font-size: 0.72rem;
+  color: #000000;
+}
+
+/*
+ * .dp3-slot-machine: a "máquina" visual da roleta.
+ * Layout de cartão real: conteúdo alinhado ao topo e à esquerda.
+ */
+#dp3-slot-container {
+  background: linear-gradient(135deg, #000000 0%, #0a7a39 100%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 20px 20px 16px;
+  margin-bottom: 16px;
+  text-align: left;
+  /* alinhado à esquerda — cartão real */
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.6s ease;
+  /* Brilho sutil no topo, como cartões físicos */
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+/*
+ * Linha superior do cartão: alinha o chip EMV (esquerda) com o emoji (direita).
+ * Simula o cabeçalho de um cartão de crédito real.
+ */
+#dp3-card-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+/*
+ * Chip EMV decorativo — CSS puro simulando contatos do chip.
+ * Cor da borda atualizada pelo JS com corDestaque do nível atual.
+ */
+#dp3-card-chip {
+  width: 36px;
+  height: 28px;
+  background: linear-gradient(135deg, #d4a843 0%, #f0c963 40%, #b8892a 100%);
+  border-radius: 5px;
+  border: 2px solid #FFD700;
+  /* cor default — JS sobrescreve com corDestaque */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 3px 4px;
+  position: relative;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Linhas internas do chip simulando os contatos elétricos */
+.dp3-chip-linha {
+  height: 2px;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 1px;
+}
+
+/*
+ * Número mascarado do cartão — fonte monospace para parecer real.
+ * Formato: •••• •••• •••• XXXX (os 4 últimos dígitos são aleatórios por nível)
+ */
+#dp3-card-numero {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+  align-self: flex-start;
+}
+
+/*
+ * Emoji do cartão — grande, animado.
+ * A animação dpRoleta simula a rotação do slot machine.
+ */
+#dp3-card-emoji {
+  font-size: 2.2rem;
+  /* reduzido para caber no layout de topo */
+  display: block;
+  transition: transform 0.2s ease;
+}
+
+/* Quando está girando, o emoji some (JS adiciona/remove a classe) */
+#dp3-card-emoji.dp-girando {
+  animation: dpGirar 0.15s linear infinite;
+}
+
+/* Nome do cartão na roleta */
+#dp3-card-nome {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: white;
+  margin-bottom: 2px;
+  line-height: 1.2;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Anuidade — em destaque */
+#dp3-card-anuidade {
+  font-size: 1.4rem;
+  font-weight: 900;
+  margin-bottom: 8px;
+}
+
+/* Frase de humilhação — satírico, itálico, alinhado à esquerda */
+#dp3-card-humilhacao {
+  font-size: 0.75rem;
+  color: rgba(0, 0, 0, 0.75);
+  font-style: italic;
+  line-height: 1.5;
+  margin: 8px 0 0 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/*
+ * Animação especial do nível 6: carteira vazia piscando em vermelho.
+ */
+#dp3-carteira-vazia {
+  display: none;
+}
+
+#dp3-carteira-vazia.dp-ativo {
+  display: block;
+  animation: dpPiscarVermelho 0.8s ease-in-out infinite;
+}
+
+/* Botão de recusa (avança para o próximo nível) */
+#dp3-btn-recusar {
+  display: block;
+  width: 100%;
+  padding: 11px 16px;
+  background: #0E9F4B;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  margin-top: 8px;
+}
+
+
+/*
+ * Botão "Continuar sem cartão" do nível 6 — o BOTÃO FUJÃO.
+ * position:fixed permite o JS reposicioná-lo livremente pela tela.
+ * Começa dentro do modal e depois "escapa" para qualquer lugar.
+ */
+#dp3-btn-sem-cartao {
+  display: none;
+  /* oculto até o nível 6 */
+  position: fixed;
+  /* permite fugir para qualquer lugar da tela */
+  padding: 10px 18px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #F87171;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: inherit;
+  z-index: 10002;
+  /* acima de tudo */
+  transition: left 0.2s ease, top 0.2s ease;
+  /* animação suave de fuga */
+  white-space: nowrap;
+}
+
+#dp3-btn-sem-cartao.dp-ativo {
+  display: block;
+}
+
+/* Indicador de nível (bolinhas) */
+#dp3-indicador-niveis {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.dp3-nivel-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.2);
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.dp3-nivel-dot.dp-atual {
+  background: #000000;
+  transform: scale(1.4);
+}
+
+.dp3-nivel-dot.dp-passado {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+/* ── 5. Keyframes de Animação ─────────────────────────────────────────────── */
+
+/* Fade in genérico — usado nos overlays */
+@keyframes dpFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* Slide de baixo para cima — banners e modais */
+@keyframes dpSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.94);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Slide especial para o banner do popup 1 (sobe de baixo) */
+@keyframes dpSlideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(60px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Pulso do botão de investimento — chama atenção */
+@keyframes dpPulse {
+
+  0%,
+  100% {
+    box-shadow: 0 8px 24px rgba(33, 194, 94, 0.4);
+  }
+
+  50% {
+    box-shadow: 0 8px 40px rgba(33, 194, 94, 0.8);
+  }
+}
+
+/* Brilho que percorre a linha do topo do banner */
+@keyframes dpShine {
+  from {
+    background-position: -200% center;
+  }
+
+  to {
+    background-position: 200% center;
+  }
+}
+
+/* Bounce do contador de cliques */
+@keyframes dpBounce {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.3);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Giro rápido dos emojis do slot machine */
+@keyframes dpGirar {
+  0% {
+    transform: rotateX(0deg);
+    opacity: 1;
+  }
+
+  50% {
+    transform: rotateX(90deg);
+    opacity: 0.3;
+  }
+
+  100% {
+    transform: rotateX(0deg);
+    opacity: 1;
+  }
+}
+
+/*
+ * dpVoarGirar: animação do emoji 💸 subindo e sumindo.
+ * Combina translateY (sobe), rotate (gira como nota voando) e
+ * opacity (some gradualmente). O scale cresce no meio para dar
+ * a sensação de "impacto" antes de sumir — efeito de arremesso.
+ * Usada com a classe .dp-animar, disparada pelo JS com reflow.
+ */
+@keyframes dpVoarGirar {
+  0% {
+    transform: translateY(0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+
+  30% {
+    transform: translateY(-20px) rotate(-8deg) scale(1.15);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(-100px) rotate(15deg) scale(0.4);
+    opacity: 0;
+  }
+}
+
+/* Carteira vazia piscando em vermelho */
+@keyframes dpPiscarVermelho {
+
+  0%,
+  100% {
+    color: #ef4444;
+    text-shadow: 0 0 20px rgba(239, 68, 68, 0.8);
+  }
+
+  50% {
+    color: #fca5a5;
+    text-shadow: 0 0 0 transparent;
+  }
+}
+
+/* ── 6. Responsividade ────────────────────────────────────────────────────── */
+
+@media (max-width: 480px) {
+
+  /* Banner do popup 1 ocupa toda a largura em mobile */
+  #dp1-banner {
+    border-radius: 16px 16px 0 0;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+  }
+
+  /* Modal dos popups 2 e 3 tem padding reduzido */
+  #dp2-modal,
+  #dp3-modal {
+    padding: 20px 16px;
+  }
+
+  /* Botão de recusa da roleta fica um pouco maior em mobile (mais fácil de tocar) */
+  #dp3-btn-sem-cartao {
+    padding: 12px 20px;
+    font-size: 0.85rem;
+  }
+
+  /* Título do CDB um pouco menor */
+  #dp2-titulo-cdb {
+    font-size: 0.9rem;
+  }
+
+  /* Rendimento negativo menor */
+  #dp2-subtitulo-cdb {
+    font-size: 1.5rem;
+  }
+}

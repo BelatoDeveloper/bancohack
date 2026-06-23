@@ -1,26 +1,26 @@
 """
-Model: conta.py
+Model: conta.py (expandido para ZicaPay)
 Representa a conta bancária associada a um Cliente.
-Responsabilidade: guardar saldo e executar as regras de débito/crédito.
 """
+from datetime import datetime
 
 
 class Conta:
     """
-    Entidade que representa uma conta corrente digital.
-
-    Atributos encapsulados:
-        _numero (str): Número identificador da conta.
-        _agencia (str): Agência da conta.
-        _saldo (float): Saldo disponível (somente leitura externa).
+    Entidade que representa uma conta corrente digital ZicaPay.
     """
 
-    def __init__(self, numero: str, agencia: str, saldo_inicial: float = 0.0):
+    def __init__(
+        self,
+        numero: str,
+        agencia: str,
+        saldo_inicial: float = 0.0,
+        tipo: str = "corrente",
+    ):
         self._numero = numero
         self._agencia = agencia
         self._saldo = saldo_inicial
-
-    # ── Getters ──────────────────────────────────────────────────────────
+        self._tipo = tipo
 
     @property
     def numero(self) -> str:
@@ -34,19 +34,18 @@ class Conta:
     def saldo(self) -> float:
         return self._saldo
 
-    # ── Métodos de negócio ───────────────────────────────────────────────
+    @property
+    def tipo(self) -> str:
+        return self._tipo
 
     def depositar(self, valor: float) -> None:
-        """Aumenta o saldo da conta. Chamado quando se recebe uma transferência."""
+        """Aumenta o saldo da conta."""
         if valor <= 0:
             raise ValueError("O valor do depósito deve ser positivo.")
         self._saldo += valor
 
     def debitar(self, valor: float) -> None:
-        """
-        Reduz o saldo. Contém a regra de negócio de saldo insuficiente.
-        Lança ValueError para que o Controller trate e informe o Template.
-        """
+        """Reduz o saldo com validação de saldo insuficiente."""
         if valor <= 0:
             raise ValueError("O valor da transferência deve ser positivo.")
         if valor > self._saldo:

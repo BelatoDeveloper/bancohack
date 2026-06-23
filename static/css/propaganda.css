@@ -1,0 +1,487 @@
+/*
+ * ============================================================
+ * propaganda.css — Estilos do Modal de Propaganda (Dark Pattern)
+ * ============================================================
+ *
+ * Este arquivo controla a aparência do pop-up que bloqueia o
+ * usuário de ver o saldo. É propositalmente frustrante:
+ *   • Overlay escuro e desfocado que bloqueia toda a tela
+ *   • Botão "Pular" com visual enganoso (parece real mas reinicia o vídeo)
+ *   • Countdown timer estressante
+ *   • Layout que força o usuário a assistir o vídeo completo
+ *
+ * ── VARIÁVEIS DE PERSONALIZAÇÃO ──────────────────────────────
+ * Para alterar cores e visuais, edite as variáveis abaixo:
+ */
+
+/* ── Overlay — Fundo escuro que bloqueia a tela toda ─────────────────────────
+ * position: fixed + inset:0 garante que cobre 100% da viewport
+ * z-index muito alto (9999) para ficar na frente de tudo
+ * backdrop-filter: blur() desfoca o conteúdo de fundo
+ * display: none por padrão; toggled via JS para "flex" quando ativo
+ */
+#propaganda-overlay {
+  position: fixed;
+  inset: 0;
+  /* cobre top, right, bottom, left = 0 */
+  z-index: 9999;
+  /* garante que fica na frente de tudo */
+  background: rgba(0, 0, 0, 0.80);
+  /* escurecimento do fundo — 80% opacidade */
+  backdrop-filter: blur(6px);
+  /* desfoca o conteúdo por trás */
+  -webkit-backdrop-filter: blur(6px);
+  /* compatibilidade com Safari */
+  display: none;
+  /* começa escondido */
+  align-items: center;
+  /* centraliza verticalmente */
+  justify-content: center;
+  /* centraliza horizontalmente */
+  padding: 16px;
+  /* margem nas bordas em telas pequenas */
+  animation: overlayFadeIn 0.3s ease;
+  /* animação suave de entrada */
+}
+
+/* Quando o overlay está ativo, muda display para flex */
+#propaganda-overlay.ativo {
+  display: flex;
+}
+
+/* ── Modal — O card do pop-up em si ─────────────────────────────────────────
+ * max-width limita o tamanho em telas grandes
+ * border-radius arredonda os cantos (visual moderno)
+ * box-shadow cria profundidade visual
+ */
+#propaganda-modal {
+  background: #000000;
+  /* fundo escuro azulado — cor personalizável */
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  /* borda roxa sutil — cor personalizável */
+  border-radius: 20px;
+  /* cantos bem arredondados */
+  padding: 28px 24px 24px;
+  /* espaçamento interno */
+  width: 100%;
+  max-width: 420px;
+  /* largura máxima do modal — personalizável */
+  box-shadow:
+    0 25px 50px rgba(0, 0, 0, 0.6),
+    /* sombra externa profunda */
+    0 0 0 1px rgba(139, 92, 246, 0.1),
+    /* borda interna sutil */
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  /* brilho no topo */
+  animation: modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* mola suave */
+  position: relative;
+  overflow: hidden;
+}
+
+/* Efeito decorativo de gradiente no canto superior do modal */
+#propaganda-modal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  /* linha colorida no topo do modal */
+  background: linear-gradient(90deg, #8B5CF6, #EC4899, #F59E0B);
+  /* gradiente roxo→rosa→amarelo */
+}
+
+/* ── Cabeçalho do modal — Ícone + Título ─────────────────────────────────── */
+.propaganda-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+/* Ícone de "publicidade" no cabeçalho */
+.propaganda-header-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #21C25E;
+  /* gradiente roxo→rosa — personalizável */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.propaganda-header h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #F1F5F9;
+  /* cor do título — personalizável */
+  line-height: 1.3;
+  margin: 0;
+}
+
+.propaganda-header span {
+  font-size: 0.72rem;
+  color: #94A3B8;
+  /* cor do subtítulo — personalizável */
+  margin-top: 2px;
+  display: block;
+}
+
+/* ── Texto da propaganda ─────────────────────────────────────────────────── */
+.propaganda-texto {
+  font-size: 0.88rem;
+  color: #000000;
+  /* cor do texto — personalizável */
+  line-height: 1.6;
+  margin-bottom: 18px;
+  padding: 14px 16px;
+  background: #21C25E;
+  /* fundo levemente claro */
+  border-radius: 10px;
+  border-left: 3px solid #8B5CF6;
+  /* borda lateral roxa — personalizável */
+}
+
+/* ── Wrapper do vídeo ────────────────────────────────────────────────────── */
+.propaganda-video-wrapper {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  /* clip do vídeo nos cantos arredondados */
+  background: #000;
+  margin-bottom: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+/*
+ * ── O elemento <video> ───────────────────────────────────────────────────
+ * width: 100% → ocupa toda a largura do wrapper
+ * display: block → remove o espaço extra embaixo do vídeo (comportamento inline)
+ * max-height limita para não ficar gigante em telas grandes
+ */
+#propaganda-video {
+  width: 100%;
+  display: block;
+  max-height: 220px;
+  /* altura máxima do player — personalizável */
+  object-fit: cover;
+  /* cobre o espaço sem distorcer */
+  background: #111;
+}
+
+/* Placeholder quando não há vídeo — exibe uma tela preta com ícone */
+.propaganda-video-placeholder {
+  width: 100%;
+  height: 180px;
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #94A3B8;
+  font-size: 0.8rem;
+}
+
+.propaganda-video-placeholder svg {
+  opacity: 0.5;
+}
+
+/* ── Barra de progresso do tempo ─────────────────────────────────────────── */
+.propaganda-progress-bar-track {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+/*
+ * A barra de preenchimento começa em 0% e vai até 100%
+ * A largura é controlada via JS (style.width = porcentagem)
+ * Transição suave de 1s para parecer contínua
+ */
+.propaganda-progress-bar-fill {
+  height: 100%;
+  width: 0%;
+  /* começa vazia */
+  background: linear-gradient(90deg, #8B5CF6, #EC4899);
+  /* gradiente da barra — personalizável */
+  border-radius: 2px;
+  transition: width 0.5s linear;
+  /* animação suave */
+}
+
+/* ── Contador de tempo ───────────────────────────────────────────────────── */
+.propaganda-timer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+/* Número regressivo (ex: "28s") */
+#propaganda-countdown {
+  font-size: 0.8rem;
+  color: #94A3B8;
+  font-variant-numeric: tabular-nums;
+  /* evita que o número "pule" de posição */
+}
+
+/* Badge "AO VIVO / OBRIGATÓRIO" */
+.propaganda-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: rgba(239, 68, 68, 0.2);
+  /* fundo vermelho translúcido */
+  color: #F87171;
+  /* cor do texto vermelho — personalizável */
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  padding: 3px 8px;
+  border-radius: 20px;
+  animation: badgePulse 1.5s ease-in-out infinite;
+  /* pisca para ser irritante */
+}
+
+/* ── Botões da área de ação ──────────────────────────────────────────────── */
+.propaganda-actions {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+/*
+ * ── BOTÃO "PULAR VÍDEO" — O DARK PATTERN PRINCIPAL ──────────────────────
+ *
+ * DESIGN INTENCIONAL: Este botão tem aparência completamente funcional.
+ * Possui hover, cor de destaque, cursor pointer, transições...
+ * Mas ao clicar, ele REINICIA o vídeo em vez de pular.
+ *
+ * Isso é um Dark Pattern clássico chamado "Trick Question" / "Hidden Costs":
+ * o usuário é induzido a clicar achando que vai economizar tempo,
+ * mas na verdade desperdiça mais tempo ainda.
+ */
+#btn-pular-video {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(139, 92, 246, 0.5);
+  background: #21C25E;
+  /* borda roxa visível */
+  /*background: rgba(139, 92, 246, 0.15);
+  /* fundo roxo translúcido */
+  color: #000000;
+  /* texto roxo claro — parece um botão real */
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  /* cursor de mão = parece clicável e funcional */
+  transition: all 0.2s ease;
+  /* hover suave para enganar o usuário */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* Hover do botão falso — responde visualmente para enganar o usuário */
+#btn-pular-video:hover {
+  background: rgba(19, 223, 0, 0.3);
+  /* fica mais escuro no hover */
+  border-color: rgba(70, 10, 211, 0.8);
+  /* borda mais destacada */
+  transform: translateY(-1px);
+  /* sobe levemente como botão real */
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+  /* sombra de clique */
+}
+
+/* Clique do botão falso — feedback visual de "pressionado" */
+#btn-pular-video:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/*
+ * ── BOTÃO "AGUARDANDO..." (desabilitado) ─────────────────────────────────
+ * Este botão de fechar/confirmar só fica ativo quando o vídeo terminar.
+ * Enquanto o vídeo toca, ele fica cinza e sem cursor pointer.
+ */
+#btn-fechar-propaganda {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: none;
+  background: #ff0000;
+  /* verde de "sucesso" — personalizável */
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: not-allowed;
+  /* cursor proibido enquanto desabilitado */
+  opacity: 0.1;
+  /* transparente enquanto desabilitado */
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  pointer-events: none;
+  /* desabilita completamente os cliques */
+}
+
+/* Quando o vídeo termina, o JS remove a classe "desabilitado" */
+/*
+ * .ativo: classe adicionada pelo JS quando o timer de 30s termina.
+ * pointer-events: auto (NÃO 'all' — 'all' é valor inválido no CSS)
+ * Isso re-habilita os cliques no botão após o timer.
+ */
+#btn-fechar-propaganda.ativo {
+  cursor: pointer;
+  opacity: 1;
+  pointer-events: auto;
+  /* CORRIGIDO: 'all' era inválido, deve ser 'auto' */
+  animation: btnActivate 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+#btn-fechar-propaganda.ativo:hover {
+  background: #ff0000;
+  transform: translateY(-1px);
+}
+
+/* ── Animações de keyframe ───────────────────────────────────────────────── */
+
+/* Entrada do overlay — fade in */
+@keyframes overlayFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* Entrada do modal — slide de baixo com efeito mola */
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.92);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Badge piscando — para chamar atenção */
+@keyframes badgePulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* Botão de fechar ativando — efeito elástico */
+@keyframes btnActivate {
+  0% {
+    transform: scale(0.9);
+  }
+
+  60% {
+    transform: scale(1.05);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Animação do alerta caindo de cima — substituiu o translateY que causava flash */
+@keyframes alertaDescer {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-60px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* ── Alerta customizado de "camelo verde" (alternativa ao alert() nativo) ─ */
+/*
+ * #alerta-camelo: caixa de aviso estilizada que aparece no TOPO DA TELA
+ * quando o usuário clica em "Pular vídeo".
+ * É vermelha, chama atenção, e tem uma mensagem absurda proposital.
+ */
+/*
+ * #alerta-camelo: começa completamente oculto (display:none).
+ * A classe 'visivel' o torna visível via display:block + animação.
+ * Usar display:none garante que NÃO aparece no carregamento da página,
+ * problema que ocorria quando só o transform era usado (o navegador
+ * pode animar do estado padrão causando um flash indesejado).
+ */
+#alerta-camelo {
+  display: none;
+  /* OCULTO por padrão — não aparece no carregamento */
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 99999;
+  /* acima de tudo, inclusive do modal */
+  background: linear-gradient(135deg, #7f1d1d, #991b1b);
+  /* vermelho escuro — personalizável */
+  border: 1px solid rgba(239, 68, 68, 0.6);
+  border-radius: 16px;
+  padding: 16px 20px;
+  max-width: 340px;
+  width: calc(100% - 32px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  animation: none;
+  /* sem animação até a classe 'visivel' ser adicionada */
+}
+
+/* Quando o JS adiciona a classe 'visivel', o alerta aparece com animação de queda */
+#alerta-camelo.visivel {
+  display: block;
+  /* torna visível */
+  animation: alertaDescer 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  /* animação de entrada */
+}
+
+#alerta-camelo .alerta-emoji {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  display: block;
+}
+
+#alerta-camelo .alerta-titulo {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #FCA5A5;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+#alerta-camelo .alerta-mensagem {
+  font-size: 0.80rem;
+  color: #FEE2E2;
+  line-height: 1.5;
+}

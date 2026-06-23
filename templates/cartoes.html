@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block title %}ZicaPay — Meus Cartões{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+  <a href="{{ url_for('dashboard') }}" class="back-btn">
+    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+  </a>
+  <span class="page-title">Meus Cartões</span>
+</div>
+
+<div class="container" style="padding-top:20px;">
+
+  <!-- Card Visual -->
+  <div class="card-visual-container animate-fade-up" id="card-container" title="Clique para ver o verso">
+    <div class="card-visual {% if cartao.bloqueado %}flipped{% endif %}" id="card-flip">
+      <!-- Frente -->
+      <div class="card-face">
+        {% if cartao.bloqueado %}
+        <div class="card-blocked-overlay">
+          <div class="card-blocked-badge">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            Cartão Bloqueado
+          </div>
+        </div>
+        {% endif %}
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:auto;">
+          <div class="card-chip"></div>
+          <div class="card-logo">
+            <svg width="40" height="24" viewBox="0 0 52 52" fill="none">
+              <path d="M10 12H42L16 40H42" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+        <div class="card-number" style="margin-top:auto;">{{ cartao.numero_mascarado }}</div>
+        <div class="card-info">
+          <div>
+            <div class="card-info-label">Titular</div>
+            <div class="card-info-value">{{ cartao.nome_titular | upper }}</div>
+          </div>
+          <div>
+            <div class="card-info-label">Validade</div>
+            <div class="card-info-value">{{ cartao.validade }}</div>
+          </div>
+          <div>
+            <div class="card-info-label">ZicaPay</div>
+            <div class="card-info-value" style="font-size:0.7rem;">Virtual</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Verso -->
+      <div class="card-back" style="display:flex;flex-direction:column;justify-content:center;">
+        <div class="card-back-strip"></div>
+        <div style="padding:0 20px;">
+          <p style="font-size:0.7rem;opacity:0.8;margin-bottom:4px;">CVV de segurança</p>
+          <div class="card-cvv-box" id="cvv-display">• • •</div>
+          <p style="font-size:0.65rem;opacity:0.6;text-align:right;">Não compartilhe este código</p>
+        </div>
+        <div style="position:absolute;bottom:20px;right:20px;">
+          <svg width="32" height="32" viewBox="0 0 52 52" fill="none">
+            <path d="M10 12H42L16 40H42" stroke="rgba(255,255,255,0.6)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p style="text-align:center;font-size:0.75rem;color:var(--text-muted);margin-top:8px;">Toque no cartão para ver o verso</p>
+
+  <!-- Status e Limite -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px;" class="animate-fade-up delay-1">
+    <div class="card card--flat" style="padding:16px;text-align:center;">
+      <div style="width:36px;height:36px;border-radius:10px;background:{% if cartao.bloqueado %}var(--danger-10){% else %}var(--primary-10){% endif %};color:{% if cartao.bloqueado %}var(--danger){% else %}var(--primary){% endif %};display:flex;align-items:center;justify-content:center;margin:0 auto 8px;">
+        {% if cartao.bloqueado %}
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+        {% else %}
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        {% endif %}
+      </div>
+      <p style="font-size:0.7rem;color:var(--text-muted);">Status</p>
+      <p style="font-weight:700;color:{% if cartao.bloqueado %}var(--danger){% else %}var(--success){% endif %};">{{ cartao.status }}</p>
+    </div>
+    <div class="card card--flat" style="padding:16px;text-align:center;">
+      <div style="width:36px;height:36px;border-radius:10px;background:var(--primary-10);color:var(--primary);display:flex;align-items:center;justify-content:center;margin:0 auto 8px;">
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+      </div>
+      <p style="font-size:0.7rem;color:var(--text-muted);">Limite disponível</p>
+      <p style="font-weight:700;color:var(--primary);">R$ {{ '{:,.2f}'.format(cartao.limite_disponivel).replace(',','X').replace('.',',').replace('X','.') }}</p>
+    </div>
+  </div>
+
+  <!-- Barra de limite -->
+  <div class="card animate-fade-up delay-2" style="margin-top:12px;">
+    <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+      <span style="font-size:0.875rem;font-weight:600;">Limite do cartão</span>
+      <span style="font-size:0.875rem;color:var(--text-secondary);">R$ {{ '{:,.2f}'.format(cartao.limite).replace(',','X').replace('.',',').replace('X','.') }}</span>
+    </div>
+    <div style="height:8px;background:var(--surface-2);border-radius:4px;overflow:hidden;">
+      <div style="height:100%;width:{{ ((cartao.limite_disponivel / cartao.limite) * 100) | round | int }}%;background:var(--gradient-primary);border-radius:4px;transition:width 1s;"></div>
+    </div>
+    <p style="font-size:0.75rem;color:var(--text-muted);margin-top:6px;">
+      R$ {{ '{:,.2f}'.format(cartao.limite_disponivel).replace(',','X').replace('.',',').replace('X','.') }} disponível de R$ {{ '{:,.2f}'.format(cartao.limite).replace(',','X').replace('.',',').replace('X','.') }}
+    </p>
+  </div>
+
+  <!-- Ações -->
+  <div class="card animate-fade-up delay-3" style="margin-top:12px;">
+    <h3 style="font-weight:700;margin-bottom:16px;">Configurações do cartão</h3>
+
+    <!-- Revelar CVV -->
+    <button onclick="toggleCVV()" class="profile-item" style="width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--border);border-radius:0;padding:14px 0;cursor:pointer;">
+      <div class="profile-item-icon">
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+      </div>
+      <div class="profile-item-text">
+        <div class="profile-item-label">Ver CVV</div>
+        <div class="profile-item-sub">Toque para revelar temporariamente</div>
+      </div>
+      <svg class="profile-item-arrow" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+    </button>
+
+    <!-- Bloquear/Desbloquear -->
+    <form method="POST" action="{{ url_for('cartoes') }}" style="border-bottom:1px solid var(--border);">
+      <input type="hidden" name="acao" value="{% if cartao.bloqueado %}desbloquear{% else %}bloquear{% endif %}">
+      <button type="submit" class="profile-item" style="width:100%;text-align:left;background:none;border:none;border-radius:0;padding:14px 0;cursor:pointer;"
+        onclick="return confirm('{% if cartao.bloqueado %}Desbloquear o cartão?{% else %}Bloquear o cartão? Compras serão recusadas.{% endif %}')">
+        <div class="profile-item-icon {% if cartao.bloqueado %}{% else %}profile-item-icon--danger{% endif %}">
+          {% if cartao.bloqueado %}
+          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
+          {% else %}
+          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          {% endif %}
+        </div>
+        <div class="profile-item-text">
+          <div class="profile-item-label" style="color:{% if cartao.bloqueado %}var(--success){% else %}var(--danger){% endif %};">
+            {% if cartao.bloqueado %}Desbloquear cartão{% else %}Bloquear cartão{% endif %}
+          </div>
+          <div class="profile-item-sub">{% if cartao.bloqueado %}Reativar compras{% else %}Bloquear temporariamente{% endif %}</div>
+        </div>
+        <svg class="profile-item-arrow" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      </button>
+    </form>
+
+    <!-- Ajustar Limite -->
+    <button onclick="toggleLimiteForm()" class="profile-item" style="width:100%;text-align:left;background:none;border:none;border-radius:0;padding:14px 0;cursor:pointer;">
+      <div class="profile-item-icon">
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+      </div>
+      <div class="profile-item-text">
+        <div class="profile-item-label">Ajustar limite</div>
+        <div class="profile-item-sub">Limite atual: R$ {{ '{:,.2f}'.format(cartao.limite).replace(',','X').replace('.',',').replace('X','.') }}</div>
+      </div>
+      <svg class="profile-item-arrow" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+    </button>
+
+    <div id="limite-form" style="display:none;padding:12px 0 0;">
+      <form method="POST" action="{{ url_for('cartoes') }}">
+        <input type="hidden" name="acao" value="ajustar_limite">
+        <div style="display:flex;gap:8px;align-items:flex-end;">
+          <div class="form-group" style="flex:1;">
+            <label class="form-label" for="novo_limite">Novo limite (R$)</label>
+            <input class="form-input" type="number" id="novo_limite" name="novo_limite" step="100" min="0" max="50000" placeholder="Ex: 5000" value="{{ cartao.limite | int }}">
+          </div>
+          <button type="submit" class="btn btn--primary btn--sm" style="margin-bottom:1px;">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+let cvvRevealed = false;
+function toggleCVV() {
+  cvvRevealed = !cvvRevealed;
+  const el = document.getElementById('cvv-display');
+  const card = document.getElementById('card-flip');
+  if (cvvRevealed) {
+    el.textContent = '{{ cartao.cvv }}';
+    card.classList.add('flipped');
+    setTimeout(() => {
+      cvvRevealed = false;
+      el.textContent = '• • •';
+    }, 5000);
+  } else {
+    el.textContent = '• • •';
+    card.classList.remove('flipped');
+  }
+}
+function toggleLimiteForm() {
+  const form = document.getElementById('limite-form');
+  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+</script>
+{% endblock %}

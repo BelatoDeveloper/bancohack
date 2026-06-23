@@ -1,0 +1,278 @@
+{% extends "base.html" %}
+
+{% block title %}ZicaPay — Pix{% endblock %}
+
+{% block page_content %}
+<!-- Header -->
+<div class="page-header" style="background:var(--gradient-primary);border-bottom:none;">
+  <a href="{{ url_for('dashboard') }}" class="back-btn" style="background:rgba(255,255,255,0.2);color:white;">
+    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+  </a>
+  <span class="page-title" style="color:white;display:flex;align-items:center;gap:8px;">
+    <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+    Área Pix
+  </span>
+  <div style="width:36px;"></div>
+</div>
+
+<div class="container" style="padding-top:16px;">
+
+  <!-- Saldo Pix Banner -->
+  <div style="background:var(--primary-10);border:1px solid var(--primary-20);border-radius:16px;padding:16px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;">
+    <div>
+      <p style="font-size:0.75rem;color:var(--text-secondary);font-weight:500;">Saldo disponível</p>
+      <p style="font-size:1.25rem;font-weight:800;color:var(--primary);">{{ cliente.conta.saldo_formatado() }}</p>
+    </div>
+    <div style="width:40px;height:40px;background:var(--primary);border-radius:12px;display:flex;align-items:center;justify-content:center;">
+      <svg width="22" height="22" fill="none" stroke="white" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs-container">
+    <div class="tabs" style="margin-bottom:20px;">
+      <button class="tab-btn active" data-tab="enviar" id="tab-enviar">⚡ Enviar</button>
+      <button class="tab-btn" data-tab="receber" id="tab-receber">📥 Receber</button>
+      <button class="tab-btn" data-tab="chaves" id="tab-chaves">🔑 Chaves</button>
+    </div>
+
+    <!-- TAB: Enviar Pix -->
+    <div class="tab-content active" data-tab="enviar">
+      <div class="card">
+        <h3 style="font-weight:700;margin-bottom:16px;font-size:1rem;">Enviar Pix</h3>
+        <form method="POST" action="{{ url_for('pix') }}" id="form-enviar-pix">
+          <input type="hidden" name="acao" value="enviar">
+          <div style="display:flex;flex-direction:column;gap:16px;">
+
+            <div class="form-group">
+              <label class="form-label" for="chave_pix">Chave Pix / E-mail do destinatário</label>
+              <div class="input-wrapper">
+                <span class="input-icon">
+                  <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+                </span>
+                <input class="form-input form-input--icon" type="text" id="chave_pix" name="chave_pix" placeholder="CPF, e-mail, telefone ou chave" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="valor-pix">Valor</label>
+              <div class="input-wrapper">
+                <span class="input-icon" style="left:14px;font-weight:600;color:var(--text-secondary);font-size:1rem;">R$</span>
+                <input class="form-input" type="text" id="valor-pix" name="valor" placeholder="0,00" required data-mask="currency" style="padding-left:44px;" inputmode="numeric">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="descricao-pix">Descrição (opcional)</label>
+              <input class="form-input" type="text" id="descricao-pix" placeholder="Para que é esse Pix?">
+            </div>
+
+            <!-- Destinatários rápidos -->
+            {% set outros = [] %}
+            {% for c in [cliente] %}{% endfor %}
+            <div>
+              <p style="font-size:0.75rem;color:var(--text-muted);font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;">Contatos ZicaPay</p>
+              <div style="display:flex;gap:12px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;">
+                {% set contas_possiveis = [
+                  {'nome': 'Bruno C.', 'chave': 'bruno@zicapay.com', 'avatar': 'BC'},
+                  {'nome': 'Carla M.', 'chave': 'carla@zicapay.com', 'avatar': 'CM'},
+                ] %}
+                {% for contato in contas_possiveis %}
+                <button type="button" onclick="document.getElementById('chave_pix').value='{{ contato.chave }}'" style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:12px 16px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--border)'">
+                  <div style="width:40px;height:40px;background:var(--gradient-primary);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:0.875rem;">{{ contato.avatar }}</div>
+                  <span style="font-size:0.75rem;font-weight:600;white-space:nowrap;">{{ contato.nome }}</span>
+                </button>
+                {% endfor %}
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn--primary btn--full btn--lg">
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              Enviar Pix
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Histórico Pix -->
+      {% if historico_pix %}
+      <div style="margin-top:20px;">
+        <h3 style="font-weight:700;font-size:1rem;margin-bottom:12px;">Histórico Pix</h3>
+        <div class="card card--flat" style="overflow:hidden;">
+          <div class="transaction-list">
+            {% for tx in historico_pix[:5] %}
+            <div class="transaction-item">
+              <div class="transaction-icon transaction-icon--pix">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              </div>
+              <div class="transaction-info">
+                <div class="transaction-name">{{ tx.nome }}</div>
+                <div class="transaction-date">{{ tx.data }}</div>
+              </div>
+              <div class="transaction-amount {% if tx.tipo == 'ENTRADA' %}transaction-amount--entrada{% else %}transaction-amount--saida{% endif %}">
+                {{ '+' if tx.tipo == 'ENTRADA' else '-' }}{{ tx.valor_formatado }}
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- TAB: Receber Pix -->
+    <div class="tab-content" data-tab="receber">
+      <div class="card" style="text-align:center;">
+        <div style="width:56px;height:56px;background:var(--primary-10);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;color:var(--primary);">
+          <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+        </div>
+        <h3 style="font-weight:700;font-size:1.125rem;margin-bottom:8px;">Receber via Pix</h3>
+        <p style="color:var(--text-secondary);font-size:0.875rem;margin-bottom:20px;">Compartilhe sua chave ou QR Code para receber</p>
+
+        <!-- QR Code simulado -->
+        <div class="qr-container">
+          <div class="qr-code">
+            <svg width="140" height="140" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- QR Code decorativo (simulado) -->
+              <rect width="140" height="140" fill="white"/>
+              <rect x="10" y="10" width="50" height="50" rx="4" fill="#111" opacity="0.9"/>
+              <rect x="18" y="18" width="34" height="34" rx="2" fill="white"/>
+              <rect x="24" y="24" width="22" height="22" fill="#111" opacity="0.9"/>
+              <rect x="80" y="10" width="50" height="50" rx="4" fill="#111" opacity="0.9"/>
+              <rect x="88" y="18" width="34" height="34" rx="2" fill="white"/>
+              <rect x="94" y="24" width="22" height="22" fill="#111" opacity="0.9"/>
+              <rect x="10" y="80" width="50" height="50" rx="4" fill="#111" opacity="0.9"/>
+              <rect x="18" y="88" width="34" height="34" rx="2" fill="white"/>
+              <rect x="24" y="94" width="22" height="22" fill="#111" opacity="0.9"/>
+              <!-- Módulos do QR -->
+              <rect x="70" y="70" width="12" height="12" fill="#21C25E"/>
+              <rect x="84" y="70" width="12" height="12" fill="#111"/>
+              <rect x="98" y="70" width="12" height="12" fill="#21C25E"/>
+              <rect x="112" y="70" width="12" height="12" fill="#111"/>
+              <rect x="70" y="84" width="12" height="12" fill="#111"/>
+              <rect x="84" y="84" width="12" height="12" fill="#21C25E"/>
+              <rect x="98" y="84" width="12" height="12" fill="#111"/>
+              <rect x="112" y="84" width="12" height="12" fill="#21C25E"/>
+              <rect x="70" y="98" width="12" height="12" fill="#21C25E"/>
+              <rect x="84" y="98" width="12" height="12" fill="#111"/>
+              <rect x="98" y="98" width="12" height="12" fill="#21C25E"/>
+              <rect x="112" y="98" width="12" height="12" fill="#111"/>
+              <rect x="70" y="112" width="12" height="12" fill="#111"/>
+              <rect x="84" y="112" width="12" height="12" fill="#21C25E"/>
+              <rect x="98" y="112" width="12" height="12" fill="#111"/>
+              <rect x="112" y="112" width="12" height="12" fill="#21C25E"/>
+              <!-- Logo no centro -->
+              <rect x="57" y="57" width="26" height="26" rx="6" fill="#21C25E"/>
+              <path d="M63 66h10l-6 10" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <p style="font-size:0.75rem;color:var(--text-muted);">Escaneie para me enviar dinheiro</p>
+
+          {% if chaves_pix %}
+          {% for chave in chaves_pix if chave.ativa %}
+          <div class="qr-key-display">
+            <svg width="18" height="18" fill="none" stroke="var(--primary)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+            <div>
+              <p style="font-size:0.7rem;color:var(--text-muted);">{{ chave.tipo_label }}</p>
+              <p class="qr-key-text">{{ chave.valor }}</p>
+            </div>
+            <button class="btn btn--sm btn--secondary" onclick="ZicaPay.copyToClipboard('{{ chave.valor }}', this)">Copiar</button>
+          </div>
+          {% endfor %}
+          {% else %}
+          <p style="color:var(--text-muted);font-size:0.875rem;">Nenhuma chave cadastrada.<br>Vá em "Chaves" para adicionar.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: Minhas Chaves -->
+    <div class="tab-content" data-tab="chaves">
+      <h3 style="font-weight:700;font-size:1rem;margin-bottom:16px;">Minhas Chaves Pix</h3>
+
+      {% if chaves_pix %}
+        {% for chave in chaves_pix if chave.ativa %}
+        <div class="pix-key-item">
+          <div class="pix-key-icon">
+            {% if chave.tipo == 'email' %}
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            {% elif chave.tipo == 'telefone' %}
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+            {% elif chave.tipo == 'cpf' %}
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4z"/></svg>
+            {% else %}
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+            {% endif %}
+          </div>
+          <div class="pix-key-info">
+            <div class="pix-key-type">{{ chave.tipo_label }}</div>
+            <div class="pix-key-value">{{ chave.valor }}</div>
+          </div>
+          <form method="POST" style="display:inline;">
+            <input type="hidden" name="acao" value="remover_chave">
+            <input type="hidden" name="chave_id" value="{{ chave.id }}">
+            <button type="submit" class="btn btn--sm btn--danger" onclick="return confirm('Remover esta chave?')">Remover</button>
+          </form>
+        </div>
+        {% endfor %}
+      {% else %}
+      <div class="empty-state">
+        <div class="empty-icon">
+          <svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+        </div>
+        <p class="empty-title">Nenhuma chave</p>
+        <p class="empty-sub">Adicione uma chave abaixo</p>
+      </div>
+      {% endif %}
+
+      <!-- Adicionar chave -->
+      <div class="card" style="margin-top:16px;">
+        <h4 style="font-weight:700;margin-bottom:16px;font-size:0.9rem;">+ Adicionar chave Pix</h4>
+        <form method="POST" action="{{ url_for('pix') }}">
+          <input type="hidden" name="acao" value="adicionar_chave">
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div class="form-group">
+              <label class="form-label" for="tipo_chave">Tipo de chave</label>
+              <select class="form-input" id="tipo_chave" name="tipo_chave" required onchange="updateKeyPlaceholder(this)">
+                <option value="">Selecione o tipo</option>
+                <option value="email">E-mail</option>
+                <option value="cpf">CPF</option>
+                <option value="telefone">Telefone</option>
+                <option value="aleatoria">Chave aleatória</option>
+              </select>
+            </div>
+            <div class="form-group" id="valor-chave-group">
+              <label class="form-label" for="valor_chave">Valor da chave</label>
+              <input class="form-input" type="text" id="valor_chave" name="valor_chave" placeholder="Digite o valor" required>
+            </div>
+            <button type="submit" class="btn btn--primary btn--full">Cadastrar chave</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function updateKeyPlaceholder(select) {
+  const input = document.getElementById('valor_chave');
+  const placeholders = {
+    email: 'seu@email.com',
+    cpf: '000.000.000-00',
+    telefone: '(00) 00000-0000',
+    aleatoria: 'Será gerada automaticamente',
+  };
+  input.placeholder = placeholders[select.value] || 'Digite o valor';
+  if (select.value === 'aleatoria') {
+    input.value = crypto.randomUUID ? crypto.randomUUID() : 'chave-' + Math.random().toString(36).substr(2, 9);
+    input.readOnly = true;
+  } else {
+    input.readOnly = false;
+    input.value = '';
+  }
+  if (select.value === 'cpf') input.setAttribute('data-mask', 'cpf');
+  else if (select.value === 'telefone') input.setAttribute('data-mask', 'phone');
+  else input.removeAttribute('data-mask');
+}
+</script>
+{% endblock %}
