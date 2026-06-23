@@ -18,19 +18,29 @@ banco_digital/
 ├── models/                       ← MODEL (dados + regras de negócio)
 │   ├── __init__.py
 │   ├── usuario.py                (superclasse: identidade e autenticação)
-│   ├── conta.py                  (entidade: saldo e operações financeiras)
 │   ├── cliente.py                (subclasse de Usuario, compõe Conta)
+│   ├── conta.py                  (entidade: saldo e operações financeiras)
+│   ├── cartao.py                 (entidade: gerencia os cartões de crédito)
+│   ├── pix.py                    (entidade: gerencia transferências via Pix)
+│   ├── notificacao.py            (entidade: sistema de alertas e notificações)
 │   └── banco_dados.py            (repositório em memória, seed de dados)
 │
 ├── templates/                    ← TEMPLATE (apresentação via Jinja2)
 │   ├── base.html                 (layout mestre: cabeçalho, flash, rodapé)
-│   ├── login.html                (Funcionalidade 1)
-│   ├── dashboard.html            (Funcionalidade 2)
-│   └── transferencia.html        (Funcionalidade 3)
+│   ├── login.html                (Funcionalidade 1 — Autenticação)
+│   ├── dashboard.html            (Funcionalidade 2 — Resumo da Conta)
+│   ├── transferencia.html        (Funcionalidade 3 — Operações Financeiras)
+│   ├── investir.html             (UX: Fraudes e Tinder de investimentos)
+│   └── ...                       (Outros templates de suporte)
 │
-└── static/
-    └── css/
-        └── estilos.css           (CSS com variáveis BEM, totalmente editável)
+└── static/                       ← FRONTEND (Dark Patterns e Má UX)
+    ├── css/
+    │   ├── main.css, estilos.css (CSS base e variáveis)
+    │   ├── darkPopups.css, guia.css, propaganda.css (Poluição visual)
+    └── js/
+        ├── app.js                (Lógica frontend padrão)
+        ├── darkPopups.js, popupsConfig.js, taxa_abertura.js (Lógica de interrupções agressivas)
+        └── guia_zica.js          (Onboarding interativo sarcástico)
 ```
 
 O padrão MTC é uma especialização do MVC (Model-View-Controller) adaptada ao Flask.
@@ -49,9 +59,12 @@ importa Flask ou conhece conceitos HTTP (rotas, request, session).
 | Arquivo            | Responsabilidade                                                                               |
 | ------------------ | ---------------------------------------------------------------------------------------------- |
 | `usuario.py`     | Superclasse. Guarda `_id`, `_nome`, `_email`, `_senha`. Método `verificar_senha()`. |
-| `conta.py`       | Entidade Conta. Guarda `_saldo`. Métodos `depositar()` e `debitar()` com validações.  |
-| `cliente.py`     | Subclasse de `Usuario`. Compõe uma `Conta`. Método `realizar_transferencia()`.         |
-| `banco_dados.py` | Repositório. Armazena todos os clientes em memória e fornece métodos de busca.              |
+| `cliente.py`     | Subclasse de `Usuario`. Compõe `Conta`, lista de `Cartao` e `Notificacao`. Método `realizar_transferencia()`. |
+| `conta.py`       | Entidade Conta. Guarda `_saldo`. Métodos `depositar()` e `debitar()` com validações de negócio reais.  |
+| `cartao.py`      | Entidade que gerencia cartões de crédito e limites (utilizado na tela de cartões). |
+| `pix.py`         | Lógica para validação de chaves e transferências instantâneas. |
+| `notificacao.py` | Modelo para mensagens do sistema enviadas ao cliente. |
+| `banco_dados.py` | Repositório em memória, simulando um banco de dados e instanciando o seed de clientes iniciais. |
 
 ### 2.2 Template (`templates/`)
 
@@ -172,6 +185,27 @@ Ao final, redireciona ao dashboard com `redirect(url_for('dashboard'))`.
 
 ---
 
+### Funcionalidade 4 — Dark Patterns e Má Experiência de Usuário (Isolamento no Frontend)
+
+| Item                                  | Detalhe                                                                                                                                                                         |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Rotas Envolvidas**            | Diversas (`/dashboard`, `/investir`, `/cartoes`)                                                                                                                                |
+| **Classes do Model envolvidas** | Nenhuma. As regras de mau design não poluem as regras de negócio!                                                                                                               |
+| **Camadas Ativas**              | **Template** (`.html`) e **Static** (`.css` e `.js`)                                                                                                                            |
+
+**Fluxo de "Bad UX":**
+Uma das maiores forças do padrão MTC neste projeto acadêmico é a prova de que a camada de negócio (Model) permanece íntegra enquanto a camada de apresentação (Template/Static) pode ser um caos intencional.
+
+Os Dark Patterns desenvolvidos incluem:
+1. **Taxa de Abertura Inesperada (`taxa_abertura.js`):** Um pop-up obriga o usuário a pagar uma taxa e fazer um empréstimo compulsório logo após o login.
+2. **Onboarding do Mal (`guia_zica.js`):** Um guia interativo abusivo injetado via JavaScript que persegue o usuário pelo DOM induzindo a péssimas decisões financeiras.
+3. **Dark Pop-ups e Interrupções (`darkPopups.js`):** Modais que fogem do mouse ("Mestre da Fuga") ou exigem resolução de Captcha com cronômetro ("Refém Intelectual").
+4. **Tinder Financeiro (`investir.js` e `investir.html`):** Telas com carrosséis viciados e compras forçadas por deslizamento (swipe).
+
+Todo o controle dessas experiências frustrantes é feito puramente via **JavaScript Assíncrono** (Fetch API chamando rotas do Controller para debitar o Model de forma disfarçada) e **Manipulação do DOM**. O Backend em Python desconhece as intenções maliciosas da interface — ele apenas recebe comandos RESTful padrão (ex: deduzir saldo via API) e os executa de forma segura e perfeitamente encapsulada.
+
+---
+
 ## 4. Modelagem orientada a objetos — justificativa
 
 ### 4.1 Hierarquia de herança
@@ -278,5 +312,3 @@ USUÁRIO
 
 ---
 
-*Relatório gerado para fins acadêmicos. Projeto não utiliza banco de dados real.*
-*Todo o estado é mantido em memória durante a sessão do servidor.*
