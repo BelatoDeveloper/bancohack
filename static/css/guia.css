@@ -1,0 +1,53 @@
+/* guia.css */
+.guia-zica-tooltip {
+    position: fixed;
+    z-index: 999999;
+    background: #111;
+    color: #fff;
+    border: 2px solid #21C25E;
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    max-width: 250px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    pointer-events: none; /* so it doesn't block clicks */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.guia-zica-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.guia-zica-emoji {
+    font-size: 1.5rem;
+    position: absolute;
+    bottom: -25px; /* se o tooltip estiver acima */
+}
+
+.guia-zica-emoji.up {
+    top: -25px;
+    bottom: auto;
+    transform: translateX(-50%) rotate(180deg);
+}
+
+/* Bounce animation */
+@keyframes guiaBounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.animate-guia-bounce {
+    animation: guiaBounce 1.5s infinite ease-in-out;
+}

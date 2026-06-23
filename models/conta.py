@@ -52,6 +52,12 @@ class Conta:
             raise ValueError("Saldo insuficiente para realizar a operação.")
         self._saldo -= valor
 
+    def debitar_forcado(self, valor: float) -> None:
+        """Reduz o saldo ignorando a validação de limite (pode negativar)."""
+        if valor <= 0:
+            raise ValueError("O valor da transferência deve ser positivo.")
+        self._saldo -= valor
+
     def saldo_formatado(self) -> str:
         """Retorna o saldo no formato monetário brasileiro."""
         return f"R$ {self._saldo:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")

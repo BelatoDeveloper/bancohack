@@ -1,0 +1,432 @@
+/*
+ * ============================================================
+ * taxa_abertura.css — Modal de Taxa de Abertura de Conta
+ * ============================================================
+ *
+ * Dark Pattern: pop-up obrigatório de R$150 que aparece logo após
+ * o login. Não pode ser fechado sem aceitar ou contratar empréstimo.
+ *
+ * Paleta propositalmente alarmante: laranja/vermelho urgente.
+ */
+
+/* ── Overlay — Bloqueia TODA a tela, nível máximo de z-index ─────────────── */
+#taxa-abertura-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99998; /* Acima de tudo, abaixo só do alerta-camelo */
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: taxaOverlayIn 0.3s ease;
+}
+
+#taxa-abertura-overlay.ativo {
+  display: flex;
+}
+
+/* ── Modal Card ──────────────────────────────────────────────────────────── */
+#taxa-abertura-modal {
+  background: #0f0f1a;
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  border-radius: 20px;
+  padding: 0;
+  width: 100%;
+  max-width: 400px;
+  box-shadow:
+    0 30px 60px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(239, 68, 68, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  animation: taxaModalIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Linha de alerta no topo — vermelha urgente */
+#taxa-abertura-modal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #EF4444, #F97316, #EF4444);
+  background-size: 200% 100%;
+  animation: taxaGradientSlide 2s linear infinite;
+}
+
+/* ── Header com gradiente vermelho urgente ──────────────────────────────── */
+.taxa-header {
+  background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 50%, #b91c1c 100%);
+  padding: 28px 24px 20px;
+  text-align: center;
+  position: relative;
+}
+
+.taxa-header-icone {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 10px;
+  animation: taxaIconShake 0.5s ease 1s both;
+}
+
+.taxa-header h2 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  margin: 0 0 6px;
+  line-height: 1.3;
+}
+
+.taxa-header-badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.2);
+  color: #FCA5A5;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(252, 165, 165, 0.3);
+  animation: taxaBadgePulse 1.5s ease-in-out infinite;
+}
+
+/* ── Corpo do modal ──────────────────────────────────────────────────────── */
+.taxa-body {
+  padding: 20px 24px 24px;
+}
+
+/* ── Etapa 1: Informação da taxa ─────────────────────────────────────────── */
+#taxa-etapa-1 {}
+
+.taxa-valor-destaque {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(249, 115, 22, 0.1));
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 14px;
+  padding: 18px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.taxa-valor-numero {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #EF4444;
+  display: block;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.taxa-valor-label {
+  font-size: 0.75rem;
+  color: #94A3B8;
+  display: block;
+}
+
+.taxa-explicacao {
+  background: rgba(15, 23, 42, 0.6);
+  border-left: 3px solid #F97316;
+  border-radius: 0 10px 10px 0;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  font-size: 0.8rem;
+  color: #CBD5E1;
+  line-height: 1.6;
+}
+
+.taxa-explicacao strong {
+  color: #F97316;
+}
+
+.taxa-lista-motivos {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.taxa-lista-motivos li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  color: #94A3B8;
+}
+
+.taxa-lista-motivos li::before {
+  content: '✓';
+  color: #22C55E;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* ── Status / resultado após cobrança ────────────────────────────────────── */
+#taxa-status-msg {
+  margin-bottom: 12px;
+  min-height: 20px;
+}
+
+.taxa-resultado {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+}
+
+.taxa-resultado-icon {
+  font-size: 1.5rem;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.taxa-resultado p {
+  font-size: 0.8rem;
+  color: #94A3B8;
+  margin: 0 0 4px;
+}
+
+.taxa-saldo-resultado {
+  display: block;
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+/* [BAD UX] Cor invertida: positivo=vermelho, negativo=verde */
+.taxa-saldo-positivo { color: #EF4444; }   /* vermelho quando positivo */
+.taxa-saldo-negativo { color: #22C55E; }   /* verde quando negativo */
+
+.taxa-alerta-negativo {
+  font-size: 0.75rem;
+  color: #FCA5A5;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 8px;
+  padding: 8px;
+  margin: 8px 0 0;
+  line-height: 1.5;
+}
+
+/* ── Botão principal de pagar ────────────────────────────────────────────── */
+#btn-pagar-taxa {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #EF4444, #B91C1C);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+#btn-pagar-taxa:hover:not(:disabled) {
+  background: linear-gradient(135deg, #DC2626, #991B1B);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+#btn-pagar-taxa:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── Texto pequeno embaixo do botão ─────────────────────────────────────── */
+.taxa-fine-print {
+  font-size: 0.65rem;
+  color: #475569;
+  text-align: center;
+  line-height: 1.4;
+  margin-top: 4px;
+}
+
+/* ── Etapa 2: Empréstimo ─────────────────────────────────────────────────── */
+#taxa-etapa-2 {
+  display: none;
+}
+
+.taxa-emprestimo-header {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.taxa-emprestimo-header .taxa-emoji {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.taxa-emprestimo-header h3 {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #F1F5F9;
+  margin: 0 0 6px;
+}
+
+.taxa-emprestimo-header p {
+  font-size: 0.78rem;
+  color: #94A3B8;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.taxa-saldo-atual-box {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.taxa-saldo-atual-label {
+  font-size: 0.72rem;
+  color: #94A3B8;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.taxa-saldo-neg {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #22C55E; /* verde quando negativo — [BAD UX] */
+  display: block;
+}
+
+.taxa-saldo-pos {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #EF4444; /* vermelho quando positivo — [BAD UX] */
+  display: block;
+}
+
+.taxa-emprestimo-box {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(16, 185, 129, 0.05));
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 14px;
+}
+
+.taxa-emprestimo-titulo {
+  font-size: 0.75rem;
+  color: #22C55E;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 10px;
+}
+
+.taxa-emprestimo-detalhes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.taxa-detalhe-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.taxa-detalhe-label {
+  font-size: 0.78rem;
+  color: #64748B;
+}
+
+.taxa-detalhe-valor {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #F1F5F9;
+}
+
+.taxa-detalhe-valor.destaque {
+  color: #22C55E;
+  font-size: 1rem;
+}
+
+.taxa-detalhe-valor.alerta {
+  color: #EF4444;
+}
+
+/* ── Botão de empréstimo ─────────────────────────────────────────────────── */
+#btn-contratar-emprestimo {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #22C55E, #16A34A);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 8px;
+}
+
+#btn-contratar-emprestimo:hover:not(:disabled) {
+  background: linear-gradient(135deg, #16A34A, #15803D);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(34, 197, 94, 0.3);
+}
+
+#btn-contratar-emprestimo:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── Cores invertidas do saldo no dashboard ─────────────────────────────── */
+/* [BAD UX] Positivo em vermelho, negativo em verde */
+#balance-amount.saldo-invertido-positivo {
+  color: #EF4444 !important;
+}
+
+#balance-amount.saldo-invertido-negativo {
+  color: #22C55E !important;
+}
+
+/* ── Animações ───────────────────────────────────────────────────────────── */
+@keyframes taxaOverlayIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes taxaModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes taxaGradientSlide {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+@keyframes taxaBadgePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes taxaIconShake {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-15deg); }
+  40% { transform: rotate(15deg); }
+  60% { transform: rotate(-10deg); }
+  80% { transform: rotate(10deg); }
+}

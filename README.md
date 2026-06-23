@@ -33,17 +33,21 @@ O sistema viola propositalmente as Heurísticas de Usabilidade de Jakob Nielsen 
 2. **Termos de Uso** — checkboxes interdependentes e contraditórios que nunca deixam o usuário aceitar de primeira
 3. **Cadastro** — regras de senha absurdas e contraditórias + campo de confirmar senha que sempre diz não coincidir
 4. **Login** — regras de senha que só aparecem após tentar entrar, mudam a cada tentativa e se contradizem
-5. **Dashboard** — saldo visível apenas após assistir propaganda obrigatória
-6. **Propaganda** — anúncio impossível de pular (o usuário aceitou nos termos)
-7. **Operações** — transferências, Pix e extrato funcionam corretamente, mas com interface confusa
+5. **Taxa de Abertura** — cobrança surpresa imediata de R$150; saldo negativo obriga a aceitar um empréstimo com juros abusivos
+6. **Dashboard** — saldo visível apenas após assistir propaganda obrigatória (com som forçado)
+7. **Onboarding do Mal** — um guia interativo que insulta o usuário e o guia para tomar péssimas decisões financeiras
+8. **Pop-ups Interativos** — "O Mestre da Fuga" (botão que foge do mouse), "O Refém Intelectual" (captcha cronometrado), e "A Roleta da Recusa" (slot machine para cancelar um cartão de crédito)
+9. **Investimentos** — "Tinder dos Investimentos" (swipe compra sem confirmação) e "Apostas Hípicas" (corrida viciada onde o usuário sempre perde e é taxado pelo veterinário)
 
 **Princípios de UX/UI violados:**
 
 - **H1 — Visibilidade do status:** regras de senha só aparecem após tentar submeter
+- **H3 — Controle e liberdade:** taxa de abertura compulsória e empréstimo forçado para sair da tela; popups sem botão claro de fechamento
 - **H4 — Consistência e padrões:** regras se contradizem abertamente entre si
-- **H5 — Prevenção de erros:** o sistema provoca erros ativamente
+- **H5 — Prevenção de erros:** o sistema provoca erros ativamente (compra via swipe, captcha impossível)
 - **H6 — Reconhecimento em vez de memorização:** regras mudam a cada tentativa
-- **H9 — Mensagens de erro:** mensagens inúteis como "a senha deve expressar um sentimento positivo"
+- **H8 — Estética e design minimalista:** poluição visual extrema na roleta de cartões e apostas
+- **H9 — Mensagens de erro:** mensagens inúteis e humilhantes como "a senha deve expressar um sentimento positivo" ou insultos do guia
 - **H10 — Ajuda e documentação:** termos impossíveis de aceitar, propaganda impossível de pular
 
 **Proposta de melhoria:** uma versão corrigida do fluxo seguiria as heurísticas violadas — exibindo os requisitos de senha antes do preenchimento, com validação em tempo real, sem regras contraditórias, e sem barreiras artificiais para acessar informações da própria conta.
@@ -129,7 +133,8 @@ bancohack/
 │   ├── pix.html
 │   ├── cartoes.html
 │   ├── notificacoes.html
-│   └── perfil.html
+│   ├── perfil.html
+│   └── investir.html             (tela de investimentos fraudulentos)
 │
 └── static/
     ├── css/
@@ -137,7 +142,10 @@ bancohack/
     │   ├── main.css
     │   ├── termos.css
     │   ├── darkPopups.css
-    │   └── propaganda.css
+    │   ├── propaganda.css
+    │   ├── taxa_abertura.css
+    │   ├── guia.css
+    │   └── investir.css
     └── js/
         ├── app.js
         ├── login.js
@@ -145,7 +153,10 @@ bancohack/
         ├── termos.js
         ├── propaganda.js
         ├── darkPopups.js
-        └── popupsConfig.js
+        ├── popupsConfig.js
+        ├── taxa_abertura.js      (lógica da extorsão pós-login)
+        ├── guia_zica.js          (onboarding sarcástico)
+        └── investir.js           (lógica das apostas e swipe)
 ```
 
 > Para detalhamento completo da arquitetura, consulte o arquivo `RELATORIO_MTC.md`.

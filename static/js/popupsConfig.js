@@ -136,7 +136,7 @@ window.DARK_POPUPS_CONFIG = {
     niveis: [
       {
         nivel: 1,
-        emoji: "💎",
+        emoji: '<i class="ph ph-diamond"></i>',
         nome: "Black Diamante Eterno",
         anuidade: "R$ 4.999,90/ano",
         humilhacao: "Você é exatamente o tipo de cliente que merece exclusividade. Recusar isso é quase um insulto ao seu próprio potencial.",
@@ -146,7 +146,7 @@ window.DARK_POPUPS_CONFIG = {
       },
       {
         nivel: 2,
-        emoji: "🥈",
+        emoji: '<i class="ph ph-medal" style="color:#C0C0C0"></i>',
         nome: "Platina Prestígio",
         anuidade: "R$ 2.499,90/ano",
         humilhacao: "Tudo bem, ninguém é perfeito. Ainda dá pra impressionar no jantar de família.",
@@ -156,7 +156,7 @@ window.DARK_POPUPS_CONFIG = {
       },
       {
         nivel: 3,
-        emoji: "🥇",
+        emoji: '<i class="ph ph-medal" style="color:#FFD700"></i>',
         nome: "Gold Esperançoso",
         anuidade: "R$ 999,90/ano",
         humilhacao: "Gold é pra quem tem fé no próprio futuro financeiro. Você tem fé, não tem?",
@@ -166,7 +166,7 @@ window.DARK_POPUPS_CONFIG = {
       },
       {
         nivel: 4,
-        emoji: "🎗️",
+        emoji: '<i class="ph ph-ticket"></i>',
         nome: "Prata 'Pelo Menos Você Tentou'",
         anuidade: "R$ 399,90/ano",
         humilhacao: "Esse aqui é bem mais em conta. Quase todo mundo consegue pagar isso. Quase.",
@@ -176,7 +176,7 @@ window.DARK_POPUPS_CONFIG = {
       },
       {
         nivel: 5,
-        emoji: "🪫",
+        emoji: '<i class="ph ph-battery-warning-vertical"></i>',
         nome: "Básico 'Modo Sobrevivência'",
         anuidade: "R$ 99,90/ano",
         humilhacao: "Sem benefícios, sem milhas, sem brilho. Mas é um cartão. Isso já é alguma coisa, né?",
@@ -186,7 +186,7 @@ window.DARK_POPUPS_CONFIG = {
       },
       {
         nivel: 6,
-        emoji: "👛",
+        emoji: '<i class="ph ph-wallet"></i>',
         nome: "Modo Pedestre Financeiro",
         anuidade: "R$ 0,00",
         humilhacao: "Parabéns. Você optou oficialmente por viver sem crédito, sem pontos, sem futuro.",

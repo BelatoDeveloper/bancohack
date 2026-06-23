@@ -36,6 +36,8 @@ class Cliente(Usuario):
         self._cartao: Cartao = Cartao(id=id, limite=5000.0, nome_titular=nome)
         self._notificacoes: list[Notificacao] = []
         self._pix_id_counter = 1
+        self.cartao_oferta_vista: bool = False
+        self.pedido_cartao: dict | None = None
 
     # ── Getters ─────────────────────────────────────────────────────────
 

@@ -33,7 +33,7 @@
  * IMPORTANTE: Coloque seu arquivo .mp4 dentro de /static/videos/
  * e atualize o caminho abaixo.
  */
-const CAMINHO_DO_VIDEO = '';   // <- COLOQUE AQUI O CAMINHO DO SEU VIDEO MP4
+const CAMINHO_DO_VIDEO = './static/midia/koda.mp4';   // <- COLOQUE AQUI O CAMINHO DO SEU VIDEO MP4
 
 /**
  * DURACAO_PROPAGANDA: Duração em segundos da propaganda obrigatória.
@@ -110,9 +110,8 @@ function abrirModalPropaganda() {
       video.style.display = 'block';
       video.load();
       video.currentTime = 0;
-      video.play().catch(function (err) {
-        console.warn('[Propaganda] Autoplay bloqueado:', err.message);
-      });
+      // O play() e volume=1 foram movidos para dentro do callback de click original
+      // para garantir a permissão do navegador para áudio
     } else {
       video.style.display = 'none';
     }
@@ -363,6 +362,13 @@ function initPropaganda() {
     } else {
       // Abrir modal de propaganda em vez de revelar o saldo diretamente
       abrirModalPropaganda();
+      var video = document.getElementById('propaganda-video');
+      if (video && CAMINHO_DO_VIDEO && CAMINHO_DO_VIDEO.trim() !== '') {
+        video.volume = 1.0;
+        video.play().catch(function (err) {
+          console.warn('[Propaganda] Autoplay bloqueado:', err.message);
+        });
+      }
     }
   }, true); // <- 'true' aqui é o que ativa o event capture
 

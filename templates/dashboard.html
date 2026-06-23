@@ -11,6 +11,9 @@
      Controla: banner armadilha "Seu dinheiro está derretendo!" e a
      hierarquia visual falsa nos quick actions (destaque vs. secundario). -->
 <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard-darkux.css') }}">
+<!-- ─── CSS da Taxa de Abertura de Conta ─────────────────────────────────────
+     [BAD UX] Pop-up obrigatório de R$150 + empréstimo forçado. -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/taxa_abertura.css') }}">
 {% endblock %}
 
 
@@ -62,6 +65,8 @@
        A classe 'hidden' é adicionada pelo propaganda.js via JavaScript.
        O valor real do saldo vem do servidor (Jinja2), mas é escondido por CSS.
        O data-saldo-real não é usado diretamente — o texto do elemento é o real. -->
+  <!-- Data element para taxa_abertura.js ler o saldo real sem scraping de texto -->
+  <span id="saldo-real-data" data-saldo="{{ conta.saldo }}" style="display:none;"></span>
   <div class="balance-amount" id="balance-amount">{{ conta.saldo_formatado() }}</div>
   <div class="balance-meta">Ag. {{ conta.agencia }} · Conta {{ conta.numero }}</div>
 </div>
@@ -77,7 +82,8 @@
      explorar a aversão à perda (Loss Aversion Bias).
      ════════════════════════════════════════════════════════════════════════ -->
 <div class="animate-fade-up" style="padding: 0 16px 4px;">
-  <a href="{{ url_for('investir') }}" id="banner-armadilha" class="banner-armadilha" aria-label="Ir para a área de Investimentos">
+  <a href="{{ url_for('investir') }}" id="banner-armadilha" class="banner-armadilha"
+    aria-label="Ir para a área de Investimentos">
 
     <!-- Partículas decorativas de fundo (CSS puro, sem imagens) -->
     <span class="banner-particle banner-particle--1" aria-hidden="true"></span>
@@ -392,7 +398,7 @@
           - 'playsinline': toca no lugar em mobile (sem fullscreen automático)
           - 'muted': permite autoplay em navegadores modernos
       -->
-      <video id="propaganda-video" playsinline muted src="" style="display:none;"></video>
+      <video id="propaganda-video" playsinline src="" style="display:none;"></video>
 
       <!-- Placeholder exibido quando CAMINHO_DO_VIDEO está vazio -->
       <div id="propaganda-video-placeholder" class="propaganda-video-placeholder">
@@ -460,6 +466,118 @@
 </div>
 <!-- Fim #propaganda-overlay -->
 
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     [DARK PATTERN] TAXA OBRIGATÓRIA DE ABERTURA DE CONTA — R$ 150,00
+     ═══════════════════════════════════════════════════════════════════════════
+
+     Aparece logo após o login. O usuário NÃO pode fechar sem pagar.
+     Se não tiver saldo, é obrigado a contratar um empréstimo.
+     Dark Patterns: Hidden Costs, Forced Action, Roach Motel.
+-->
+<div id="taxa-abertura-overlay" role="dialog" aria-modal="true" aria-labelledby="taxa-titulo">
+  <div id="taxa-abertura-modal">
+
+    <!-- ── Cabeçalho Alarmante ────────────────────────────────────────────── -->
+    <div class="taxa-header">
+      <span class="taxa-header-icone">⚠️</span>
+      <h2 id="taxa-titulo">Taxa de Ativação da Conta</h2>
+      <span class="taxa-header-badge">🔴 OBRIGATÓRIO — Ação Requerida</span>
+    </div>
+
+    <div class="taxa-body">
+
+      <!-- ── ETAPA 1: Cobrança da taxa ─────────────────────────────────── -->
+      <div id="taxa-etapa-1">
+
+        <!-- Destaque do valor -->
+        <div class="taxa-valor-destaque">
+          <span class="taxa-valor-numero">R$ 150,00</span>
+          <span class="taxa-valor-label">Taxa única de ativação e abertura de conta</span>
+        </div>
+
+        <!-- Justificativa absurda -->
+        <div class="taxa-explicacao">
+          Conforme <strong>Cláusula 47.3-B</strong> dos Termos de Uso que você aceitou,
+          toda conta ZicaPay está sujeita à <strong>Taxa de Ativação de Infraestrutura Digital (TAID)</strong>
+          no valor de R$ 150,00, cobrada no primeiro acesso pós-cadastro.
+        </div>
+
+        <!-- Lista de "benefícios" incluídos -->
+        <ul class="taxa-lista-motivos">
+          <li>Acesso à plataforma ZicaPay garantido por 12 meses</li>
+          <li>Proteção contra fraudes (básica)</li>
+          <li>Suporte por e-mail em até 30 dias úteis</li>
+          <li>Certificado digital de conta ativa (PDF)</li>
+        </ul>
+
+        <!-- Área de status/resultado após cobrança -->
+        <div id="taxa-status-msg"></div>
+
+        <!-- Botão de pagamento -->
+        <button id="btn-pagar-taxa" type="button">
+          💳 Pagar R$ 150,00 e ativar conta
+        </button>
+
+        <p class="taxa-fine-print">
+          Ao clicar, você autoriza o débito imediato de R$ 150,00 da sua conta corrente ZicaPay.
+          Taxa não reembolsável conforme política vigente.
+        </p>
+      </div>
+
+      <!-- ── ETAPA 2: Empréstimo obrigatório (se saldo insuficiente) ────── -->
+      <div id="taxa-etapa-2">
+
+        <div class="taxa-emprestimo-header">
+          <span class="taxa-emoji">📉</span>
+          <h3>Saldo Insuficiente Detectado</h3>
+          <p>Sua conta está negativa após a cobrança da taxa. Para continuar
+            usando o ZicaPay, você precisa regularizar seu saldo agora mesmo.</p>
+        </div>
+
+        <!-- Saldo atual (atualizado via JS) -->
+        <div class="taxa-saldo-atual-box">
+          <span class="taxa-saldo-atual-label">Saldo atual da sua conta:</span>
+          <span id="taxa-saldo-display" class="taxa-saldo-neg">-</span>
+        </div>
+
+        <!-- Oferta de empréstimo -->
+        <div class="taxa-emprestimo-box">
+          <div class="taxa-emprestimo-titulo">💰 Empréstimo ZicaPay — Aprovação Imediata</div>
+          <div class="taxa-emprestimo-detalhes">
+            <div class="taxa-detalhe-row">
+              <span class="taxa-detalhe-label">Valor do empréstimo:</span>
+              <span class="taxa-detalhe-valor destaque">R$ 500,00</span>
+            </div>
+            <div class="taxa-detalhe-row">
+              <span class="taxa-detalhe-label">Taxa de juros:</span>
+              <span class="taxa-detalhe-valor alerta">12,99% ao mês</span>
+            </div>
+            <div class="taxa-detalhe-row">
+              <span class="taxa-detalhe-label">Total a pagar:</span>
+              <span class="taxa-detalhe-valor alerta">R$ 2.147,83</span>
+            </div>
+            <div class="taxa-detalhe-row">
+              <span class="taxa-detalhe-label">Prazo:</span>
+              <span class="taxa-detalhe-valor">36x de R$ 59,66</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botão de contratar empréstimo -->
+        <button id="btn-contratar-emprestimo" type="button">
+          ✅ Contratar Empréstimo e Regularizar Conta
+        </button>
+
+        <p class="taxa-fine-print">
+          Ao contratar, você concorda com os termos do empréstimo ZicaPay.
+          A taxa de 12,99% a.m. é fixa e não sujeita a negociação.
+        </p>
+      </div>
+
+    </div><!-- .taxa-body -->
+  </div><!-- #taxa-abertura-modal -->
+</div><!-- #taxa-abertura-overlay -->
+
 {% endblock %}
 
 {% block scripts %}
@@ -468,4 +586,8 @@
      propaganda.js sobrescreve o initBalanceToggle() do app.js com a
      lógica de propaganda forçada. -->
 <script src="{{ url_for('static', filename='js/propaganda.js') }}"></script>
+<!-- ─── JavaScript da Taxa de Abertura + Polling + Cores Invertidas ──────────
+     [BAD UX] Exibe pop-up de R$150 obrigatório + força empréstimo.
+     Também faz polling do saldo a cada 5s e aplica cores invertidas. -->
+<script src="{{ url_for('static', filename='js/taxa_abertura.js') }}"></script>
 {% endblock %}

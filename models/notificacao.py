@@ -44,7 +44,9 @@ class Notificacao:
 
     @property
     def data_formatada(self) -> str:
-        agora = datetime.now()
+        # Pega o timezone atual da data se existir, para evitar erro de offset
+        tz = getattr(self._data, 'tzinfo', None)
+        agora = datetime.now(tz) if tz else datetime.now()
         diff = agora - self._data
         if diff.seconds < 60:
             return "Agora"

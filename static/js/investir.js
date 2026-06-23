@@ -27,17 +27,55 @@ document.addEventListener('DOMContentLoaded', () => {
     );
     /** Atualiza o texto do saldo no hero e anima a dedução */
     function debitarSaldo(valor) {
-        saldoVisual = Math.max(0, saldoVisual - valor);
-        const el = document.getElementById('invest-saldo-valor');
-        if (!el) return;
-        el.textContent = formatBRL(saldoVisual);
-        // [BAD UX] 2 — Animação de piscar vermelho ao comprar
-        el.classList.remove('debited');
-        void el.offsetWidth; // reflow para reiniciar animação
-        el.classList.add('debited');
+        // Busca saldo atualizado do servidor para garantir sincronia
+        fetch('/api/accounts/balance')
+            .then(r => r.json())
+            .then(d => {
+                saldoVisual = d.saldo;
+                const el = document.getElementById('invest-saldo-valor');
+                if (!el) return;
+                el.textContent = formatBRL(saldoVisual);
+                el.classList.remove('debited');
+                void el.offsetWidth;
+                el.classList.add('debited');
+            })
+            .catch(() => {
+                // Fallback: calcula local caso API falhe
+                saldoVisual = saldoVisual - valor;
+                const el = document.getElementById('invest-saldo-valor');
+                if (!el) return;
+                el.textContent = formatBRL(saldoVisual);
+                el.classList.remove('debited');
+                void el.offsetWidth;
+                el.classList.add('debited');
+            });
     }
-    // =========================================================================
-    // [BAD UX] 1 — CAPTCHA ANTI-ROBÔ
+    /**
+     * Debita um valor no backend (Firebase) e atualiza o saldo visual.
+     * @param {number} valor - valor a cobrar
+     * @param {string} motivo - descrição da cobrança para o extrato
+     * @param {string} msg - mensagem para a notificação
+     */
+    function cobrarNoBackend(valor, motivo, msg) {
+        fetch('/api/fees/charge', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ valor, motivo, mensagem: msg })
+        })
+        .then(r => r.json())
+        .then(d => {
+            if (d.novo_saldo !== undefined) {
+                saldoVisual = d.novo_saldo;
+                const el = document.getElementById('invest-saldo-valor');
+                if (!el) return;
+                el.textContent = formatBRL(saldoVisual);
+                el.classList.remove('debited');
+                void el.offsetWidth;
+                el.classList.add('debited');
+            }
+        })
+        .catch(() => debitarSaldo(valor)); // fallback visual
+    }
     // Modal de verificação que bloqueia toda a tela ao entrar.
     // • Botão "carne e osso" → fecha o modal normalmente.
     // • Botão "código"       → piscada vermelha + modal de punição NÃO fecha.
@@ -234,7 +272,12 @@ document.addEventListener('DOMContentLoaded', () => {
      * Deduz o valor do saldo visual e exibe o feedback de compra.
      */
     function purchase(ativo) {
-        debitarSaldo(ativo.preco);
+        // Cobra no backend (debita da conta real no Firebase)
+        cobrarNoBackend(
+            ativo.preco,
+            `Investimento: ${ativo.nome}`,
+            `✅ Compra de "${ativo.nome}" realizada! ${formatBRL(ativo.preco)} debitados automaticamente.`
+        );
 
         const feedback = document.getElementById('purchase-feedback');
         if (feedback) {
@@ -441,8 +484,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Esconde resultado anterior
         const resultEl = document.getElementById('hipica-result');
         if (resultEl) resultEl.classList.remove('visible');
-        // Debita o valor da aposta imediatamente (sem confirmação)
-        debitarSaldo(betValue);
+        // Debita o valor da aposta imediatamente no backend (sem confirmação)
+        cobrarNoBackend(
+            betValue,
+            'Aposta Hípica ZicaPay',
+            `🐎 Aposta de ${formatBRL(betValue)} realizada! Boa sorte... vai precisar.`
+        );
         // Reseta posição dos cavalos
         const horseUser = document.getElementById('horse-user');
         const horseRival = document.getElementById('horse-rival');
@@ -475,7 +522,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 resultEl.classList.add('visible');
                 // Calcula "custo veterinário" inventado (entre R$ 3.000 e R$ 15.000)
                 const vetCost = (Math.random() * 12000 + 3000).toFixed(2);
-                debitarSaldo(parseFloat(vetCost)); // Debita o custo "veterinário" também
+                // Cobra o veterinário no backend também
+                cobrarNoBackend(
+                    parseFloat(vetCost),
+                    'UTI Equina Premium + Fisioterapia',
+                    `🦴💀 Custo veterinário de ${formatBRL(parseFloat(vetCost))} debitado automaticamente!`
+                );
                 document.getElementById('hipica-result-text').innerHTML =
                     `Puxa, seu cavalo sofreu uma <strong>fratura exposta</strong> na pata dianteira esquerda 🦴<br><br>` +
                     `O adversário venceu por 4 cascos de diferença.<br><br>` +

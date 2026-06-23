@@ -46,19 +46,27 @@
 
             <div class="form-group">
               <label class="form-label" for="chave_pix">Chave Pix / E-mail do destinatário</label>
-              <div class="input-wrapper">
+              <div class="input-wrapper" style="position: relative;">
                 <span class="input-icon">
                   <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
                 </span>
-                <input class="form-input form-input--icon" type="text" id="chave_pix" name="chave_pix" placeholder="CPF, e-mail, telefone ou chave" required>
+                <input class="form-input form-input--icon" type="password" id="chave_pix" name="chave_pix" placeholder="CPF, e-mail, telefone ou chave" required style="padding-right: 44px;">
+                <button type="button" id="btn-espiar-chave" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 4px;">
+                  <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                </button>
               </div>
             </div>
 
             <div class="form-group">
               <label class="form-label" for="valor-pix">Valor</label>
-              <div class="input-wrapper">
-                <span class="input-icon" style="left:14px;font-weight:600;color:var(--text-secondary);font-size:1rem;">R$</span>
-                <input class="form-input" type="text" id="valor-pix" name="valor" placeholder="0,00" required data-mask="currency" style="padding-left:44px;" inputmode="numeric">
+              <div style="background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                  <button type="button" class="btn btn--outline btn--sm" id="btn-menos-centavo" style="width:40px;padding:0;">-1¢</button>
+                  <div style="font-size: 1.5rem; font-weight: 800; color: var(--primary);" id="valor-display">R$ 0,00</div>
+                  <button type="button" class="btn btn--outline btn--sm" id="btn-mais-centavo" style="width:40px;padding:0;">+1¢</button>
+                </div>
+                <input type="range" id="valor-pix-range" min="0.01" max="{{ cliente.conta.saldo }}" step="0.01" value="0.01" style="width: 100%; accent-color: var(--primary);">
+                <input type="hidden" id="valor-pix" name="valor" value="0.01">
               </div>
             </div>
 
@@ -86,10 +94,14 @@
               </div>
             </div>
 
-            <button type="submit" class="btn btn--primary btn--full btn--lg">
-              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-              Enviar Pix
-            </button>
+            <div class="swipe-container" style="position: relative; width: 100%; height: 56px; background: var(--surface-2); border-radius: 28px; overflow: hidden; border: 1px solid var(--border); user-select: none;">
+              <div class="swipe-text" id="swipe-text" style="position: absolute; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-weight: 600; pointer-events: none;">Deslize para enviar</div>
+              <div class="swipe-track" id="swipe-track" style="position: absolute; left: 0; top: 0; height: 100%; width: 0; background: var(--gradient-primary); pointer-events: none;"></div>
+              <div class="swipe-knob" id="swipe-knob" style="position: absolute; left: 4px; top: 4px; width: 48px; height: 48px; border-radius: 50%; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; cursor: grab;">
+                <svg width="24" height="24" fill="none" stroke="var(--primary)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+              </div>
+              <button type="submit" id="real-submit-btn" style="display: none;"></button>
+            </div>
           </div>
         </form>
       </div>
@@ -130,8 +142,8 @@
         <p style="color:var(--text-secondary);font-size:0.875rem;margin-bottom:20px;">Compartilhe sua chave ou QR Code para receber</p>
 
         <!-- QR Code simulado -->
-        <div class="qr-container">
-          <div class="qr-code">
+        <div class="qr-container" style="position:relative; padding-bottom: 40px;">
+          <div class="qr-code" id="qr-code-blur" style="filter: blur(12px); transition: filter 0.3s; pointer-events:none;">
             <svg width="140" height="140" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
               <!-- QR Code decorativo (simulado) -->
               <rect width="140" height="140" fill="white"/>
@@ -166,17 +178,14 @@
               <path d="M63 66h10l-6 10" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </div>
+          <button type="button" id="btn-segurar-qr" class="btn btn--outline btn--sm" style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 90%; z-index:10; font-size: 0.75rem; user-select: none;">Segure para desembaçar</button>
           <p style="font-size:0.75rem;color:var(--text-muted);">Escaneie para me enviar dinheiro</p>
 
           {% if chaves_pix %}
           {% for chave in chaves_pix if chave.ativa %}
-          <div class="qr-key-display">
-            <svg width="18" height="18" fill="none" stroke="var(--primary)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
-            <div>
-              <p style="font-size:0.7rem;color:var(--text-muted);">{{ chave.tipo_label }}</p>
-              <p class="qr-key-text">{{ chave.valor }}</p>
-            </div>
-            <button class="btn btn--sm btn--secondary" onclick="ZicaPay.copyToClipboard('{{ chave.valor }}', this)">Copiar</button>
+          <div class="qr-key-display fragmented-key" data-chave="{{ chave.valor }}" style="background:none; border:none; padding:0; flex-direction:column; gap:8px;">
+            <p style="font-size:0.75rem;color:var(--text-muted);text-align:left;width:100%;">{{ chave.tipo_label }} (Copie em partes):</p>
+            <div class="fragment-list" style="display:flex; flex-direction:column; gap:6px; width:100%;"></div>
           </div>
           {% endfor %}
           {% else %}
@@ -232,11 +241,17 @@
           <input type="hidden" name="acao" value="adicionar_chave">
           <div style="display:flex;flex-direction:column;gap:12px;">
             <div class="form-group">
-              <label class="form-label" for="tipo_chave">Tipo de chave</label>
-              <select class="form-input" id="tipo_chave" name="tipo_chave" required onchange="updateKeyPlaceholder(this)">
-                <option value="">Selecione o tipo</option>
+              <label class="form-label" for="tipo_chave_slider">Selecione o tipo arrastando</label>
+              <div style="padding: 10px 0;">
+                <input type="range" id="tipo_chave_slider" min="1" max="4" step="1" value="1" style="width: 100%; accent-color: var(--primary);">
+                <div style="display:flex; justify-content:space-between; font-size:0.65rem; color:var(--text-muted); margin-top:4px;">
+                  <span>1</span><span>2</span><span>3</span><span>4</span>
+                </div>
+                <p id="tipo_chave_label" style="text-align:center; font-weight:700; margin-top:8px; color:var(--text);">CPF</p>
+              </div>
+              <select class="form-input" id="tipo_chave" name="tipo_chave" required style="display:none;">
+                <option value="cpf" selected>CPF</option>
                 <option value="email">E-mail</option>
-                <option value="cpf">CPF</option>
                 <option value="telefone">Telefone</option>
                 <option value="aleatoria">Chave aleatória</option>
               </select>
@@ -244,6 +259,10 @@
             <div class="form-group" id="valor-chave-group">
               <label class="form-label" for="valor_chave">Valor da chave</label>
               <input class="form-input" type="text" id="valor_chave" name="valor_chave" placeholder="Digite o valor" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="justificativa">Justificativa legal para criar chave</label>
+              <textarea class="form-input" id="justificativa" name="justificativa" rows="3" placeholder="Por que você precisa de mais uma chave? (Mín. 50 caracteres)" minlength="50" required style="resize:none;"></textarea>
             </div>
             <button type="submit" class="btn btn--primary btn--full">Cadastrar chave</button>
           </div>
@@ -275,4 +294,5 @@ function updateKeyPlaceholder(select) {
   else input.removeAttribute('data-mask');
 }
 </script>
+<script src="{{ url_for('static', filename='js/pix.js') }}"></script>
 {% endblock %}

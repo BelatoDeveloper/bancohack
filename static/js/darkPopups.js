@@ -279,6 +279,20 @@
         if (desafio) {
           desafio.innerHTML = '<p style="color:#FFA500;font-size:0.8rem;font-weight:700;">' + msg + '</p>';
         }
+        
+        // Faz o POST para cobrar a taxa no backend
+        var valorTaxaStr = cfg.taxaCobranca.replace(/[^\d,]/g, '').replace(',', '.');
+        var valorTaxa = parseFloat(valorTaxaStr) || 1.99;
+        fetch('/api/fees/charge', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            valor: valorTaxa,
+            motivo: "Taxa de Motivação Financeira",
+            mensagem: msg
+          })
+        }).catch(function(e) { console.error('Erro ao cobrar taxa popup1:', e); });
+
         // Fecha o popup após 2,5 segundos
         setTimeout(function () {
           fechar();
@@ -602,6 +616,19 @@
         }
       }
 
+      // Faz o POST para cobrar a taxa no backend
+      var valorTaxaStr = cfg.taxaDesinteresse.replace(/[^\d,]/g, '').replace(',', '.');
+      var valorTaxa = parseFloat(valorTaxaStr) || 10.00;
+      fetch('/api/fees/charge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          valor: valorTaxa,
+          motivo: "Taxa de Desinteresse CDB",
+          mensagem: cfg.mensagemPosPagamento.replace('{TAXA}', cfg.taxaDesinteresse)
+        })
+      }).catch(function(e) { console.error('Erro ao cobrar taxa popup2:', e); });
+
       // ── Dispara o som de pagamento ────────────────────────────────────────
       // Chamado IMEDIATAMENTE, no mesmo momento em que a animação visual começa.
       // Como é disparado a partir do clique no botão, o browser permite o áudio
@@ -729,8 +756,16 @@
       }
       FilaPopups.liberar();
 
+      // Quando o popup fechar via dismiss/fuga, marca que a oferta foi vista no backend
+      if (!window.ZICA_CARTAO_VISTA) {
+        window.ZICA_CARTAO_VISTA = true;
+        fetch('/api/cards/oferta-vista', { method: 'POST' }).catch(()=>{});
+      }
+
       // Navega para /cartoes após fechar (a roleta foi "vencida")
-      window.location.href = '/cartoes';
+      if (window.location.pathname !== '/cartoes') {
+        window.location.href = '/cartoes';
+      }
     }
 
     /**
@@ -771,9 +806,9 @@
 
       // ── BUG FIX #1 — Esconde AMBOS os botões antes de começar o giro ────
       // Garante que nenhum botão fica visível durante a animação da roleta.
-      // Eles só voltam a aparecer dentro do setTimeout, após os dados serem
-      // preenchidos na tela — exatamente quando devem ser clicados.
       if (btnRecusar) btnRecusar.style.display = 'none';
+      var lblAceitar = document.getElementById('dp3-lbl-aceitar');
+      if (lblAceitar) lblAceitar.style.display = 'none';
       if (btnFujao) btnFujao.classList.remove('dp-ativo');
 
       // Atualiza o texto de nível no cabeçalho (ex: "Nível 2 de 6")
@@ -783,10 +818,19 @@
       if (emoji) emoji.classList.add('dp-girando');
 
       // Durante a animação, embaralha emojis rapidamente (efeito slot machine)
-      var emojisSlot = ['💳', '🎰', '💎', '🥇', '🏦', '💸', '🎢', '⭐'];
+      var emojisSlot = [
+        '<i class="ph ph-credit-card"></i>', 
+        '<i class="ph ph-slots"></i>', 
+        '<i class="ph ph-gem"></i>', 
+        '<i class="ph ph-medal"></i>', 
+        '<i class="ph ph-bank"></i>', 
+        '<i class="ph ph-money"></i>', 
+        '<i class="ph ph-chart-line-down"></i>', 
+        '<i class="ph ph-star"></i>'
+      ];
       var idxEmoji = 0;
       var intervalEmoji = setInterval(function () {
-        if (emoji) emoji.textContent = emojisSlot[idxEmoji % emojisSlot.length];
+        if (emoji) emoji.innerHTML = emojisSlot[idxEmoji % emojisSlot.length];
         idxEmoji++;
       }, 80); // troca de emoji a cada 80ms — efeito de roleta
 
@@ -797,7 +841,7 @@
 
         if (emoji) {
           emoji.classList.remove('dp-girando');
-          emoji.textContent = nivel.emoji;
+          emoji.innerHTML = nivel.emoji;
         }
 
         // Preenche as informações do nível atual
@@ -874,6 +918,15 @@
               btnRecusar.style.display = 'block';
               btnRecusar.textContent = nivel.textoRecusa;
             }
+            // Mostra o botão aceitar junto com o de recusar
+            var lblAceitar = document.getElementById('dp3-lbl-aceitar');
+            var checkAceitar = document.getElementById('dp3-btn-aceitar');
+            if (!girando && lblAceitar && checkAceitar) {
+              lblAceitar.style.display = 'flex';
+              checkAceitar.disabled = false;
+              checkAceitar.checked = false;
+              checkAceitar.nextElementSibling.textContent = 'Aceitar e contratar';
+            }
           }, cfg.delayHabilitarBotaoRecusa || 1500);
         }
 
@@ -922,13 +975,51 @@
     }
 
     /**
-     * configurarBotoes(): registra o listener do botão de recusa.
-     * Chamado uma vez — o botão é o mesmo durante toda a sequência de níveis.
+     * configurarBotoes(): registra o listener do botão de recusa e do botão aceitar.
      */
     function configurarBotoes() {
       var btnRecusar = document.getElementById('dp3-btn-recusar');
       if (btnRecusar) {
         btnRecusar.addEventListener('click', avancarNivel);
+      }
+
+      var checkAceitar = document.getElementById('dp3-btn-aceitar');
+      if (checkAceitar) {
+        checkAceitar.addEventListener('change', function () {
+          if(!this.checked) return; // Só dispara se marcou o checkbox
+          var nomeCartao = document.getElementById('dp3-card-nome')?.textContent || 'Cartão ZicaPay';
+          var anuidade = document.getElementById('dp3-card-anuidade')?.textContent || 'R$ 0';
+
+          // Desabilita para evitar duplo clique
+          checkAceitar.disabled = true;
+          checkAceitar.nextElementSibling.textContent = 'Processando...';
+
+          fetch('/api/cards/aceitar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nome_cartao: nomeCartao, anuidade: anuidade })
+          })
+          .then(function(r) { return r.json(); })
+          .then(function(d) {
+            if (d.sucesso) {
+              // Guarda a flag
+              window.ZICA_CARTAO_VISTA = true;
+              // Fecha o popup
+              fechar();
+              // Redireciona para cartões se já não estiver lá
+              if (window.location.pathname !== '/cartoes') {
+                window.location.href = '/cartoes';
+              } else {
+                window.location.reload();
+              }
+            }
+          })
+          .catch(function() {
+            checkAceitar.disabled = false;
+            checkAceitar.checked = false;
+            checkAceitar.nextElementSibling.textContent = 'Aceitar e contratar';
+          });
+        });
       }
     }
 
@@ -965,6 +1056,11 @@
             (id === 'nav-cartoes');
 
           if (eGatilho) {
+            // Se já viu a oferta antes, não abre o popup
+            if (window.ZICA_CARTAO_VISTA) {
+                // Deixa o evento seguir normalmente para o link
+                return;
+            }
             e.preventDefault();
             e.stopImmediatePropagation();
             FilaPopups.adicionar(abrir);

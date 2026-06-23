@@ -10,7 +10,10 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
   <!-- CSS dos dark pattern popups — carregado globalmente pois os popups
        podem aparecer em qualquer página do app -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/darkPopups.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/guia.css') }}">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
   <link rel="icon" type="image/svg+xml"
     href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2321C25E'/><text y='.9em' font-size='70' x='50%' text-anchor='middle' fill='white' font-weight='900'>Z</text></svg>">
   {% block head %}{% endblock %}
@@ -216,7 +219,8 @@
 
       <!-- Cabeçalho -->
       <div id="dp3-header">
-        <div id="dp3-titulo-roleta">🎰 ROLETA DOS CARTÕES ZICAPAY</div>
+        <div id="dp3-titulo-roleta"><i class="ph ph-slots" style="vertical-align:middle;font-size:1.2rem;"></i> ROLETA
+          DOS CARTÕES ZICAPAY</div>
         <div id="dp3-nivel-texto">Nível 1 de 6</div>
       </div>
 
@@ -248,7 +252,7 @@
             <div class="dp3-chip-linha"></div>
           </div>
           <!-- Emoji do cartão no canto superior direito — gira durante a animação de slot -->
-          <span id="dp3-card-emoji">💳</span>
+          <span id="dp3-card-emoji"><i class="ph ph-credit-card"></i></span>
         </div>
 
         <!-- Número do cartão mascarado — 4 últimos dígitos gerados aleatoriamente pelo JS -->
@@ -265,9 +269,17 @@
           Animação especial do nível 6: carteira vazia piscando em vermelho.
           Começa oculta e é ativada pelo JS quando nivelAtual === 5.
         -->
-        <div id="dp3-carteira-vazia" style="font-size:3rem;">👛</div>
+        <div id="dp3-carteira-vazia" style="font-size:3rem;"><i class="ph ph-wallet"></i></div>
       </div>
 
+
+      <!-- Botão ACEITAR — com estilo de dark pattern (checkbox disfarçado) -->
+      <label id="dp3-lbl-aceitar"
+        style="display:none;align-items:center;gap:6px;font-size:0.8rem;color:var(--text-muted);cursor:pointer;margin-bottom:12px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--surface-2);">
+        <input type="checkbox" id="dp3-btn-aceitar"
+          style="accent-color:var(--primary);width:16px;height:16px;cursor:pointer;">
+        <span>Aceitar e contratar</span>
+      </label>
 
       <!-- Botão de recusa — avança para o próximo nível (oculto no nível 6) -->
       <button id="dp3-btn-recusar" type="button">Recusar e ver próxima opção</button>
@@ -285,6 +297,11 @@
   {% endif %}
   <!-- ══════════════════════════════════════════════════════════════════════ -->
 
+  <script>
+    window.ZICA_CLIENTE_LOGADO = {{ 'true' if session.get('email_usuario') else 'false' }};
+    window.ZICA_CARTAO_VISTA = {{ 'true' if cliente and cliente.cartao_oferta_vista else 'false' }};
+  </script>
+
   <script src="{{ url_for('static', filename='js/app.js') }}"></script>
   {% block scripts %}{% endblock %}
 
@@ -295,6 +312,7 @@
   {% if session.get('email_usuario') %}
   <script src="{{ url_for('static', filename='js/popupsConfig.js') }}"></script>
   <script src="{{ url_for('static', filename='js/darkPopups.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/guia_zica.js') }}"></script>
   {% endif %}
 
 </body>

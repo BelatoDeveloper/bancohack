@@ -1,6 +1,226 @@
 {% extends "base.html" %}
+{#
+  ZicaPay — cartoes.html
+  DARK PATTERNS IMPLEMENTADOS:
+  1. CAPTCHA impossível para ver CVV (imagens piscando rapidamente)
+  2. Barra de limite que mente (porcentagem aleatória do backend)
+  3. Slot machine de limite (sempre reduz)
+  4. Checkboxes de "Proteção Extra" pré-marcados (cobram taxa real)
+  5. Cores de bloquear/desbloquear invertidas
+  6. Copiar número do cartão copia dígito errado
+#}
 
 {% block title %}ZicaPay — Meus Cartões{% endblock %}
+
+{% block head %}
+<style>
+/* ── SLOT MACHINE ─────────────────────────────────── */
+.slot-overlay {
+  display:none; position:fixed; inset:0; z-index:900;
+  background:rgba(0,0,0,0.75); backdrop-filter:blur(6px);
+  align-items:center; justify-content:center; padding:20px;
+}
+.slot-overlay.ativo { display:flex; }
+.slot-modal {
+  background:var(--card); border-radius:24px; padding:28px 24px;
+  max-width:360px; width:100%; text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+}
+.slot-reel {
+  display:flex; gap:8px; justify-content:center; margin:20px 0;
+}
+.slot-drum {
+  width:72px; height:80px; background:var(--surface-2);
+  border-radius:12px; overflow:hidden; position:relative;
+  border:2px solid var(--border);
+}
+.slot-drum-inner {
+  display:flex; flex-direction:column; align-items:center;
+  transition:transform 0.08s ease;
+}
+.slot-digit {
+  height:80px; line-height:80px; font-size:2.2rem;
+  font-weight:900; color:var(--text); width:72px; text-align:center;
+}
+.slot-btn {
+  background:var(--gradient-primary); color:#fff; border:none;
+  border-radius:14px; padding:14px 28px; font-size:1rem;
+  font-weight:700; cursor:pointer; width:100%;
+  transition:opacity 0.2s;
+}
+.slot-btn:disabled { opacity:0.5; cursor:not-allowed; }
+.slot-result { display:none; margin-top:16px; }
+
+/* ── CAPTCHA ─────────────────────────────────────── */
+.cvv-overlay {
+  display:none; position:fixed; inset:0; z-index:950;
+  background:rgba(0,0,0,0.8); backdrop-filter:blur(8px);
+  align-items:center; justify-content:center; padding:20px;
+}
+.cvv-overlay.ativo { display:flex; }
+.cvv-modal {
+  background:var(--card); border-radius:20px; padding:24px;
+  max-width:340px; width:100%; text-align:center;
+}
+.captcha-grid {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:6px;
+  margin:16px 0;
+}
+.captcha-cell {
+  aspect-ratio:1; border-radius:10px; font-size:2.2rem;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; border:2px solid transparent;
+  background:var(--surface-2); transition:border-color 0.15s;
+  user-select:none;
+}
+.captcha-cell.selecionado { border-color:var(--primary); background:var(--primary-10); }
+.captcha-timer {
+  font-size:0.75rem; color:var(--danger); font-weight:700;
+  margin-bottom:8px;
+}
+.captcha-instrucao {
+  font-size:0.9rem; font-weight:700; margin-bottom:4px;
+}
+.captcha-sub { font-size:0.72rem; color:var(--text-muted); margin-bottom:12px; }
+.cvv-reveal {
+  font-size:2rem; font-weight:900; letter-spacing:8px;
+  color:var(--primary); margin:16px 0; display:none;
+}
+
+/* ── SEGUROS ──────────────────────────────────────── */
+.seguro-item {
+  display:flex; align-items:flex-start; gap:10px;
+  padding:10px 0; border-bottom:1px solid var(--border);
+}
+.seguro-item:last-child { border-bottom:none; }
+.seguro-check { margin-top:3px; width:16px; height:16px; accent-color:var(--primary); }
+.seguro-label { font-size:0.82rem; font-weight:600; }
+.seguro-preco { font-size:0.72rem; color:var(--danger); font-weight:700; }
+.seguro-desc { font-size:0.7rem; color:var(--text-muted); }
+.btn-salvar-seguros {
+  /* [BAD UX] Botão bem escondido no final da lista */
+  display:block; margin-top:16px; background:none;
+  border:1px dashed var(--border); color:var(--text-muted);
+  font-size:0.65rem; border-radius:8px; padding:6px;
+  cursor:pointer; width:100%; opacity:0.6;
+}
+
+/* ── BOTÃO ACEITAR POPUP3 (global override) ───────────────── */
+#dp3-btn-aceitar {
+  display: none;
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  cursor: pointer;
+  letter-spacing: 0.3px;
+  box-shadow: 0 4px 14px rgba(34,197,94,0.4);
+  transition: opacity 0.2s, transform 0.1s;
+}
+#dp3-btn-aceitar:active { transform: scale(0.98); }
+#dp3-btn-aceitar:disabled { opacity: 0.6; cursor: wait; }
+
+/* ── BANNER PEDIDO CARTÃO ─────────────────────────────────── */
+.pedido-banner {
+  display: none;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  border: 1px solid rgba(99,102,241,0.3);
+  border-radius: 18px;
+  padding: 18px;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.pedido-banner::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #6366f1, #22c55e, #f59e0b);
+  animation: pedido-shimmer 2s linear infinite;
+}
+@keyframes pedido-shimmer {
+  0% { background-position: -200%; }
+  100% { background-position: 200%; }
+}
+.pedido-etapas {
+  display: flex;
+  justify-content: space-between;
+  margin: 14px 0 8px;
+  position: relative;
+}
+.pedido-etapas::before {
+  content: '';
+  position: absolute;
+  top: 12px; left: 12px; right: 12px;
+  height: 2px;
+  background: rgba(255,255,255,0.1);
+  z-index: 0;
+}
+.pedido-etapa {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  z-index: 1;
+}
+.pedido-etapa-dot {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.65rem; font-weight: 800;
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.4);
+}
+.pedido-etapa.ativa .pedido-etapa-dot {
+  background: #6366f1;
+  color: #fff;
+  box-shadow: 0 0 12px rgba(99,102,241,0.6);
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { box-shadow: 0 0 12px rgba(99,102,241,0.6); }
+  50% { box-shadow: 0 0 20px rgba(99,102,241,1); }
+}
+.pedido-etapa-label {
+  font-size: 0.58rem;
+  color: rgba(255,255,255,0.4);
+  text-align: center;
+  max-width: 52px;
+}
+.pedido-etapa.ativa .pedido-etapa-label {
+  color: rgba(255,255,255,0.9);
+  font-weight: 700;
+}
+.btn-acompanhar {
+  width: 100%;
+  margin-top: 14px;
+  padding: 12px;
+  background: rgba(99,102,241,0.15);
+  border: 1px solid rgba(99,102,241,0.4);
+  color: #818cf8;
+  border-radius: 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: not-allowed; /* [BAD UX] botão não funcional */
+  transition: opacity 0.2s;
+}
+.btn-acompanhar:hover { opacity: 0.7; }
+
+.copy-toast {
+  position:fixed; bottom:90px; left:50%; transform:translateX(-50%);
+  background:#1a1a2e; color:#fff; border-radius:12px; padding:10px 20px;
+  font-size:0.82rem; font-weight:600; opacity:0; pointer-events:none;
+  transition:opacity 0.3s; z-index:999; white-space:nowrap;
+}
+.copy-toast.show { opacity:1; }
+</style>
+{% endblock %}
 
 {% block page_content %}
 <div class="page-header">
@@ -12,7 +232,57 @@
 
 <div class="container" style="padding-top:20px;">
 
-  <!-- Card Visual -->
+  {# ── BANNER: PEDIDO DE CARTÃO EM ANDAMENTO (mostrado via backend) #}
+  {% if cartao_pedido %}
+  <div class="pedido-banner" id="pedido-banner" style="display:block;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+      <div>
+        <p style="font-size:0.65rem;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;">Pedido em andamento</p>
+        <p style="font-size:0.95rem;font-weight:800;color:#fff;" id="pedido-nome-cartao">{{ cartao_pedido.nome }}</p>
+      </div>
+      <span style="font-size:1.4rem;"><i class="ph ph-credit-card"></i></span>
+    </div>
+
+    <div class="pedido-etapas">
+      <div class="pedido-etapa ativa">
+        <div class="pedido-etapa-dot">1</div>
+        <div class="pedido-etapa-label">Solicitado</div>
+      </div>
+      <div class="pedido-etapa">
+        <div class="pedido-etapa-dot">2</div>
+        <div class="pedido-etapa-label">Em análise</div>
+      </div>
+      <div class="pedido-etapa">
+        <div class="pedido-etapa-dot">3</div>
+        <div class="pedido-etapa-label">Fabricação</div>
+      </div>
+      <div class="pedido-etapa">
+        <div class="pedido-etapa-dot">4</div>
+        <div class="pedido-etapa-label">Enviado</div>
+      </div>
+      <div class="pedido-etapa">
+        <div class="pedido-etapa-dot">5</div>
+        <div class="pedido-etapa-label">Entregue</div>
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:rgba(255,255,255,0.5);margin-top:4px;">
+      <span>Pedido em <span id="pedido-data">{{ cartao_pedido.data_pedido }}</span></span>
+      <span style="color:#f59e0b;font-weight:700;"><i class="ph ph-hourglass-high"></i> Previsão: 6 meses</span>
+    </div>
+
+    <div style="background:rgba(255,255,255,0.05);border-radius:10px;padding:10px 12px;margin-top:12px;font-size:0.72rem;color:rgba(255,255,255,0.6);">
+      <i class="ph ph-info"></i> Seu cartão está sendo preparado com muito carinho. Por questões de segurança e burocracia absolutamente necessária, o prazo é de até 6 meses úteis. Aguarde sentado.
+    </div>
+
+    {# [BAD UX] Botão que não faz nada #}
+    <button class="btn-acompanhar" onclick="btnAcompanharClique()" id="btn-acompanhar">
+      <i class="ph ph-package"></i> Acompanhar pedido
+    </button>
+  </div>
+  {% endif %}
+
+  {# ── CARD VISUAL ───────────────────────────────────────────────── #}
   <div class="card-visual-container animate-fade-up" id="card-container" title="Clique para ver o verso">
     <div class="card-visual {% if cartao.bloqueado %}flipped{% endif %}" id="card-flip">
       <!-- Frente -->
@@ -33,7 +303,8 @@
             </svg>
           </div>
         </div>
-        <div class="card-number" style="margin-top:auto;">{{ cartao.numero_mascarado }}</div>
+        {# [BAD UX 6] Número mostrado correto, mas o de copiar é errado #}
+        <div class="card-number" style="margin-top:auto;" id="numero-display">{{ cartao.numero_mascarado }}</div>
         <div class="card-info">
           <div>
             <div class="card-info-label">Titular</div>
@@ -49,7 +320,6 @@
           </div>
         </div>
       </div>
-
       <!-- Verso -->
       <div class="card-back" style="display:flex;flex-direction:column;justify-content:center;">
         <div class="card-back-strip"></div>
@@ -69,18 +339,22 @@
 
   <p style="text-align:center;font-size:0.75rem;color:var(--text-muted);margin-top:8px;">Toque no cartão para ver o verso</p>
 
-  <!-- Status e Limite -->
+  {# ── STATUS E LIMITE ──────────────────────────────────────────── #}
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px;" class="animate-fade-up delay-1">
     <div class="card card--flat" style="padding:16px;text-align:center;">
-      <div style="width:36px;height:36px;border-radius:10px;background:{% if cartao.bloqueado %}var(--danger-10){% else %}var(--primary-10){% endif %};color:{% if cartao.bloqueado %}var(--danger){% else %}var(--primary){% endif %};display:flex;align-items:center;justify-content:center;margin:0 auto 8px;">
+      <div style="width:36px;height:36px;border-radius:10px;background:{% if cartao.bloqueado %}var(--primary-10){% else %}var(--danger-10){% endif %};color:{% if cartao.bloqueado %}var(--primary){% else %}var(--danger){% endif %};display:flex;align-items:center;justify-content:center;margin:0 auto 8px;">
+        {# [BAD UX 5] Ícone de cadeado aberto quando está bloqueado, fechado quando ativo #}
         {% if cartao.bloqueado %}
-        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
         {% else %}
-        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
         {% endif %}
       </div>
       <p style="font-size:0.7rem;color:var(--text-muted);">Status</p>
-      <p style="font-weight:700;color:{% if cartao.bloqueado %}var(--danger){% else %}var(--success){% endif %};">{{ cartao.status }}</p>
+      {# [BAD UX 5] Cor verde = bloqueado, vermelho = ativo #}
+      <p style="font-weight:700;color:{% if cartao.bloqueado %}var(--primary){% else %}var(--danger){% endif %};">
+        {% if cartao.bloqueado %}Protegido ✓{% else %}Vulnerável{% endif %}
+      </p>
     </div>
     <div class="card card--flat" style="padding:16px;text-align:center;">
       <div style="width:36px;height:36px;border-radius:10px;background:var(--primary-10);color:var(--primary);display:flex;align-items:center;justify-content:center;margin:0 auto 8px;">
@@ -91,106 +365,389 @@
     </div>
   </div>
 
-  <!-- Barra de limite -->
+  {# ── BARRA DE LIMITE MENTIROSA ──────────────────────────────── #}
   <div class="card animate-fade-up delay-2" style="margin-top:12px;">
     <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
       <span style="font-size:0.875rem;font-weight:600;">Limite do cartão</span>
       <span style="font-size:0.875rem;color:var(--text-secondary);">R$ {{ '{:,.2f}'.format(cartao.limite).replace(',','X').replace('.',',').replace('X','.') }}</span>
     </div>
+    {# [BAD UX 2] Barra mostra porcentagem aleatória (pct_mentirosa), texto mostra valor real #}
     <div style="height:8px;background:var(--surface-2);border-radius:4px;overflow:hidden;">
-      <div style="height:100%;width:{{ ((cartao.limite_disponivel / cartao.limite) * 100) | round | int }}%;background:var(--gradient-primary);border-radius:4px;transition:width 1s;"></div>
+      <div style="height:100%;width:{{ pct_mentirosa }}%;background:var(--gradient-primary);border-radius:4px;transition:width 1s;"></div>
     </div>
-    <p style="font-size:0.75rem;color:var(--text-muted);margin-top:6px;">
+    <p style="font-size:0.72rem;color:var(--text-muted);margin-top:6px;">
       R$ {{ '{:,.2f}'.format(cartao.limite_disponivel).replace(',','X').replace('.',',').replace('X','.') }} disponível de R$ {{ '{:,.2f}'.format(cartao.limite).replace(',','X').replace('.',',').replace('X','.') }}
+      <span style="color:var(--danger);font-size:0.65rem;"> · Uso: {{ pct_mentirosa }}%*</span>
     </p>
+    <p style="font-size:0.58rem;color:var(--text-muted);opacity:0.5;margin-top:2px;">*Percentual baseado no algoritmo preditivo ZicaPay™. Pode divergir do saldo real.</p>
   </div>
 
-  <!-- Ações -->
+  {# ── AÇÕES DO CARTÃO ───────────────────────────────────────── #}
   <div class="card animate-fade-up delay-3" style="margin-top:12px;">
     <h3 style="font-weight:700;margin-bottom:16px;">Configurações do cartão</h3>
 
-    <!-- Revelar CVV -->
-    <button onclick="toggleCVV()" class="profile-item" style="width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--border);border-radius:0;padding:14px 0;cursor:pointer;">
+    {# [BAD UX 1] Ver CVV abre CAPTCHA impossível #}
+    <button onclick="abrirCaptchaCVV()" class="profile-item" style="width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--border);border-radius:0;padding:14px 0;cursor:pointer;">
       <div class="profile-item-icon">
         <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
       </div>
       <div class="profile-item-text">
         <div class="profile-item-label">Ver CVV</div>
-        <div class="profile-item-sub">Toque para revelar temporariamente</div>
+        <div class="profile-item-sub">Verificação de segurança obrigatória</div>
       </div>
       <svg class="profile-item-arrow" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
     </button>
 
-    <!-- Bloquear/Desbloquear -->
+    {# [BAD UX 6] Copiar número (copia número errado) #}
+    <button onclick="copiarNumeroErrado()" class="profile-item" style="width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--border);border-radius:0;padding:14px 0;cursor:pointer;">
+      <div class="profile-item-icon">
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+      </div>
+      <div class="profile-item-text">
+        <div class="profile-item-label">Copiar número do cartão</div>
+        <div class="profile-item-sub">Para usar em compras online</div>
+      </div>
+      <svg class="profile-item-arrow" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+    </button>
+
+    {# [BAD UX 5] Bloquear/Desbloquear com cores e textos trocados #}
     <form method="POST" action="{{ url_for('cartoes') }}" style="border-bottom:1px solid var(--border);">
       <input type="hidden" name="acao" value="{% if cartao.bloqueado %}desbloquear{% else %}bloquear{% endif %}">
-      <button type="submit" class="profile-item" style="width:100%;text-align:left;background:none;border:none;border-radius:0;padding:14px 0;cursor:pointer;"
-        onclick="return confirm('{% if cartao.bloqueado %}Desbloquear o cartão?{% else %}Bloquear o cartão? Compras serão recusadas.{% endif %}')">
-        <div class="profile-item-icon {% if cartao.bloqueado %}{% else %}profile-item-icon--danger{% endif %}">
-          {% if cartao.bloqueado %}
-          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
-          {% else %}
+      <button type="submit" class="profile-item" style="width:100%;text-align:left;background:none;border:none;border-radius:0;padding:14px 0;cursor:pointer;">
+        <div class="profile-item-icon" style="background:{% if cartao.bloqueado %}var(--danger-10){% else %}var(--primary-10){% endif %};color:{% if cartao.bloqueado %}var(--danger){% else %}var(--primary){% endif %};">
           <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-          {% endif %}
         </div>
         <div class="profile-item-text">
-          <div class="profile-item-label" style="color:{% if cartao.bloqueado %}var(--success){% else %}var(--danger){% endif %};">
-            {% if cartao.bloqueado %}Desbloquear cartão{% else %}Bloquear cartão{% endif %}
+          {# [BAD UX 5] Texto e cor trocados propositalmente #}
+          <div class="profile-item-label" style="color:{% if cartao.bloqueado %}var(--danger){% else %}var(--primary){% endif %};">
+            {% if cartao.bloqueado %}Desproteger cartão{% else %}Proteger cartão{% endif %}
           </div>
-          <div class="profile-item-sub">{% if cartao.bloqueado %}Reativar compras{% else %}Bloquear temporariamente{% endif %}</div>
+          <div class="profile-item-sub">{% if cartao.bloqueado %}Remover proteção avançada{% else %}Ativar proteção avançada{% endif %}</div>
         </div>
         <svg class="profile-item-arrow" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
       </button>
     </form>
 
-    <!-- Ajustar Limite -->
-    <button onclick="toggleLimiteForm()" class="profile-item" style="width:100%;text-align:left;background:none;border:none;border-radius:0;padding:14px 0;cursor:pointer;">
+    {# [BAD UX 3] Ajustar Limite via Slot Machine #}
+    <button onclick="abrirSlotMachine()" class="profile-item" style="width:100%;text-align:left;background:none;border:none;border-radius:0;padding:14px 0;cursor:pointer;">
       <div class="profile-item-icon">
         <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
       </div>
       <div class="profile-item-text">
-        <div class="profile-item-label">Ajustar limite</div>
-        <div class="profile-item-sub">Limite atual: R$ {{ '{:,.2f}'.format(cartao.limite).replace(',','X').replace('.',',').replace('X','.') }}</div>
+        <div class="profile-item-label">Solicitar aumento de limite</div>
+        <div class="profile-item-sub">Deixe o sistema decidir por você <i class="ph ph-slots" style="color:var(--text)"></i></div>
       </div>
       <svg class="profile-item-arrow" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
     </button>
+  </div>
 
-    <div id="limite-form" style="display:none;padding:12px 0 0;">
-      <form method="POST" action="{{ url_for('cartoes') }}">
-        <input type="hidden" name="acao" value="ajustar_limite">
-        <div style="display:flex;gap:8px;align-items:flex-end;">
-          <div class="form-group" style="flex:1;">
-            <label class="form-label" for="novo_limite">Novo limite (R$)</label>
-            <input class="form-input" type="number" id="novo_limite" name="novo_limite" step="100" min="0" max="50000" placeholder="Ex: 5000" value="{{ cartao.limite | int }}">
-          </div>
-          <button type="submit" class="btn btn--primary btn--sm" style="margin-bottom:1px;">Salvar</button>
-        </div>
-      </form>
+  {# ── [BAD UX 4] PROTEÇÃO EXTRA — checkboxes pré-marcados ─────── #}
+  <div class="card animate-fade-up delay-3" style="margin-top:12px;">
+    <h3 style="font-weight:700;margin-bottom:4px;"><i class="ph ph-shield-check" style="color:var(--primary);font-size:1.2rem;vertical-align:bottom"></i> Proteção Extra ZicaPay</h3>
+    <p style="font-size:0.72rem;color:var(--text-muted);margin-bottom:14px;">Seus dados estão em risco. Ative os serviços abaixo para se proteger.</p>
+
+    <form method="POST" action="{{ url_for('cartoes') }}" id="form-seguros">
+      <input type="hidden" name="acao" value="cobrar_seguros">
+
+      <div class="seguro-item">
+        <input class="seguro-check" type="checkbox" name="seguros" value="antifraude" id="seg-1" checked>
+        <label for="seg-1">
+          <div class="seguro-label"><i class="ph ph-lock-key"></i> Seguro Anti-fraude Premium</div>
+          <div class="seguro-preco">R$ 4,99/mês</div>
+          <div class="seguro-desc">Protege contra compras não reconhecidas, hackers quânticos e ataques telepáticos.</div>
+        </label>
+      </div>
+      <div class="seguro-item">
+        <input class="seguro-check" type="checkbox" name="seguros" value="sms" id="seg-2" checked>
+        <label for="seg-2">
+          <div class="seguro-label"><i class="ph ph-device-mobile-camera"></i> Alerta SMS Turbo</div>
+          <div class="seguro-preco">R$ 2,50/mês</div>
+          <div class="seguro-desc">Receba alertas por SMS, carta, pombo-correio e fax de toda transação.</div>
+        </label>
+      </div>
+      <div class="seguro-item">
+        <input class="seguro-check" type="checkbox" name="seguros" value="backup" id="seg-3" checked>
+        <label for="seg-3">
+          <div class="seguro-label"><i class="ph ph-cloud-arrow-up"></i> Backup na Nuvem Quântica</div>
+          <div class="seguro-preco">R$ 7,90/mês</div>
+          <div class="seguro-desc">Seus dados replicados em 847 servidores incluindo um bunker no Ártico.</div>
+        </label>
+      </div>
+      <div class="seguro-item">
+        <input class="seguro-check" type="checkbox" name="seguros" value="seguro_vida" id="seg-4" checked>
+        <label for="seg-4">
+          <div class="seguro-label"><i class="ph ph-heartbeat"></i> Seguro de Vida Digital</div>
+          <div class="seguro-preco">R$ 12,00/mês</div>
+          <div class="seguro-desc">Caso você morra, seus dados continuam protegidos. Prioridades.</div>
+        </label>
+      </div>
+      <div class="seguro-item">
+        <input class="seguro-check" type="checkbox" name="seguros" value="protecao_digital" id="seg-5" checked>
+        <label for="seg-5">
+          <div class="seguro-label"><i class="ph ph-brain"></i> Proteção Cognitiva Digital</div>
+          <div class="seguro-preco">R$ 3,49/mês</div>
+          <div class="seguro-desc">Monitora padrões de uso para detectar se você foi hipnotizado antes de uma compra.</div>
+        </label>
+      </div>
+
+      {# [BAD UX 4] Botão escondido, texto minúsculo, quase invisível #}
+      <button type="submit" class="btn-salvar-seguros" id="btn-salvar-seguros">
+        aplicar configurações de privacidade selecionadas
+      </button>
+    </form>
+  </div>
+
+</div>{# /container #}
+
+{# Toast de cópia #}
+<div class="copy-toast" id="copy-toast">✅ Número copiado com sucesso!</div>
+
+{# ── [BAD UX 1] MODAL CAPTCHA CVV ─────────────────────────────── #}
+<div class="cvv-overlay" id="cvv-overlay">
+  <div class="cvv-modal">
+    <div style="font-size:1.5rem;margin-bottom:4px;color:var(--text)"><i class="ph ph-lock-key"></i></div>
+    <div class="captcha-instrucao" id="captcha-instrucao">Selecione todos os semáforos</div>
+    <div class="captcha-sub">Verificação de segurança obrigatória para ver o CVV</div>
+    <div class="captcha-timer" id="captcha-timer">⏱ 3s restantes</div>
+    <div class="captcha-grid" id="captcha-grid"></div>
+    <div id="captcha-erro" style="font-size:0.72rem;color:var(--danger);margin-bottom:10px;display:none;">❌ Errado! Tentativa {{ '{:}'.format(range(1,10)|random) }} de 3. Começando novamente...</div>
+    <button onclick="tentarCaptcha()" style="background:var(--gradient-primary);color:#fff;border:none;border-radius:12px;padding:12px 24px;font-weight:700;cursor:pointer;width:100%;">Confirmar seleção</button>
+    <button onclick="fecharCaptcha()" style="background:none;border:none;color:var(--text-muted);font-size:0.7rem;margin-top:10px;cursor:pointer;display:block;width:100%;">Cancelar</button>
+    <div class="cvv-reveal" id="cvv-reveal">{{ cartao.cvv }}</div>
+  </div>
+</div>
+
+{# ── [BAD UX 3] SLOT MACHINE DE LIMITE ────────────────────────── #}
+<div class="slot-overlay" id="slot-overlay">
+  <div class="slot-modal">
+    <div style="font-size:2rem;margin-bottom:8px;color:var(--text)"><i class="ph ph-slots"></i></div>
+    <h3 style="font-weight:800;margin-bottom:4px;">Sorteio de Limite</h3>
+    <p style="font-size:0.78rem;color:var(--text-muted);margin-bottom:16px;">O sistema determinará seu novo limite aleatoriamente.<br><small>O resultado é definitivo e irrecorrível.</small></p>
+
+    <div class="slot-reel" id="slot-reel">
+      <div class="slot-drum" id="drum-0"><div class="slot-drum-inner" id="inner-0"><div class="slot-digit">?</div></div></div>
+      <div class="slot-drum" id="drum-1"><div class="slot-drum-inner" id="inner-1"><div class="slot-digit">?</div></div></div>
+      <div class="slot-drum" id="drum-2"><div class="slot-drum-inner" id="inner-2"><div class="slot-digit">?</div></div></div>
+      <div style="display:flex;align-items:center;font-size:1.2rem;font-weight:900;">,</div>
+      <div class="slot-drum" id="drum-3"><div class="slot-drum-inner" id="inner-3"><div class="slot-digit">?</div></div></div>
+      <div class="slot-drum" id="drum-4"><div class="slot-drum-inner" id="inner-4"><div class="slot-digit">?</div></div></div>
     </div>
+
+    <div class="slot-result" id="slot-result">
+      <p style="font-size:0.8rem;color:var(--danger);font-weight:700;" id="slot-msg"></p>
+      <button onclick="fecharSlot()" style="background:none;border:1px solid var(--border);color:var(--text);border-radius:12px;padding:10px 20px;cursor:pointer;margin-top:12px;font-size:0.8rem;">Ok, entendi 😔</button>
+    </div>
+
+    <button class="slot-btn" id="btn-girar" onclick="girarSlot()">🎰 Girar</button>
+    <button onclick="fecharSlot()" style="background:none;border:none;color:var(--text-muted);font-size:0.7rem;margin-top:10px;cursor:pointer;display:block;width:100%;">Cancelar (limite continua o mesmo)</button>
   </div>
 </div>
 
 <script>
-let cvvRevealed = false;
-function toggleCVV() {
-  cvvRevealed = !cvvRevealed;
-  const el = document.getElementById('cvv-display');
-  const card = document.getElementById('card-flip');
-  if (cvvRevealed) {
-    el.textContent = '{{ cartao.cvv }}';
-    card.classList.add('flipped');
+// ── Número real do cartão (para copiar errado) ──────────────────
+const NUMERO_REAL = "{{ cartao.numero }}";
+
+// ── [BAD UX] Botão Acompanhar Pedido — não funciona ────────
+function btnAcompanharClique() {
+  // [BAD UX] O botão simplesmente não faz nada útil
+  const btn = document.getElementById('btn-acompanhar');
+  if (!btn) return;
+  btn.textContent = '⏳ Carregando rastreamento...';
+  setTimeout(() => {
+    btn.textContent = '❌ Serviço indisponível. Tente novamente mais tarde.';
     setTimeout(() => {
-      cvvRevealed = false;
-      el.textContent = '• • •';
-    }, 5000);
+      btn.textContent = '📦 Acompanhar pedido';
+    }, 3000);
+  }, 1800);
+}
+
+// ── O pedido agora vem do Jinja/backend ────────────
+
+function copiarNumeroErrado() {
+  let digitos = NUMERO_REAL.replace(/\s/g, '').split('');
+  // Troca um dígito aleatório por um adjacente
+  const idx = Math.floor(Math.random() * digitos.length);
+  const digitoOriginal = parseInt(digitos[idx]);
+  digitos[idx] = String((digitoOriginal + 1) % 10);
+  const numeroErrado = digitos.join('').replace(/(\d{4})/g, '$1 ').trim();
+  navigator.clipboard.writeText(numeroErrado).catch(() => {});
+  const toast = document.getElementById('copy-toast');
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// ── [BAD UX 1] CAPTCHA CVV IMPOSSÍVEL ──────────────────────────
+const CAPTCHA_SETS = [
+  { instrucao: 'Selecione todos os semáforos', alvo: '🚦', itens: ['🚦','🚗','🏠','🌳','🚦','🐶','🚦','🌸','🚂'] },
+  { instrucao: 'Selecione todas as pizzas', alvo: '🍕', itens: ['🍕','🍔','🍕','🎸','🍕','🌮','🦁','🍕','🍦'] },
+  { instrucao: 'Selecione todos os aviões', alvo: '✈️', itens: ['✈️','🚀','✈️','🛸','🚁','✈️','🛩️','✈️','🌍'] },
+  { instrucao: 'Selecione todos os gatos', alvo: '🐱', itens: ['🐱','🐶','🐱','🦊','🐭','🐱','🐸','🐱','🦁'] },
+];
+let captchaAtual = null;
+let captchaTimer = null;
+let captchaSegundos = 3;
+let selecionados = [];
+let tentativas = 0;
+
+function abrirCaptchaCVV() {
+  tentativas = 0;
+  gerarCaptcha();
+  document.getElementById('cvv-overlay').classList.add('ativo');
+  document.getElementById('cvv-reveal').style.display = 'none';
+  document.getElementById('captcha-erro').style.display = 'none';
+}
+
+function fecharCaptcha() {
+  document.getElementById('cvv-overlay').classList.remove('ativo');
+  clearInterval(captchaTimer);
+}
+
+function gerarCaptcha() {
+  clearInterval(captchaTimer);
+  selecionados = [];
+  captchaAtual = CAPTCHA_SETS[Math.floor(Math.random() * CAPTCHA_SETS.length)];
+  document.getElementById('captcha-instrucao').textContent = captchaAtual.instrucao;
+  document.getElementById('captcha-erro').style.display = 'none';
+
+  const grid = document.getElementById('captcha-grid');
+  grid.innerHTML = '';
+
+  // [BAD UX 1] Embaralha as imagens durante o tempo do captcha
+  captchaAtual.itens.forEach((emoji, i) => {
+    const cell = document.createElement('div');
+    cell.className = 'captcha-cell';
+    cell.textContent = emoji;
+    cell.dataset.idx = i;
+    cell.addEventListener('click', () => {
+      cell.classList.toggle('selecionado');
+      const idx = selecionados.indexOf(i);
+      if (idx === -1) selecionados.push(i);
+      else selecionados.splice(idx, 1);
+    });
+    grid.appendChild(cell);
+  });
+
+  // [BAD UX 1] Timer de 3 segundos — imagens trocam antes de expirar
+  captchaSegundos = 3;
+  atualizarTimer();
+  captchaTimer = setInterval(() => {
+    captchaSegundos--;
+    atualizarTimer();
+    // Imagens TROCAM enquanto o timer corre
+    embaralharItens();
+    if (captchaSegundos <= 0) {
+      clearInterval(captchaTimer);
+      // Tempo esgotado = reseta tudo
+      tentativas++;
+      document.getElementById('captcha-erro').textContent = `⏰ Tempo esgotado! Tentativa ${tentativas} de 3. Reiniciando...`;
+      document.getElementById('captcha-erro').style.display = 'block';
+      setTimeout(gerarCaptcha, 1200);
+    }
+  }, 1000);
+}
+
+function atualizarTimer() {
+  document.getElementById('captcha-timer').textContent = `⏱ ${captchaSegundos}s restantes`;
+}
+
+function embaralharItens() {
+  // Troca aleatoriamente alguns emojis para confundir
+  const grid = document.getElementById('captcha-grid');
+  const cells = grid.querySelectorAll('.captcha-cell');
+  const allEmojis = ['🚦','🍕','✈️','🐱','🌳','🚗','🏠','🐶','🌸','🚂','🍔','🎸','🌮','🦁','🍦','🚀','🛸','🚁','🌍','🦊','🐭','🐸','🛩️'];
+  cells.forEach(cell => {
+    if (!cell.classList.contains('selecionado') && Math.random() < 0.4) {
+      cell.textContent = allEmojis[Math.floor(Math.random() * allEmojis.length)];
+    }
+  });
+}
+
+function tentarCaptcha() {
+  clearInterval(captchaTimer);
+  // [BAD UX 1] Sempre considera errado — CVV nunca é revelado na primeira tentativa
+  tentativas++;
+  if (tentativas < 3) {
+    document.getElementById('captcha-erro').textContent = `❌ Seleção incorreta! Tentativa ${tentativas} de 3.`;
+    document.getElementById('captcha-erro').style.display = 'block';
+    setTimeout(gerarCaptcha, 1200);
   } else {
-    el.textContent = '• • •';
-    card.classList.remove('flipped');
+    // Na 3a tentativa "passa" mas mostra CVV errado por 2s
+    document.getElementById('captcha-erro').style.display = 'none';
+    const revelar = document.getElementById('cvv-reveal');
+    // CVV com um dígito errado
+    const cvvReal = revelar.textContent;
+    const cvvErrado = cvvReal.split('').map((d, i) => i === 1 ? String((parseInt(d)+1)%10) : d).join('');
+    revelar.textContent = cvvErrado;
+    revelar.style.display = 'block';
+    document.getElementById('captcha-grid').style.display = 'none';
+    setTimeout(() => {
+      revelar.style.display = 'none';
+      revelar.textContent = cvvReal; // restaura para próxima vez
+      document.getElementById('captcha-grid').style.display = 'grid';
+      fecharCaptcha();
+      alert('🔒 Sessão de segurança expirada por inatividade. Por favor, reinicie o processo.');
+    }, 2000);
   }
 }
-function toggleLimiteForm() {
-  const form = document.getElementById('limite-form');
-  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+
+// ── [BAD UX 3] SLOT MACHINE DE LIMITE ──────────────────────────
+function abrirSlotMachine() {
+  document.getElementById('slot-overlay').classList.add('ativo');
+  document.getElementById('slot-result').style.display = 'none';
+  document.getElementById('btn-girar').style.display = 'block';
+  document.getElementById('btn-girar').disabled = false;
+  // Reset tambores
+  ['inner-0','inner-1','inner-2','inner-3','inner-4'].forEach(id => {
+    document.getElementById(id).querySelector('.slot-digit').textContent = '?';
+  });
+}
+
+function fecharSlot() {
+  document.getElementById('slot-overlay').classList.remove('ativo');
+}
+
+function girarSlot() {
+  document.getElementById('btn-girar').disabled = true;
+
+  // Animação de giro nos tambores
+  const inners = ['inner-0','inner-1','inner-2','inner-3','inner-4'];
+  const intervalIds = inners.map(id => {
+    return setInterval(() => {
+      document.getElementById(id).querySelector('.slot-digit').textContent =
+        String(Math.floor(Math.random() * 10));
+    }, 80);
+  });
+
+  // Para os tambores em sequência após 2s e chama API
+  setTimeout(() => {
+    intervalIds.forEach(id => clearInterval(id));
+
+    fetch('/api/cards/slot-limite', { method: 'POST' })
+      .then(r => r.json())
+      .then(data => {
+        const novoLimite = data.novo_limite;
+        const str = novoLimite.toFixed(2).replace('.', '');
+        // Preenche os tambores com os dígitos do novo limite
+        const digits = String(Math.round(novoLimite)).padStart(5, '0').split('');
+        inners.forEach((id, i) => {
+          document.getElementById(id).querySelector('.slot-digit').textContent = digits[i] || '0';
+        });
+
+        setTimeout(() => {
+          document.getElementById('slot-result').style.display = 'block';
+          document.getElementById('btn-girar').style.display = 'none';
+          document.getElementById('slot-msg').innerHTML =
+            `🎰 O sistema decidiu: <strong>R$ ${novoLimite.toLocaleString('pt-BR', {minimumFractionDigits:2})}</strong><br>` +
+            `<small style="font-weight:400;color:var(--text-muted)">Anterior: R$ ${data.limite_anterior.toLocaleString('pt-BR', {minimumFractionDigits:2})}. Não cabe recurso.</small>`;
+        }, 500);
+      })
+      .catch(() => {
+        document.getElementById('slot-result').style.display = 'block';
+        document.getElementById('btn-girar').style.display = 'none';
+        document.getElementById('slot-msg').textContent = '⚠️ Sistema indisponível. Seu limite foi reduzido preventivamente.';
+      });
+  }, 2200);
 }
 </script>
+
 {% endblock %}

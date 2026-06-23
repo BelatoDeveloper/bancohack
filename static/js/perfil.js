@@ -182,17 +182,16 @@ document.addEventListener('DOMContentLoaded', function () {
       logoutForm.submit();
     });
   }
-
-  // ──────────────────────────────────────────
+// ──────────────────────────────────────────
   // 7. MODAL APAGAR CONTA
   // Nunca apaga — sempre dá erro diferente
   // ──────────────────────────────────────────
-  window.abrirModalApagar = function () {
+  window.abrirModalApagar = function() {
     const modal = document.getElementById('modal-apagar');
     modal.style.display = 'flex';
   }
 
-  window.fecharModalApagar = function () {
+  window.fecharModalApagar = function() {
     const modal = document.getElementById('modal-apagar');
     modal.style.display = 'none';
     document.getElementById('resposta-apagar').value = '';
@@ -217,7 +216,7 @@ document.addEventListener('DOMContentLoaded', function () {
     'Erro interno do servidor. Nossa equipe foi notificada. (código: ERR_DELETE_503)',
   ];
 
-  window.tentarApagar = function () {
+  window.tentarApagar = function() {
     const resposta = document.getElementById('resposta-apagar').value.trim();
     const erroDiv = document.getElementById('erro-apagar');
     const perguntaEl = document.getElementById('pergunta-apagar');
@@ -238,5 +237,14 @@ document.addEventListener('DOMContentLoaded', function () {
       document.getElementById('resposta-apagar').value = '';
     }
   }
+
+  window.toggleSenhaForm = function() {
+    const form = document.getElementById('senha-form');
+    if (form.style.display === 'none' || form.style.display === '') {
+      form.style.display = 'block';
+    } else {
+      form.style.display = 'none';
+    }
+  };
 
 });
