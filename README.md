@@ -1,4 +1,4 @@
-# 🏦 ZicaPay — Banco Digital da Pior Experiência
+# ZicaPay — Banco Digital da Pior Experiência
 
 ## Equipe
 
@@ -75,14 +75,6 @@ python app.py
 # 5. Acessar no navegador
 # http://127.0.0.1:5000
 ```
-
-**Contas disponíveis para teste:**
-
-| Nome                | E-mail              | Senha    |
-| ------------------- | ------------------- | -------- |
-| Ana Paula Ferreira  | ana@bancohack.com   | senha123 |
-| Bruno Carvalho Lima | bruno@bancohack.com | senha456 |
-| Carla Mendes Souza  | carla@bancohack.com | senha789 |
 
 **Fluxo principal:** acesse `/`, aceite os termos, crie uma conta ou faça login com as credenciais acima, assista a propaganda obrigatória para ver o saldo e explore as funcionalidades.
 
