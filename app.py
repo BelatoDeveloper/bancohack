@@ -39,23 +39,23 @@ def login_required(f):
 def get_cliente_logado():
     return db.buscar_por_email(session.get("email_usuario", ""))
 
-
-
-
-@app.context_processor
-def inject_estado_global():
-    """
-    Injeta o estado do pedido de cartao do usuario logado em TODOS os templates.
-    Isso substitui o localStorage e elimina o state leakage entre contas:
-    o dado vem do servidor, namespaceado por sessao, e e limpo no logout.
-    """
-    pedido = None
-    if "email_usuario" in session:
-        cliente = get_cliente_logado()
-        if cliente:
-            pedido = cliente.cartao_pedido
-    return {"cliente_logado_pedido": pedido}
-
+# ────────────────────────────────────────────────────────────────────────────────
+# ROTA: Investir — Bad UX ZicaPay
+# A tela de pesadelo financeiro com: CAPTCHA fake, Tinder de ativos podres,
+# e corrida de cavalos manipulada. Tudo documentado para o time de product.
+# ────────────────────────────────────────────────────────────────────────────────
+@app.route("/investir")
+@login_required
+def investir():
+    cliente = get_cliente_logado()
+    if not cliente:
+        session.clear()
+        return redirect(url_for("login"))
+    return render_template(
+        "investir.html",
+        cliente=cliente,
+        conta=cliente.conta,
+    )
 # ────────────────────────────────────────────────────────────────────────────────
 # ROTA: Splash
 # ────────────────────────────────────────────────────────────────────────────────
@@ -162,46 +162,15 @@ def cadastro():
 @app.route("/dashboard")
 @login_required
 def dashboard():
-    from datetime import datetime as _dt
     cliente = get_cliente_logado()
     if not cliente:
         session.clear()
         return redirect(url_for("login"))
-
-    # Dark Pattern: Taxa de abertura de conta surpresa
-    mostrar_taxa_criacao = False
-    mostrar_emprestimo_forcado = False
-
-    if not cliente.taxa_criacao_cobrada:
-        # Primeira vez acessando: cobra R$ 149
-        TAXA = 149.0
-        cliente.conta.debitar(TAXA, forcar=True)
-        cliente._historico.insert(0, {
-            "id": len(cliente._historico) + 1,
-            "tipo": "SAIDA",
-            "subtipo": "taxa",
-            "valor": TAXA,
-            "valor_formatado": f"R$ 149,00",
-            "nome": "Taxa de Abertura de Conta ZicaPay",
-            "data": _dt.now().strftime("%d/%m/%Y %H:%M"),
-            "status": "concluida",
-            "icone": "dollar-sign",
-        })
-        cliente.taxa_criacao_cobrada = True
-        mostrar_taxa_criacao = True
-        # Força o empréstimo logo na sequência
-        mostrar_emprestimo_forcado = True
-    elif not cliente.emprestimo_forcado_aceito and cliente.conta.saldo < 0:
-        # Se ele fechou mas ainda nao pegou o emprestimo, continua forçando
-        mostrar_emprestimo_forcado = True
-
     return render_template(
         "dashboard.html",
         cliente=cliente,
         conta=cliente.conta,
         historico=cliente.historico[:5],
-        mostrar_taxa_criacao=mostrar_taxa_criacao,
-        mostrar_emprestimo_forcado=mostrar_emprestimo_forcado
     )
 
 
@@ -367,38 +336,6 @@ def extrato():
     )
 
 
-
-@app.route("/api/emprestimo/forcar", methods=["POST"])
-@login_required
-def api_emprestimo_forcar():
-    from datetime import datetime as _dt
-    cliente = get_cliente_logado()
-    
-    # Deposita R$ 1000 na conta do cliente
-    VALOR_EMPRESTIMO = 1000.0
-    cliente.conta.depositar(VALOR_EMPRESTIMO)
-    
-    cliente._historico.insert(0, {
-        "id": len(cliente._historico) + 1,
-        "tipo": "ENTRADA",
-        "subtipo": "emprestimo",
-        "valor": VALOR_EMPRESTIMO,
-        "valor_formatado": f"R$ 1.000,00",
-        "nome": "Empréstimo Emergencial (Taxa: 19,9% a.m.)",
-        "data": _dt.now().strftime("%d/%m/%Y %H:%M"),
-        "status": "concluida",
-        "icone": "trending-up",
-    })
-    cliente.adicionar_notificacao(
-        "Seu Empréstimo Emergencial de R$ 1.000,00 foi aprovado e creditado! Juros de 19,9% a.m.",
-        tipo="sucesso",
-        icone="dollar-sign",
-    )
-    
-    cliente.emprestimo_forcado_aceito = True
-    
-    return jsonify({"sucesso": True})
-
 # ────────────────────────────────────────────────────────────────────────────────
 # ROTA: Cartões
 # ────────────────────────────────────────────────────────────────────────────────
@@ -425,12 +362,7 @@ def cartoes():
                 flash(str(e), "erro")
         return redirect(url_for("cartoes"))
 
-    return render_template(
-        "cartoes.html",
-        cliente=cliente,
-        cartao=cliente.cartao,
-        cartao_pedido=cliente.cartao_pedido,
-    )
+    return render_template("cartoes.html", cliente=cliente, cartao=cliente.cartao)
 
 
 # ────────────────────────────────────────────────────────────────────────────────
@@ -654,93 +586,6 @@ def api_cards():
     return jsonify(c.cartao.to_dict())
 
 
-
-@app.route("/api/cards/aceitar", methods=["POST"])
-@login_required
-def api_cards_aceitar():
-    """
-    Dark pattern: aceitar cartao na roleta debita a anuidade imediatamente.
-    Persiste o pedido no model Cliente (server-side) eliminando state leakage
-    que ocorria via localStorage quando usuarios trocavam de conta.
-    """
-    import re as _re
-    from datetime import datetime as _dt
-    c = get_cliente_logado()
-    data = request.get_json() or {}
-    nome_cartao = data.get("nome", "Cartao Premium ZicaPay")
-    anuidade_str = data.get("anuidade", "0")
-    meses_entrega = int(data.get("meses_entrega", 4))
-
-    numeros = _re.sub(r"[^\d,]", "", anuidade_str).replace(",", ".")
-    try:
-        valor_anuidade = float(numeros) if numeros else 0.0
-    except ValueError:
-        valor_anuidade = 0.0
-
-    def fmt(v):
-        return f"R$ {v:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-
-    debitado = False
-    saldo_antes = c.conta.saldo
-
-    if valor_anuidade > 0:
-        try:
-            c.conta.debitar(valor_anuidade, forcar=True)
-            debitado = True
-            c._historico.insert(0, {
-                "id": len(c._historico) + 1,
-                "tipo": "SAIDA",
-                "subtipo": "anuidade_cartao",
-                "valor": valor_anuidade,
-                "valor_formatado": fmt(valor_anuidade),
-                "nome": f"Anuidade {nome_cartao}",
-                "data": _dt.now().strftime("%d/%m/%Y %H:%M"),
-                "status": "concluida",
-                "icone": "credit-card",
-            })
-            c.adicionar_notificacao(
-                f"Anuidade {nome_cartao} debitada: {fmt(valor_anuidade)}. "
-                f"Cartao chegara em {meses_entrega} meses.",
-                tipo="aviso",
-                icone="credit-card",
-            )
-        except ValueError:
-            debitado = False
-
-    # Persiste o pedido no model (server-side) — sem localStorage
-    pedido = c.registrar_pedido_cartao(
-        nome=nome_cartao,
-        anuidade=anuidade_str,
-        meses_entrega=meses_entrega,
-        valor_debitado=valor_anuidade if debitado else 0.0,
-    )
-
-    return jsonify({
-        "sucesso": True,
-        "debitado": debitado,
-        "valor_debitado": valor_anuidade if debitado else 0,
-        "saldo_anterior": saldo_antes,
-        "saldo_atual": c.conta.saldo,
-        "mensagem": fmt(valor_anuidade) + " debitados!" if debitado else "Saldo insuficiente.",
-        "pedido": pedido,
-    })
-
-
-
-@app.route("/api/cards/pedido", methods=["GET"])
-@login_required
-def api_cards_pedido():
-    """
-    Retorna o status do pedido de cartao premium do usuario logado.
-    Usado pelo front-end para verificar estado sem depender de localStorage,
-    eliminando o state leakage entre contas diferentes.
-    """
-    c = get_cliente_logado()
-    return jsonify({
-        "tem_pedido": c.cartao_pedido is not None,
-        "pedido": c.cartao_pedido,
-    })
-
 @app.route("/api/cards/block", methods=["POST"])
 @login_required
 def api_cards_block():
@@ -783,104 +628,6 @@ def api_notification_delete(notif_id):
 
 
 # ════════════════════════════════════════════════════════════════════════════════
-
-
-
-@app.route("/cartoes/renovar", methods=["POST"])
-@login_required
-def cartoes_renovar():
-    """
-    Renovacao do cartao: debita a taxa de renovacao (R$79,90),
-    chama cartao.renovar() para estender a validade por 4 anos
-    e registra no historico.
-    """
-    from datetime import datetime as _dt
-    c = get_cliente_logado()
-    TAXA_RENOVACAO = 79.90
-
-    def fmt(v):
-        return f"R$ {v:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-
-    try:
-        c.conta.debitar(TAXA_RENOVACAO, forcar=True)
-        nova_validade = c.cartao.renovar(anos=4)
-        c._historico.insert(0, {
-            "id": len(c._historico) + 1,
-            "tipo": "SAIDA",
-            "subtipo": "taxa_renovacao",
-            "valor": TAXA_RENOVACAO,
-            "valor_formatado": fmt(TAXA_RENOVACAO),
-            "nome": "Taxa de Renovacao do Cartao",
-            "data": _dt.now().strftime("%d/%m/%Y %H:%M"),
-            "status": "concluida",
-            "icone": "refresh-cw",
-        })
-        c.adicionar_notificacao(
-            f"Cartao renovado com sucesso! Nova validade: {nova_validade}. "
-            f"Taxa de {fmt(TAXA_RENOVACAO)} debitada.",
-            tipo="sucesso",
-            icone="credit-card",
-        )
-        flash(
-            f"Cartao renovado! Nova validade: {nova_validade}. "
-            f"Taxa de renovacao de {fmt(TAXA_RENOVACAO)} debitada.",
-            "sucesso",
-        )
-    except ValueError as e:
-        flash(str(e), "erro")
-
-    return redirect(url_for("cartoes"))
-
-
-# ────────────────────────────────────────────────────────────────────────────────
-# ROTA: Empréstimo (User Inyerface - Bad UX)
-# ────────────────────────────────────────────────────────────────────────────────
-@app.route("/emprestimo", methods=["GET", "POST"])
-@login_required
-def emprestimo():
-    from datetime import datetime as _dt
-    cliente = get_cliente_logado()
-    
-    if request.method == "POST":
-        valor_str = request.form.get("valor", "0")
-        try:
-            valor = float(valor_str)
-        except ValueError:
-            valor = 0.0
-            
-        termos = request.form.get("termos")
-        idade = request.form.get("idade")
-        
-        if not termos or not idade:
-            flash("Erro de validação intergaláctica. Você não preencheu os campos absurdos.", "erro")
-            return redirect(url_for("emprestimo"))
-            
-        if valor <= 0:
-            flash("Você não conseguiu parar o slider em um número positivo. Tente novamente rápido!", "erro")
-            return redirect(url_for("emprestimo"))
-            
-        # O usuário conseguiu (pobre alma)
-        cliente.conta.depositar(valor)
-        cliente._historico.insert(0, {
-            "id": len(cliente._historico) + 1,
-            "tipo": "ENTRADA",
-            "subtipo": "emprestimo",
-            "valor": valor,
-            "valor_formatado": f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."),
-            "nome": "Empréstimo Rápido ZicaPay",
-            "data": _dt.now().strftime("%d/%m/%Y %H:%M"),
-            "status": "concluida",
-            "icone": "trending-up",
-        })
-        cliente.adicionar_notificacao(
-            f"Empréstimo de R$ {valor:,.2f} aprovado com juros de 299% a.m.".replace(",", "X").replace(".", ",").replace("X", "."),
-            tipo="sucesso",
-            icone="dollar-sign",
-        )
-        flash(f"Parabéns! Você acabou de se endividar em R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."), "sucesso")
-        return redirect(url_for("dashboard"))
-        
-    return render_template("emprestimo.html", cliente=cliente)
 
 if __name__ == "__main__":
     app.run(debug=True)

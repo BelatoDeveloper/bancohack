@@ -624,47 +624,15 @@
 }
 
 /* Botão de recusa (avança para o próximo nível) */
-/* Wrapper dos botoes: flex column para empilhar aceitar e recusar */
-#dp3-botoes-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-}
-
-/* Botao ACEITAR - verde pulsante, destaque maximo */
-#dp3-btn-aceitar {
-  display: block;
-  width: 100%;
-  padding: 13px 16px;
-  background: linear-gradient(135deg, #16a34a, #15803d);
-  border: 2px solid rgba(255, 255, 255, 0.35);
-  color: #fff;
-  font-size: 0.92rem;
-  font-weight: 800;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: inherit;
-  animation: dpPulse 1.6s ease-in-out infinite;
-  box-shadow: 0 6px 20px rgba(22, 163, 74, 0.5);
-  letter-spacing: 0.3px;
-}
-
-#dp3-btn-aceitar:hover {
-  transform: scale(1.02);
-  box-shadow: 0 8px 28px rgba(22, 163, 74, 0.7);
-}
-
 #dp3-btn-recusar {
   display: block;
   width: 100%;
   padding: 11px 16px;
-  background: rgba(0, 0, 0, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.75rem;
-  font-weight: 500;
+  background: #0E9F4B;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s ease;

@@ -707,7 +707,6 @@
     var nivelAtual = 0;          // índice do nível atual (0 a 5)
     var limparFuga = null;       // função de limpeza do botão fujão (nível 6)
     var girando = false;         // flag: roleta está animando?
-    var aceitando = false;       // flag: chamada de aceitar em andamento?
 
     /**
      * fechar(): fecha o popup 3, limpa listeners e libera a fila.
@@ -720,91 +719,18 @@
       if (overlay) overlay.classList.remove('dp-ativo');
       if (btnFujao) {
         btnFujao.classList.remove('dp-ativo');
+        // Reseta posição para dentro do modal (para a próxima abertura)
         btnFujao.style.left = '';
         btnFujao.style.top = '';
       }
       if (limparFuga) {
-        limparFuga();
+        limparFuga(); // remove o listener de mousemove do botão fujão
         limparFuga = null;
       }
       FilaPopups.liberar();
+
+      // Navega para /cartoes após fechar (a roleta foi "vencida")
       window.location.href = '/cartoes';
-    }
-
-    /**
-     * aceitarCartao(): chamado quando o usuário clica em "QUERO ESTE CARTÃO!".
-     * 1. Chama /api/cards/aceitar para debitar a anuidade
-     * 2. Salva no localStorage para suprimir o popup nas próximas visitas
-     * 3. Mostra tela de confirmação com os detalhes do "golpe"
-     * 4. Redireciona para /cartoes após alguns segundos
-     */
-    function aceitarCartao() {
-      if (aceitando) return;
-      aceitando = true;
-
-      var nivel = cfg.niveis[nivelAtual];
-      var botoes = document.getElementById('dp3-botoes-wrapper');
-      var confirmacao = document.getElementById('dp3-confirmacao');
-      var confTitulo = document.getElementById('dp3-confirmacao-titulo');
-      var confTexto = document.getElementById('dp3-confirmacao-texto');
-      var confAviso = document.getElementById('dp3-confirmacao-aviso');
-      var slotContainer = document.getElementById('dp3-slot-container');
-
-      // Esconde os botões enquanto processa
-      if (botoes) botoes.style.opacity = '0.4';
-
-      // Chama a API para debitar a anuidade
-      fetch('/api/cards/aceitar', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          nome: nivel.nome,
-          anuidade: nivel.anuidade,
-        }),
-      })
-      .then(function(r) { return r.json(); })
-      .then(function(res) {
-        // Salva no localStorage para não mostrar o popup de novo
-        var mesesEntrega = Math.floor(Math.random() * 4) + 3; // 3 a 6 meses
-        localStorage.setItem('zicapay_cartao_aceito', JSON.stringify({
-          nome: nivel.nome,
-          anuidade: nivel.anuidade,
-          meses: mesesEntrega,
-          data: new Date().toLocaleDateString('pt-BR'),
-        }));
-
-        // Esconde o slot container e botões, mostra confirmação
-        if (slotContainer) slotContainer.style.display = 'none';
-        if (botoes) botoes.style.display = 'none';
-        if (confirmacao) confirmacao.style.display = 'block';
-
-        // Preenche os textos de confirmação
-        if (confTitulo) confTitulo.textContent = '🎉 ' + nivel.nome + ' solicitado!';
-        if (confTexto) {
-          confTexto.innerHTML =
-            '<strong>Anuidade debitada:</strong> ' + nivel.anuidade + '<br>' +
-            '<strong>Prazo de entrega:</strong> ' + mesesEntrega + ' meses úteis<br>' +
-            '<strong>Entrega via:</strong> Sedex Não-Rastreável® ZicaPay';
-        }
-        if (confAviso) {
-          confAviso.textContent =
-            'Em caso de não recebimento, taxa de re-emissão de R$ 189,90. ' +
-            'O valor da anuidade nao e reembolsavel. Obrigado por confiar no ZicaPay!';
-        }
-
-        // Redireciona para /cartoes após 4 segundos
-        setTimeout(function() {
-          var overlay = document.getElementById('dp3-overlay');
-          if (overlay) overlay.classList.remove('dp-ativo');
-          FilaPopups.liberar();
-          window.location.href = '/cartoes';
-        }, 4500);
-      })
-      .catch(function() {
-        // Mesmo se a API falhar, salva localmente e mostra confirmação
-        aceitando = false;
-        if (botoes) botoes.style.opacity = '1';
-      });
     }
 
     /**
@@ -996,17 +922,13 @@
     }
 
     /**
-     * configurarBotoes(): registra listeners do botão de recusa e do botão aceitar.
-     * Chamado uma vez — os botões são os mesmos durante toda a sequência de níveis.
+     * configurarBotoes(): registra o listener do botão de recusa.
+     * Chamado uma vez — o botão é o mesmo durante toda a sequência de níveis.
      */
     function configurarBotoes() {
       var btnRecusar = document.getElementById('dp3-btn-recusar');
       if (btnRecusar) {
         btnRecusar.addEventListener('click', avancarNivel);
-      }
-      var btnAceitar = document.getElementById('dp3-btn-aceitar');
-      if (btnAceitar) {
-        btnAceitar.addEventListener('click', aceitarCartao);
       }
     }
 
@@ -1027,11 +949,14 @@
        * Event delegation com capture:true:
        * - 'capture:true' garante que capturamos o evento antes de qualquer
        *   handler de navegação padrão do browser ou do app.js
-       * - SE o usuário já aceitou um cartão (localStorage), deixa navegar normalmente.
+       * - Verificamos se o elemento clicado (ou algum ancestral) é um link
+       *   que aponta para /cartoes
        */
       document.addEventListener('click', function (e) {
+        // Percorre a árvore DOM a partir do elemento clicado
         var alvo = e.target;
         while (alvo && alvo !== document) {
+          // Verifica se é um link para cartoes ou tem o ID de gatilho
           var href = alvo.getAttribute ? alvo.getAttribute('href') : null;
           var id = alvo.id;
 
@@ -1040,14 +965,6 @@
             (id === 'nav-cartoes');
 
           if (eGatilho) {
-            // ── Se já aceitou um cartão, NÃO mostra o popup — navega direto ──
-            // Usa window.ZICAPAY_ESTADO (injetado pelo Flask) em vez de localStorage,
-            // eliminando state leakage entre contas no mesmo browser.
-            var temPedido = window.ZICAPAY_ESTADO && window.ZICAPAY_ESTADO.cartaoPedido;
-            if (temPedido) {
-              // Tem pedido server-side: navega diretamente sem popup
-              return;
-            }
             e.preventDefault();
             e.stopImmediatePropagation();
             FilaPopups.adicionar(abrir);
