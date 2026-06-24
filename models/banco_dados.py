@@ -5,6 +5,11 @@ Repositório mock usando arquivo JSON local para evitar travamentos do gRPC/Fire
 import os
 import json
 from datetime import datetime
+
+# FIX VERCEL FIREBASE: Importando Firebase admin
+import firebase_admin
+from firebase_admin import credentials, firestore
+
 from models.conta import Conta
 from models.cliente import Cliente
 from models.notificacao import Notificacao
@@ -12,6 +17,22 @@ from models.pix import ChavePix
 from models.cartao import Cartao
 
 LOCAL_DB_FILE = "local_db.json"
+
+# FIX VERCEL FIREBASE: Inicializando o Firebase Admin
+try:
+    if not firebase_admin._apps:
+        cred_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "firebase_credentials.json")
+        if os.path.exists(cred_path):
+            cred = credentials.Certificate(cred_path)
+            firebase_admin.initialize_app(cred)
+            db_firestore = firestore.client()
+        else:
+            db_firestore = None
+    else:
+        db_firestore = firestore.client()
+except Exception as e:
+    print(f"Erro ao inicializar Firebase: {e}")
+    db_firestore = None
 
 class BancoDados:
     """Repositório mock usando arquivo JSON local."""
@@ -22,23 +43,52 @@ class BancoDados:
         self._carregar_local()
 
     def _carregar_local(self):
-        if os.path.exists(LOCAL_DB_FILE):
+        # FIX VERCEL FIREBASE: Usar Firebase se disponível e estiver na Vercel
+        if os.environ.get("VERCEL") and db_firestore:
             try:
+                docs = db_firestore.collection('clientes').stream()
+                for doc in docs:
+                    data = doc.to_dict()
+                    self._clientes_dict[data.get('email')] = self._cliente_from_dict(data)
+                
+                meta_doc = db_firestore.collection('metadata').document('banco').get()
+                if meta_doc.exists:
+                    self._id_counter = meta_doc.to_dict().get("id_counter", 1)
+                return
+            except Exception as e:
+                print(f"Erro ao carregar do Firebase: {e}")
+
+        # FIX VERCEL FIREBASE: Tratamento de erros (fallback)
+        try:
+            if os.path.exists(LOCAL_DB_FILE):
                 with open(LOCAL_DB_FILE, "r", encoding="utf-8") as f:
                     data = json.load(f)
                     self._id_counter = data.get("id_counter", 1)
                     for k, v in data.get("clientes", {}).items():
                         self._clientes_dict[k] = self._cliente_from_dict(v)
-            except Exception as e:
-                print(f"Erro ao carregar {LOCAL_DB_FILE}: {e}")
+        except OSError:
+            pass
+        except Exception as e:
+            print(f"Erro ao carregar {LOCAL_DB_FILE}: {e}")
 
     def _salvar_local(self):
+        # FIX VERCEL FIREBASE: Pular gravação local se estiver na Vercel
+        if os.environ.get("VERCEL"):
+            return
+
         data = {
             "id_counter": self._id_counter,
             "clientes": {k: self._cliente_to_dict(v) for k, v in self._clientes_dict.items()}
         }
-        with open(LOCAL_DB_FILE, "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=2, default=str)
+        
+        # FIX VERCEL FIREBASE: Tratamento de erro (fallback) para infra Serverless
+        try:
+            with open(LOCAL_DB_FILE, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=2, default=str)
+        except OSError:
+            pass
+        except Exception as e:
+            print(f"Erro ao salvar {LOCAL_DB_FILE}: {e}")
 
     def _get_next_id(self) -> int:
         return self._id_counter
@@ -106,6 +156,9 @@ class BancoDados:
                         notif._data = datetime.strptime(raw_data.split(".")[0], "%Y-%m-%d %H:%M:%S")
                     except ValueError:
                         pass
+            elif isinstance(raw_data, datetime):
+                # FIX VERCEL FIREBASE: Suporte nativo para datetime retornado pelo Firebase
+                notif._data = raw_data
             notif._lida = n.get("lida", False)
             cliente._notificacoes.append(notif)
             
@@ -146,6 +199,14 @@ class BancoDados:
 
     def salvar_cliente(self, cliente: Cliente) -> None:
         self._clientes_dict[cliente.email] = cliente
+        
+        # FIX VERCEL FIREBASE: Gravar cliente no Firebase
+        if db_firestore:
+            try:
+                db_firestore.collection('clientes').document(cliente.email).set(self._cliente_to_dict(cliente))
+            except Exception as e:
+                print(f"Erro ao salvar cliente no Firebase: {e}")
+                
         self._salvar_local()
 
     # ── Métodos de consulta ──────────────────────────────────────────────
@@ -206,6 +267,14 @@ class BancoDados:
         
         self.salvar_cliente(cliente)
         self._id_counter += 1
+        
+        # FIX VERCEL FIREBASE: Sincronizar metadata id_counter no Firebase
+        if db_firestore:
+            try:
+                db_firestore.collection('metadata').document('banco').set({"id_counter": self._id_counter}, merge=True)
+            except Exception as e:
+                print(f"Erro ao atualizar id_counter no Firebase: {e}")
+                
         self._salvar_local()
         return cliente
 
