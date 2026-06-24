@@ -192,7 +192,7 @@ O projeto foi testado pelos próprios integrantes da equipe simulando o fluxo co
 
 ---
 
-## Aviso de Compliance — Hackathon IFRO 2026/1
+## Aviso de Compliance — Hackathon IFRO 2026
 
 > ⚠️ **Declaração Obrigatória conforme regras do Hackathon Extensionista IFRO Ariquemes**
 
