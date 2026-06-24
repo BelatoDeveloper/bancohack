@@ -206,7 +206,7 @@ Nenhuma chave de API, senha ou credencial real está exposta no código-fonte de
 
 ### Disponibilidade do MVP
 
-O MVP está funcional e disponível para demonstração. O sistema executa localmente via `flask run` seguindo as instruções de instalação deste README.
+O MVP está online, funcional e disponível para avaliação da banca através do link público: https://zicapay-steel.vercel.app. O sistema também pode ser executado localmente seguindo as instruções deste README.
 
 ### Prazo de Submissão
 
