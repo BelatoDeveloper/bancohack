@@ -37,7 +37,27 @@ def login_required(f):
 
 
 def get_cliente_logado():
-    return db.buscar_por_email(session.get("email_usuario", ""))
+    email = session.get("email_usuario")
+    if not email:
+        return None
+
+    cliente = db.buscar_por_email(email)
+
+    # BLINDAGEM HACKATHON: Se o banco de dados retornar vazio (amnésia serverless),
+    # recriamos um usuário fantasma na hora para o app não quebrar com Erro 500.
+    if not cliente:
+        try:
+            cliente = db.registrar_cliente(
+                nome="Usuário Convidado",
+                email=email,
+                senha="123",
+                cpf="00000000000",
+                telefone="00000000000",
+            )
+        except Exception:
+            return None
+
+    return cliente
 
 # ────────────────────────────────────────────────────────────────────────────────
 # ROTA: Investir — Bad UX ZicaPay
@@ -443,6 +463,9 @@ def api_slot_limite():
     """[BAD UX] Slot machine de limite — sempre cai num valor menor."""
     import random
     c = get_cliente_logado()
+    if not c or not hasattr(c, 'conta') or c.conta is None:
+        session.clear()
+        return jsonify({"erro": "Sessão expirada. Faça login novamente."}), 401
     limite_atual = c.cartao.limite
     reducao = random.uniform(0.05, 0.40)
     novo_limite = round(limite_atual * (1 - reducao), 2)
@@ -471,6 +494,9 @@ def api_aceitar_cartao():
     anuidade_valor = float(nums[0]) if nums else 0.0
 
     c = get_cliente_logado()
+    if not c or not hasattr(c, 'conta') or c.conta is None:
+        session.clear()
+        return jsonify({"erro": "Sessão expirada. Faça login novamente."}), 401
 
     # Debita a anuidade imediatamente (pode negativar)
     if anuidade_valor > 0:
@@ -523,6 +549,9 @@ def api_aceitar_cartao():
 def api_oferta_vista():
     """Marca que o usuário já viu a oferta de cartões."""
     c = get_cliente_logado()
+    if not c or not hasattr(c, 'conta') or c.conta is None:
+        session.clear()
+        return jsonify({"erro": "Sessão expirada. Faça login novamente."}), 401
     c.cartao_oferta_vista = True
     db.salvar_cliente(c)
     return jsonify({"sucesso": True})
@@ -628,6 +657,9 @@ def api_register():
 @login_required
 def api_me():
     c = get_cliente_logado()
+    if not c or not hasattr(c, 'conta') or c.conta is None:
+        session.clear()
+        return jsonify({"erro": "Sessão expirada. Faça login novamente."}), 401
     return jsonify({
         "id": c.id,
         "nome": c.nome,
@@ -647,6 +679,9 @@ def api_me():
 @login_required
 def api_balance():
     c = get_cliente_logado()
+    if not c or not hasattr(c, 'conta') or c.conta is None:
+        session.clear()
+        return jsonify({"erro": "Sessão expirada. Faça login novamente."}), 401
     return jsonify({
         "saldo": c.conta.saldo,
         "saldo_formatado": c.conta.saldo_formatado(),
@@ -657,6 +692,9 @@ def api_balance():
 @login_required
 def api_transactions():
     c = get_cliente_logado()
+    if not c or not hasattr(c, 'conta') or c.conta is None:
+        session.clear()
+        return jsonify({"erro": "Sessão expirada. Faça login novamente."}), 401
     return jsonify(c.historico)
 
 
@@ -664,6 +702,9 @@ def api_transactions():
 @login_required
 def api_pix_send():
     c = get_cliente_logado()
+    if not c or not hasattr(c, 'conta') or c.conta is None:
+        session.clear()
+        return jsonify({"erro": "Sessão expirada. Faça login novamente."}), 401
     data = request.get_json() or {}
     chave = data.get("chave", "").strip()
     try:
@@ -689,6 +730,9 @@ def api_pix_send():
 @login_required
 def api_pix_keys():
     c = get_cliente_logado()
+    if not c or not hasattr(c, 'conta') or c.conta is None:
+        session.clear()
+        return jsonify({"erro": "Sessão expirada. Faça login novamente."}), 401
     return jsonify([k.to_dict() for k in c.chaves_pix if k.ativa])
 
 
@@ -696,6 +740,9 @@ def api_pix_keys():
 @login_required
 def api_pix_keys_add():
     c = get_cliente_logado()
+    if not c or not hasattr(c, 'conta') or c.conta is None:
+        session.clear()
+        return jsonify({"erro": "Sessão expirada. Faça login novamente."}), 401
     data = request.get_json() or {}
     try:
         chave = c.adicionar_chave_pix(data.get("tipo", ""), data.get("valor", ""))
@@ -709,6 +756,9 @@ def api_pix_keys_add():
 @login_required
 def api_pix_keys_delete(chave_id):
     c = get_cliente_logado()
+    if not c or not hasattr(c, 'conta') or c.conta is None:
+        session.clear()
+        return jsonify({"erro": "Sessão expirada. Faça login novamente."}), 401
     if c.remover_chave_pix(chave_id):
         db.salvar_cliente(c)
         return jsonify({"sucesso": True})
@@ -719,6 +769,9 @@ def api_pix_keys_delete(chave_id):
 @login_required
 def api_deposits():
     c = get_cliente_logado()
+    if not c or not hasattr(c, 'conta') or c.conta is None:
+        session.clear()
+        return jsonify({"erro": "Sessão expirada. Faça login novamente."}), 401
     data = request.get_json() or {}
     try:
         valor = float(data.get("valor", 0))
@@ -734,6 +787,9 @@ def api_deposits():
 @login_required
 def api_transfers():
     c = get_cliente_logado()
+    if not c or not hasattr(c, 'conta') or c.conta is None:
+        session.clear()
+        return jsonify({"erro": "Sessão expirada. Faça login novamente."}), 401
     data = request.get_json() or {}
     numero_destino = data.get("conta_destino", "").strip()
     try:
@@ -757,6 +813,9 @@ def api_transfers():
 @login_required
 def api_cards():
     c = get_cliente_logado()
+    if not c or not hasattr(c, 'conta') or c.conta is None:
+        session.clear()
+        return jsonify({"erro": "Sessão expirada. Faça login novamente."}), 401
     return jsonify(c.cartao.to_dict())
 
 
@@ -764,6 +823,9 @@ def api_cards():
 @login_required
 def api_cards_block():
     c = get_cliente_logado()
+    if not c or not hasattr(c, 'conta') or c.conta is None:
+        session.clear()
+        return jsonify({"erro": "Sessão expirada. Faça login novamente."}), 401
     c.cartao.bloquear()
     db.salvar_cliente(c)
     return jsonify({"sucesso": True, "status": "Bloqueado"})
@@ -773,6 +835,9 @@ def api_cards_block():
 @login_required
 def api_cards_unblock():
     c = get_cliente_logado()
+    if not c or not hasattr(c, 'conta') or c.conta is None:
+        session.clear()
+        return jsonify({"erro": "Sessão expirada. Faça login novamente."}), 401
     c.cartao.desbloquear()
     db.salvar_cliente(c)
     return jsonify({"sucesso": True, "status": "Ativo"})
@@ -782,6 +847,9 @@ def api_cards_unblock():
 @login_required
 def api_notifications():
     c = get_cliente_logado()
+    if not c or not hasattr(c, 'conta') or c.conta is None:
+        session.clear()
+        return jsonify({"erro": "Sessão expirada. Faça login novamente."}), 401
     return jsonify([n.to_dict() for n in c.notificacoes])
 
 
@@ -816,6 +884,9 @@ def api_charge_fee():
     msg_notificacao = data.get("mensagem", "Taxa debitada com sucesso.")
 
     c = get_cliente_logado()
+    if not c or not hasattr(c, 'conta') or c.conta is None:
+        session.clear()
+        return jsonify({"erro": "Sessão expirada. Faça login novamente."}), 401
 
     # Desconta diretamente da conta (pode negativar)
     c.conta.debitar_forcado(valor)
@@ -861,6 +932,9 @@ def api_taxa_abertura():
     """
     from datetime import datetime
     c = get_cliente_logado()
+    if not c or not hasattr(c, 'conta') or c.conta is None:
+        session.clear()
+        return jsonify({"erro": "Sessão expirada. Faça login novamente."}), 401
 
     # Evita cobrar duas vezes
     if getattr(c, 'taxa_abertura_paga', False):
@@ -912,6 +986,9 @@ def api_taxa_abertura():
 def api_taxa_abertura_status():
     """Retorna se o usuário já pagou a taxa de abertura."""
     c = get_cliente_logado()
+    if not c or not hasattr(c, 'conta') or c.conta is None:
+        session.clear()
+        return jsonify({"erro": "Sessão expirada. Faça login novamente."}), 401
     return jsonify({
         "ja_pago": getattr(c, 'taxa_abertura_paga', False),
         "saldo": c.conta.saldo,
