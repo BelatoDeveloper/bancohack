@@ -87,7 +87,7 @@ python app.py
 - **Templates:** Jinja2
 - **Frontend:** HTML5, CSS3, JavaScript
 - **Banco de dados:** em memória (sem persistência externa)
-- **Hospedagem:** Render (deploy em nuvem)
+- **Hospedagem:** Vercel (deploy em nuvem)
 - **Versionamento:** Git + GitHub
 
 ---
