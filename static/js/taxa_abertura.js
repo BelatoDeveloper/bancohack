@@ -23,29 +23,60 @@ const TAXA_EMPRESTIMO = 12.99;   // % ao mês (absurda)
 // ── ESTADO ───────────────────────────────────────────────────────────────────
 let taxaJaExibida = false;
 
+// ── HELPERS DE PERSISTÊNCIA ──────────────────────────────────────────────────
+/**
+ * Retorna a chave do localStorage para o usuário atual.
+ * Chaveada pelo email para não misturar contas diferentes no mesmo navegador.
+ */
+function _localKey() {
+  const el = document.getElementById('saldo-real-data');
+  const email = el ? el.dataset.email : 'unknown';
+  return 'zicapay_taxa_paga_' + email;
+}
+
+/** Persiste que a taxa foi paga no localStorage (sobrevive a reloads). */
+function _marcarPagaLocalmente() {
+  try { localStorage.setItem(_localKey(), '1'); } catch (_) {}
+}
+
+/** Verifica se o localStorage já marcou a taxa como paga. */
+function _jaMarcadaLocalmente() {
+  try { return localStorage.getItem(_localKey()) === '1'; } catch (_) { return false; }
+}
+
 // ── FUNCAO PRINCIPAL ──────────────────────────────────────────────────────────
 /**
  * verificarETaxar()
  * Checa via API se o usuário já pagou a taxa. Se não, exibe o modal.
+ * Usa localStorage como cache para não exibir novamente após window.location.reload().
  */
 async function verificarETaxar() {
-  // Camada 1: evita reexibir na mesma sessão de página
+  // Camada 1: evita reexibir na mesma sessão de página (memória JS)
   if (taxaJaExibida) return;
+
+  // Camada 2: localStorage — persiste entre reloads de página
+  // Resolve o problema: pagar a taxa → polling faz reload → modal reaparecia
+  if (_jaMarcadaLocalmente()) return;
 
   try {
     const resp = await fetch('/api/fees/taxa-abertura/status');
+
+    // Se a sessão expirou (401), não exibe o modal — o usuário será redirecionado
+    if (resp.status === 401) return;
+
     const data = await resp.json();
     if (data.ja_pago) {
+      // Sincroniza o localStorage com o estado do servidor
+      _marcarPagaLocalmente();
       return;
     }
     // Taxa ainda não paga — exibe o modal
     taxaJaExibida = true;
     exibirModalTaxaAbertura();
   } catch (e) {
-    // Se a API falhar e não houver informação local, exibe o modal
-    // (dark pattern: dúvida resolve-se em favor do banco)
-    taxaJaExibida = true;
-    exibirModalTaxaAbertura();
+    // Erro de rede: não exibe o modal automaticamente para não incomodar
+    // o usuário com cobranças duplicadas por falha de conectividade
+    console.warn('[ZicaPay] verificarETaxar: erro de rede, modal suprimido.', e);
   }
 }
 
@@ -80,6 +111,10 @@ async function cobrarTaxaAbertura() {
     const data = await resp.json();
 
     if (data.sucesso && !data.ja_pago) {
+      // Persiste que a taxa foi paga — evita que o modal reapareça após reload
+      _marcarPagaLocalmente();
+      taxaJaExibida = true;
+
       // Mostra novo saldo
       if (statusEl) {
         const saldoNum = data.novo_saldo;
@@ -105,6 +140,10 @@ async function cobrarTaxaAbertura() {
 
       // Atualiza display do saldo na página se visível
       atualizarDisplaySaldo(data.novo_saldo);
+    } else if (data.ja_pago) {
+      // Já havia sido pago (resposta do servidor) — sincroniza localStorage
+      _marcarPagaLocalmente();
+      fecharModalTaxa();
     }
   } catch (e) {
     if (statusEl) statusEl.textContent = 'Erro ao processar. Tente novamente.';
