@@ -212,7 +212,26 @@ class BancoDados:
     # ── Métodos de consulta ──────────────────────────────────────────────
 
     def buscar_por_email(self, email: str) -> Cliente | None:
-        return self._clientes_dict.get(email)
+        # Tenta encontrar na memória RAM local primeiro
+        cliente = self._clientes_dict.get(email)
+        if cliente:
+            return cliente
+
+        # BLINDAGEM HACKATHON: Se não encontrou na RAM, tenta recuperar do Firebase
+        # Isso resolve o problema de "amnésia" serverless na Vercel
+        if db_firestore:
+            try:
+                doc = db_firestore.collection('clientes').document(email).get()
+                if doc.exists:
+                    data = doc.to_dict()
+                    cliente = self._cliente_from_dict(data)
+                    # Recarrega na memória local para uso imediato
+                    self._clientes_dict[email] = cliente
+                    return cliente
+            except Exception as e:
+                print(f"Erro ao buscar cliente no Firebase: {e}")
+
+        return None
 
     def buscar_por_numero_conta(self, numero: str) -> Cliente | None:
         for c in self._clientes_dict.values():
