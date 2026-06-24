@@ -66,7 +66,7 @@
        O valor real do saldo vem do servidor (Jinja2), mas é escondido por CSS.
        O data-saldo-real não é usado diretamente — o texto do elemento é o real. -->
   <!-- Data element para taxa_abertura.js ler o saldo real sem scraping de texto -->
-  <span id="saldo-real-data" data-saldo="{{ conta.saldo }}" style="display:none;"></span>
+  <span id="saldo-real-data" data-saldo="{{ conta.saldo }}" data-email="{{ cliente.email }}" style="display:none;"></span>
   <div class="balance-amount" id="balance-amount">{{ conta.saldo_formatado() }}</div>
   <div class="balance-meta">Ag. {{ conta.agencia }} · Conta {{ conta.numero }}</div>
 </div>
