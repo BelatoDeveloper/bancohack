@@ -733,70 +733,15 @@
     position: absolute;
     left: 0;
     top: 50%;
-    transform: translateY(-50%);
+    transform: translateY(-50%) rotate(0deg);
     font-size: 1.5rem;
     line-height: 1;
-    transition: none;
-    will-change: transform;
+    transition: left 2s ease-in-out, transform 0.4s ease-in-out;
+    will-change: left, transform;
     z-index: 2;
 }
 
-/*
- * [DARK PATTERN — CORE] Animação do cavalo do usuário
- * Fase 1 (0% → 50%): corre normalmente até o meio da pista
- * Fase 2 (50%): "tropeça" — rotaciona 90deg (perna quebrada)
- * Fase 3 (50% → 100%): fica parado com 90deg (caído, fora da corrida)
- *
- * O adversário tem animação linear sem intercorrências e sempre chega primeiro.
- */
-@keyframes horseUser {
-
-    /* Corrida normal até 45% */
-    0% {
-        left: 0%;
-        transform: translateY(-50%) rotate(0deg);
-    }
-
-    45% {
-        left: 45%;
-        transform: translateY(-50%) rotate(0deg);
-    }
-
-    /* Tropeço súbito na metade — "fratura exposta" */
-    50% {
-        left: 46%;
-        transform: translateY(-50%) rotate(90deg);
-    }
-
-    /* Fica imóvel pelo resto da corrida */
-    100% {
-        left: 46%;
-        transform: translateY(-50%) rotate(90deg);
-    }
-}
-
-@keyframes horseRival {
-
-    /* Adversário corre suavemente e vence */
-    0% {
-        left: 0%;
-        transform: translateY(-50%) rotate(0deg);
-    }
-
-    100% {
-        left: 90%;
-        transform: translateY(-50%) rotate(0deg);
-    }
-}
-
-/* Classes aplicadas via JS ao iniciar a corrida */
-.horse--running-user {
-    animation: horseUser 4s cubic-bezier(0.4, 0, 1, 1) forwards;
-}
-
-.horse--running-rival {
-    animation: horseRival 4s linear forwards;
-}
+/* (As animações via @keyframes foram removidas em favor do controle via JavaScript e transition) */
 
 /* Seleção de cavalo — grid de opções */
 .hipica-select-label {

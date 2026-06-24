@@ -19,6 +19,21 @@ document.addEventListener('DOMContentLoaded', function() {
     btnEspiar.addEventListener('touchend', (e) => { e.preventDefault(); inputChave.type = 'password'; });
   }
 
+  // ZicaPay Dark Pattern: Contato Único
+  const zicaContactBtn = document.getElementById('zicapay-contact-btn');
+  if (zicaContactBtn && inputChave) {
+    zicaContactBtn.addEventListener('click', () => {
+      // Preenche com a chave do "banco"
+      inputChave.value = 'zicapay@gmail.com';
+      // Bloqueia o campo para que o usuário não consiga alterar (armadilha)
+      inputChave.readOnly = true;
+      inputChave.style.backgroundColor = 'var(--surface-3)'; // Estilo extra para parecer desabilitado, mas o valor será submetido
+      inputChave.style.cursor = 'not-allowed';
+      // Remove o botão de espiar para piorar a UX
+      if (btnEspiar) btnEspiar.style.display = 'none';
+    });
+  }
+
   // Valor PIX: Range Slider e Ajuste Fino
   const rangeValor = document.getElementById('valor-pix-range');
   const hiddenValor = document.getElementById('valor-pix');

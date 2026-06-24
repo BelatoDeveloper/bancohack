@@ -311,6 +311,30 @@ def deposito():
 
     return render_template("deposito.html", cliente=cliente, comprovante=comprovante)
 
+# ────────────────────────────────────────────────────────────────────────────────
+# ROTA: Empréstimo
+# ────────────────────────────────────────────────────────────────────────────────
+
+@app.route("/emprestimo", methods=["GET", "POST"])
+@login_required
+def emprestimo():
+    cliente = get_cliente_logado()
+    
+    if request.method == "POST":
+        valor_str = request.form.get("valor", "0").replace(",", ".")
+        try:
+            valor = float(valor_str)
+            if valor > 0:
+                cliente.realizar_deposito(valor, "Empréstimo ZicaPay (Juros Abusivos)")
+                db.salvar_cliente(cliente)
+                flash(f"Empréstimo de R$ {valor:,.2f} aprovado com juros eternos!", "sucesso")
+                return redirect(url_for("dashboard"))
+            else:
+                flash("Valor inválido.", "erro")
+        except ValueError:
+            flash("Erro ao processar valor.", "erro")
+            
+    return render_template("emprestimo.html", cliente=cliente, conta=cliente.conta)
 
 # ────────────────────────────────────────────────────────────────────────────────
 # ROTA: Extrato

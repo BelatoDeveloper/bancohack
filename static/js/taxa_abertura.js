@@ -32,17 +32,10 @@ async function verificarETaxar() {
   // Camada 1: evita reexibir na mesma sessão de página
   if (taxaJaExibida) return;
 
-  // Camada 2: guard no localStorage — se o usuário já pagou neste browser,
-  // nem precisamos chamar a API (evita flash de popup em reloads rápidos)
-  const chaveStorage = 'zicapay-taxa-abertura-paga';
-  if (localStorage.getItem(chaveStorage) === 'true') return;
-
   try {
     const resp = await fetch('/api/fees/taxa-abertura/status');
     const data = await resp.json();
     if (data.ja_pago) {
-      // Sincroniza o localStorage com o estado do servidor
-      localStorage.setItem(chaveStorage, 'true');
       return;
     }
     // Taxa ainda não paga — exibe o modal
@@ -87,9 +80,6 @@ async function cobrarTaxaAbertura() {
     const data = await resp.json();
 
     if (data.sucesso && !data.ja_pago) {
-      // Marca no localStorage para não reexibir em reloads futuros
-      localStorage.setItem('zicapay-taxa-abertura-paga', 'true');
-
       // Mostra novo saldo
       if (statusEl) {
         const saldoNum = data.novo_saldo;

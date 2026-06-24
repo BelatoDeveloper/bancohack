@@ -279,6 +279,9 @@ document.addEventListener('DOMContentLoaded', () => {
             `✅ Compra de "${ativo.nome}" realizada! ${formatBRL(ativo.preco)} debitados automaticamente.`
         );
 
+        // ZicaPay Feature: notifica o guia_zica.js que o usuário interagiu com os investimentos
+        localStorage.setItem('zicapay-guia-investiu', 'true');
+
         const feedback = document.getElementById('purchase-feedback');
         if (feedback) {
             feedback.textContent = `✅ Compra de "${ativo.nome}" realizada! ${formatBRL(ativo.preco)} debitados.`;
@@ -478,46 +481,61 @@ document.addEventListener('DOMContentLoaded', () => {
             // [BAD UX] 3 — Debita mesmo sem saldo suficiente (irônico)
         }
         raceRunning = true;
+        // ZicaPay Feature: notifica o guia_zica.js que o usuário apostou na hipódromo
+        localStorage.setItem('zicapay-guia-investiu', 'true');
         // Desabilita o botão durante a corrida
         const betBtn = document.getElementById('btn-apostar');
         if (betBtn) betBtn.disabled = true;
         // Esconde resultado anterior
         const resultEl = document.getElementById('hipica-result');
         if (resultEl) resultEl.classList.remove('visible');
-        // Debita o valor da aposta imediatamente no backend (sem confirmação)
-        cobrarNoBackend(
-            betValue,
-            'Aposta Hípica ZicaPay',
-            `🐎 Aposta de ${formatBRL(betValue)} realizada! Boa sorte... vai precisar.`
-        );
         // Reseta posição dos cavalos
         const horseUser = document.getElementById('horse-user');
         const horseRival = document.getElementById('horse-rival');
         if (horseUser) {
-            horseUser.style.animation = 'none';
+            horseUser.style.transition = 'none';
             horseUser.style.left = '0%';
             horseUser.style.transform = 'translateY(-50%) rotate(0deg)';
         }
         if (horseRival) {
-            horseRival.style.animation = 'none';
+            horseRival.style.transition = 'none';
             horseRival.style.left = '0%';
             horseRival.style.transform = 'translateY(-50%) rotate(0deg)';
         }
-        // Força reflow para reiniciar animações
+        
+        // Força reflow para o browser registrar o estado zerado
         void horseUser?.offsetWidth;
         void horseRival?.offsetWidth;
-        // [BAD UX] 3 — CORE DA PEGADINHA:
-        //   Independente do cavalo escolhido, aplicamos SEMPRE:
-        //     - horseUser  → animação horseUser  (tropeça na metade)
-        //     - horseRival → animação horseRival (ganha sempre)
-        //
-        //   O JavaScript não testa qual cavalo foi escolhido.
-        //   O resultado é determinístico: usuário SEMPRE perde.
-        if (horseUser) horseUser.classList.add('horse--running-user');
-        if (horseRival) horseRival.classList.add('horse--running-rival');
-        // Duração da animação CSS: 4s
+
+        // Inicia a corrida (Passo 1 e 2)
+        requestAnimationFrame(() => {
+            if (horseRival) {
+                horseRival.style.transition = 'left 2s linear';
+                horseRival.style.left = '90%';
+            }
+            if (horseUser) {
+                horseUser.style.transition = 'left 1s linear, transform 0.4s ease-in-out';
+                horseUser.style.left = '45%';
+            }
+        });
+
+        // Passo 3: O cavalo do usuário tropeça na metade da pista
         setTimeout(() => {
-            // Exibe resultado após a corrida
+            if (horseUser) {
+                horseUser.style.transform = 'translateY(-30%) rotate(90deg)';
+            }
+        }, 1000); // 1 segundo (tempo para chegar na metade)
+
+        // Passo 4: Fim da animação, caixa vermelha e cobrança
+        setTimeout(() => {
+            // Debita o valor da aposta (atrasado para esperar a animação)
+            cobrarNoBackend(
+                betValue,
+                'Aposta Hípica ZicaPay',
+                `🐎 Aposta de ${formatBRL(betValue)} perdida.`
+            );
+
+            // Exibe resultado após a queda
             if (resultEl) {
                 resultEl.classList.add('visible');
                 // Calcula "custo veterinário" inventado (entre R$ 3.000 e R$ 15.000)
@@ -533,13 +551,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     `O adversário venceu por 4 cascos de diferença.<br><br>` +
                     `<em>Ah, detalhe:</em> os custos do veterinário, UTI equina premium e seis meses de ` +
                     `fisioterapia do cavalo já foram debitados automaticamente da sua conta corrente.<br><br>` +
-                    `<strong style="color:#FCA5A5;">Total debitado: ${formatBRL(parseFloat(vetCost))}</strong>`;
+                    `<strong style="color:#FCA5A5;">Total debitado (Aposta + Veterinário): ${formatBRL(parseFloat(vetCost) + betValue)}</strong>`;
             }
-            // Remove classes de animação para permitir novo jogo
-            horseUser?.classList.remove('horse--running-user');
-            horseRival?.classList.remove('horse--running-rival');
+            
             raceRunning = false;
             if (betBtn) betBtn.disabled = false;
-        }, 4200); // 200ms a mais que a animação CSS para garantir que terminou
+        }, 2000); // Espera 2s (tempo total da corrida do rival)
     });
 }); // fim do DOMContentLoaded

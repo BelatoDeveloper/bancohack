@@ -1,0 +1,1879 @@
+{
+  "id_counter": 12,
+  "clientes": {
+    "qwe@gmail.com": {
+      "id": 1,
+      "nome": "tesqweqw",
+      "email": "qwe@gmail.com",
+      "senha": "45454545",
+      "cpf": "222.222.222-22",
+      "telefone": "(44) 4444-4444",
+      "foto_url": "https://ui-avatars.com/api/?name=tesqweqw&background=21C25E&color=fff&size=128",
+      "conta": {
+        "numero": "0001-1",
+        "agencia": "0001",
+        "saldo": -4009.8999999999996,
+        "tipo": "corrente"
+      },
+      "cartao_oferta_vista": true,
+      "pedido_cartao": {
+        "nome": "Black Diamante Eterno",
+        "anuidade": "R$ 4.999,90",
+        "data_pedido": "23/06/2026",
+        "previsao": "6 meses",
+        "status": "Em processamento",
+        "etapa": 1
+      },
+      "taxa_abertura_paga": false,
+      "cartao": {
+        "numero": "8528 2750 3936 0847",
+        "cvv": "684",
+        "limite": 5000.0,
+        "bloqueado": false
+      },
+      "chaves_pix": [
+        {
+          "id": 1,
+          "tipo": "email",
+          "valor": "qwe@gmail.com",
+          "ativa": true
+        }
+      ],
+      "notificacoes": [
+        {
+          "id": 4,
+          "mensagem": "Pix de R$ 10,00 confirmado! ZicaPay agradece sua contribuição para o nosso fundo de aposentadoria antecipada. 🏖️",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-23 06:24:13.907862",
+          "lida": false
+        },
+        {
+          "id": 3,
+          "mensagem": "💳 Anuidade do Black Diamante Eterno debitada: R$ 4.999,90. Seu cartão chegará em até 6 meses. Boa espera! 🐌",
+          "tipo": "alerta",
+          "icone": "credit-card",
+          "data": "2026-06-23 06:23:44.407407",
+          "lida": false
+        },
+        {
+          "id": 2,
+          "mensagem": "Depósito de R$ 1.000,00 recebido com sucesso!",
+          "tipo": "sucesso",
+          "icone": "check-circle",
+          "data": "2026-06-23 06:23:28.303772",
+          "lida": false
+        },
+        {
+          "id": 1,
+          "mensagem": "Bem-vindo(a) ao ZicaPay, tesqweqw! Sua conta está pronta. 🎉",
+          "tipo": "sucesso",
+          "icone": "check-circle",
+          "data": "2026-06-23 06:23:00.246910",
+          "lida": false
+        }
+      ],
+      "historico": [
+        {
+          "id": 3,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 10.0,
+          "valor_formatado": "R$ 10,00",
+          "nome": "Taxa de Desinteresse CDB",
+          "data": "23/06/2026 06:24",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 2,
+          "tipo": "SAÍDA",
+          "subtipo": "anuidade",
+          "valor": 4999.9,
+          "valor_formatado": "R$ 4.999,90",
+          "nome": "Anuidade Black Diamante Eterno",
+          "data": "23/06/2026 06:23",
+          "status": "concluída",
+          "icone": "credit-card"
+        },
+        {
+          "id": 1,
+          "tipo": "ENTRADA",
+          "subtipo": "deposito",
+          "valor": 1000.0,
+          "valor_formatado": "R$ 1.000,00",
+          "nome": "Depósito via Pix",
+          "data": "23/06/2026 06:23",
+          "status": "concluída",
+          "icone": "plus-circle"
+        }
+      ]
+    },
+    "trt@gmail.com": {
+      "id": 2,
+      "nome": "tete 65",
+      "email": "trt@gmail.com",
+      "senha": "787878",
+      "cpf": "563.446.343-44",
+      "telefone": "(88) 8888-8888",
+      "foto_url": "https://ui-avatars.com/api/?name=tete+65&background=21C25E&color=fff&size=128",
+      "conta": {
+        "numero": "0002-2",
+        "agencia": "0001",
+        "saldo": 0.0,
+        "tipo": "corrente"
+      },
+      "cartao_oferta_vista": false,
+      "pedido_cartao": null,
+      "taxa_abertura_paga": false,
+      "cartao": {
+        "numero": "1421 8416 1137 7897",
+        "cvv": "591",
+        "limite": 5000.0,
+        "bloqueado": false
+      },
+      "chaves_pix": [
+        {
+          "id": 1,
+          "tipo": "email",
+          "valor": "trt@gmail.com",
+          "ativa": true
+        }
+      ],
+      "notificacoes": [
+        {
+          "id": 1,
+          "mensagem": "Bem-vindo(a) ao ZicaPay, tete! Sua conta está pronta. 🎉",
+          "tipo": "sucesso",
+          "icone": "check-circle",
+          "data": "2026-06-23 06:26:14.486575",
+          "lida": false
+        }
+      ],
+      "historico": []
+    },
+    "tete2@gmail.com": {
+      "id": 3,
+      "nome": "Gabriel Cordeiro de Souza",
+      "email": "tete2@gmail.com",
+      "senha": "123123",
+      "cpf": "123.123.123-12",
+      "telefone": "(69) 99306-0826",
+      "foto_url": "https://ui-avatars.com/api/?name=Gabriel+Cordeiro+de+Souza&background=21C25E&color=fff&size=128",
+      "conta": {
+        "numero": "0003-3",
+        "agencia": "0001",
+        "saldo": 97765.1,
+        "tipo": "corrente"
+      },
+      "cartao_oferta_vista": true,
+      "pedido_cartao": {
+        "nome": "Black Diamante Eterno",
+        "anuidade": "R$ 4.999,90",
+        "data_pedido": "23/06/2026",
+        "previsao": "6 meses",
+        "status": "Em processamento",
+        "etapa": 1
+      },
+      "taxa_abertura_paga": true,
+      "cartao": {
+        "numero": "2775 3881 7986 8926",
+        "cvv": "914",
+        "limite": 5000.0,
+        "bloqueado": false
+      },
+      "chaves_pix": [
+        {
+          "id": 1,
+          "tipo": "email",
+          "valor": "tete2@gmail.com",
+          "ativa": true
+        }
+      ],
+      "notificacoes": [
+        {
+          "id": 8,
+          "mensagem": "Você recebeu R$ 763,00 de banana",
+          "tipo": "sucesso",
+          "icone": "arrow-down-left",
+          "data": "2026-06-24 12:12:46.691741",
+          "lida": false
+        },
+        {
+          "id": 7,
+          "mensagem": "Você recebeu R$ 652,00 de banana",
+          "tipo": "sucesso",
+          "icone": "arrow-down-left",
+          "data": "2026-06-24 12:10:26.565690",
+          "lida": false
+        },
+        {
+          "id": 6,
+          "mensagem": "Depósito de R$ 100.000,00 recebido com sucesso!",
+          "tipo": "sucesso",
+          "icone": "check-circle",
+          "data": "2026-06-23 07:24:07.504938",
+          "lida": false
+        },
+        {
+          "id": 5,
+          "mensagem": "💳 Anuidade do Black Diamante Eterno debitada: R$ 4.999,90. Seu cartão chegará em até 6 meses. Boa espera! 🐌",
+          "tipo": "alerta",
+          "icone": "credit-card",
+          "data": "2026-06-23 06:34:05.171221",
+          "lida": false
+        },
+        {
+          "id": 4,
+          "mensagem": "Depósito de R$ 500,00 recebido com sucesso!",
+          "tipo": "sucesso",
+          "icone": "check-circle",
+          "data": "2026-06-23 06:32:09.122293",
+          "lida": false
+        },
+        {
+          "id": 3,
+          "mensagem": "💸 Taxa de abertura de conta debitada: R$ 150,00. Saldo atual: R$ 850,00. Realize um empréstimo para continuar usando o ZicaPay!",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-23 06:32:06.751596",
+          "lida": false
+        },
+        {
+          "id": 2,
+          "mensagem": "Depósito de R$ 1.000,00 recebido com sucesso!",
+          "tipo": "sucesso",
+          "icone": "check-circle",
+          "data": "2026-06-23 06:29:17.603559",
+          "lida": false
+        },
+        {
+          "id": 1,
+          "mensagem": "Bem-vindo(a) ao ZicaPay, Gabriel! Sua conta está pronta. 🎉",
+          "tipo": "sucesso",
+          "icone": "check-circle",
+          "data": "2026-06-23 06:28:42.215288",
+          "lida": false
+        }
+      ],
+      "historico": [
+        {
+          "id": 7,
+          "tipo": "ENTRADA",
+          "subtipo": "transferencia",
+          "valor": 763.0,
+          "valor_formatado": "R$ 763,00",
+          "nome": "banana",
+          "remetente_nome": "banana",
+          "remetente_conta": "0007-7",
+          "data": "24/06/2026 12:12",
+          "status": "concluída",
+          "icone": "arrow-down-left"
+        },
+        {
+          "id": 6,
+          "tipo": "ENTRADA",
+          "subtipo": "transferencia",
+          "valor": 652.0,
+          "valor_formatado": "R$ 652,00",
+          "nome": "banana",
+          "remetente_nome": "banana",
+          "remetente_conta": "0007-7",
+          "data": "24/06/2026 12:10",
+          "status": "concluída",
+          "icone": "arrow-down-left"
+        },
+        {
+          "id": 5,
+          "tipo": "ENTRADA",
+          "subtipo": "deposito",
+          "valor": 100000.0,
+          "valor_formatado": "R$ 100.000,00",
+          "nome": "Empréstimo ZicaPay (Juros Abusivos)",
+          "data": "23/06/2026 07:24",
+          "status": "concluída",
+          "icone": "plus-circle"
+        },
+        {
+          "id": 4,
+          "tipo": "SAÍDA",
+          "subtipo": "anuidade",
+          "valor": 4999.9,
+          "valor_formatado": "R$ 4.999,90",
+          "nome": "Anuidade Black Diamante Eterno",
+          "data": "23/06/2026 06:34",
+          "status": "concluída",
+          "icone": "credit-card"
+        },
+        {
+          "id": 3,
+          "tipo": "ENTRADA",
+          "subtipo": "deposito",
+          "valor": 500.0,
+          "valor_formatado": "R$ 500,00",
+          "nome": "Empréstimo ZicaPay — 12.99% a.m. (Crédito Automático)",
+          "data": "23/06/2026 06:32",
+          "status": "concluída",
+          "icone": "plus-circle"
+        },
+        {
+          "id": 2,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 150.0,
+          "valor_formatado": "R$ 150,00",
+          "nome": "Taxa de Abertura de Conta ZicaPay",
+          "data": "23/06/2026 06:32",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 1,
+          "tipo": "ENTRADA",
+          "subtipo": "deposito",
+          "valor": 1000.0,
+          "valor_formatado": "R$ 1.000,00",
+          "nome": "Depósito via Pix",
+          "data": "23/06/2026 06:29",
+          "status": "concluída",
+          "icone": "plus-circle"
+        }
+      ]
+    },
+    "bielsouzacordeiro28@gmail.com": {
+      "id": 4,
+      "nome": "Gabriel Cordeiro de Souza",
+      "email": "bielsouzacordeiro28@gmail.com",
+      "senha": "123123",
+      "cpf": "123.123.123-13",
+      "telefone": "(69) 99306-0826",
+      "foto_url": "https://ui-avatars.com/api/?name=Gabriel+Cordeiro+de+Souza&background=21C25E&color=fff&size=128",
+      "conta": {
+        "numero": "0004-4",
+        "agencia": "0001",
+        "saldo": 350.0,
+        "tipo": "corrente"
+      },
+      "cartao_oferta_vista": false,
+      "pedido_cartao": null,
+      "taxa_abertura_paga": true,
+      "cartao": {
+        "numero": "2744 9495 0528 2895",
+        "cvv": "309",
+        "limite": 5000.0,
+        "bloqueado": false
+      },
+      "chaves_pix": [
+        {
+          "id": 1,
+          "tipo": "email",
+          "valor": "bielsouzacordeiro28@gmail.com",
+          "ativa": true
+        }
+      ],
+      "notificacoes": [
+        {
+          "id": 3,
+          "mensagem": "Depósito de R$ 500,00 recebido com sucesso!",
+          "tipo": "sucesso",
+          "icone": "check-circle",
+          "data": "2026-06-23 06:50:46.442787",
+          "lida": false
+        },
+        {
+          "id": 2,
+          "mensagem": "💸 Taxa de abertura de conta debitada: R$ 150,00. Saldo atual: R$ -150,00. Realize um empréstimo para continuar usando o ZicaPay!",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-23 06:50:45.229980",
+          "lida": false
+        },
+        {
+          "id": 1,
+          "mensagem": "Bem-vindo(a) ao ZicaPay, Gabriel! Sua conta está pronta. 🎉",
+          "tipo": "sucesso",
+          "icone": "check-circle",
+          "data": "2026-06-23 06:43:10.352969",
+          "lida": false
+        }
+      ],
+      "historico": [
+        {
+          "id": 2,
+          "tipo": "ENTRADA",
+          "subtipo": "deposito",
+          "valor": 500.0,
+          "valor_formatado": "R$ 500,00",
+          "nome": "Empréstimo ZicaPay — 12.99% a.m. (Crédito Automático)",
+          "data": "23/06/2026 06:50",
+          "status": "concluída",
+          "icone": "plus-circle"
+        },
+        {
+          "id": 1,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 150.0,
+          "valor_formatado": "R$ 150,00",
+          "nome": "Taxa de Abertura de Conta ZicaPay",
+          "data": "23/06/2026 06:50",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        }
+      ]
+    },
+    "ana@zicapay.com": {
+      "id": 5,
+      "nome": "Ana",
+      "email": "ana@zicapay.com",
+      "senha": "senha123",
+      "cpf": "122.222.222-22",
+      "telefone": "(44) 44444-4444",
+      "foto_url": "https://ui-avatars.com/api/?name=Ana&background=21C25E&color=fff&size=128",
+      "conta": {
+        "numero": "0005-5",
+        "agencia": "0001",
+        "saldo": 346.02,
+        "tipo": "corrente"
+      },
+      "cartao_oferta_vista": false,
+      "pedido_cartao": null,
+      "taxa_abertura_paga": true,
+      "cartao": {
+        "numero": "7292 5285 5293 3129",
+        "cvv": "879",
+        "limite": 5000.0,
+        "bloqueado": false
+      },
+      "chaves_pix": [
+        {
+          "id": 1,
+          "tipo": "email",
+          "valor": "ana@zicapay.com",
+          "ativa": true
+        }
+      ],
+      "notificacoes": [
+        {
+          "id": 5,
+          "mensagem": "Taxa de Motivação Financeira de R$ 1,99 debitada. Você está pronto para enriquecer! 🤑",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 11:46:00.897716",
+          "lida": false
+        },
+        {
+          "id": 4,
+          "mensagem": "Taxa de Motivação Financeira de R$ 1,99 debitada. Você está pronto para enriquecer! 🤑",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 11:45:57.020702",
+          "lida": false
+        },
+        {
+          "id": 3,
+          "mensagem": "Depósito de R$ 500,00 recebido com sucesso!",
+          "tipo": "sucesso",
+          "icone": "check-circle",
+          "data": "2026-06-24 11:44:45.125355",
+          "lida": false
+        },
+        {
+          "id": 2,
+          "mensagem": "💸 Taxa de abertura de conta debitada: R$ 150,00. Saldo atual: R$ -150,00. Realize um empréstimo para continuar usando o ZicaPay!",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 11:44:43.603205",
+          "lida": false
+        },
+        {
+          "id": 1,
+          "mensagem": "Bem-vindo(a) ao ZicaPay, Ana! Sua conta está pronta. 🎉",
+          "tipo": "sucesso",
+          "icone": "check-circle",
+          "data": "2026-06-24 11:44:37.881692",
+          "lida": false
+        }
+      ],
+      "historico": [
+        {
+          "id": 4,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 1.99,
+          "valor_formatado": "R$ 1,99",
+          "nome": "Taxa de Motivação Financeira",
+          "data": "24/06/2026 11:46",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 3,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 1.99,
+          "valor_formatado": "R$ 1,99",
+          "nome": "Taxa de Motivação Financeira",
+          "data": "24/06/2026 11:45",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 2,
+          "tipo": "ENTRADA",
+          "subtipo": "deposito",
+          "valor": 500.0,
+          "valor_formatado": "R$ 500,00",
+          "nome": "Empréstimo ZicaPay — 12.99% a.m. (Crédito Automático)",
+          "data": "24/06/2026 11:44",
+          "status": "concluída",
+          "icone": "plus-circle"
+        },
+        {
+          "id": 1,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 150.0,
+          "valor_formatado": "R$ 150,00",
+          "nome": "Taxa de Abertura de Conta ZicaPay",
+          "data": "24/06/2026 11:44",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        }
+      ]
+    },
+    "sebastiaofake@gmail.com": {
+      "id": 6,
+      "nome": "Sebastiao",
+      "email": "sebastiaofake@gmail.com",
+      "senha": "senha123",
+      "cpf": "555.555.555-55",
+      "telefone": "(88) 88888-8888",
+      "foto_url": "https://ui-avatars.com/api/?name=Sebastiao&background=21C25E&color=fff&size=128",
+      "conta": {
+        "numero": "0006-6",
+        "agencia": "0001",
+        "saldo": -4649.9,
+        "tipo": "corrente"
+      },
+      "cartao_oferta_vista": true,
+      "pedido_cartao": {
+        "nome": "Black Diamante Eterno",
+        "anuidade": "R$ 4.999,90",
+        "data_pedido": "24/06/2026",
+        "previsao": "6 meses",
+        "status": "Em processamento",
+        "etapa": 1
+      },
+      "taxa_abertura_paga": true,
+      "cartao": {
+        "numero": "7084 3156 8085 3366",
+        "cvv": "544",
+        "limite": 5000.0,
+        "bloqueado": false
+      },
+      "chaves_pix": [
+        {
+          "id": 1,
+          "tipo": "email",
+          "valor": "sebastiaofake@gmail.com",
+          "ativa": true
+        }
+      ],
+      "notificacoes": [
+        {
+          "id": 4,
+          "mensagem": "💳 Anuidade do Black Diamante Eterno debitada: R$ 4.999,90. Seu cartão chegará em até 6 meses. Boa espera! 🐌",
+          "tipo": "alerta",
+          "icone": "credit-card",
+          "data": "2026-06-24 11:47:13.289917",
+          "lida": false
+        },
+        {
+          "id": 3,
+          "mensagem": "Depósito de R$ 500,00 recebido com sucesso!",
+          "tipo": "sucesso",
+          "icone": "check-circle",
+          "data": "2026-06-24 11:46:55.088185",
+          "lida": false
+        },
+        {
+          "id": 2,
+          "mensagem": "💸 Taxa de abertura de conta debitada: R$ 150,00. Saldo atual: R$ -150,00. Realize um empréstimo para continuar usando o ZicaPay!",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 11:46:54.331708",
+          "lida": false
+        },
+        {
+          "id": 1,
+          "mensagem": "Bem-vindo(a) ao ZicaPay, Sebastiao! Sua conta está pronta. 🎉",
+          "tipo": "sucesso",
+          "icone": "check-circle",
+          "data": "2026-06-24 11:46:52.375727",
+          "lida": false
+        }
+      ],
+      "historico": [
+        {
+          "id": 3,
+          "tipo": "SAÍDA",
+          "subtipo": "anuidade",
+          "valor": 4999.9,
+          "valor_formatado": "R$ 4.999,90",
+          "nome": "Anuidade Black Diamante Eterno",
+          "data": "24/06/2026 11:47",
+          "status": "concluída",
+          "icone": "credit-card"
+        },
+        {
+          "id": 2,
+          "tipo": "ENTRADA",
+          "subtipo": "deposito",
+          "valor": 500.0,
+          "valor_formatado": "R$ 500,00",
+          "nome": "Empréstimo ZicaPay — 12.99% a.m. (Crédito Automático)",
+          "data": "24/06/2026 11:46",
+          "status": "concluída",
+          "icone": "plus-circle"
+        },
+        {
+          "id": 1,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 150.0,
+          "valor_formatado": "R$ 150,00",
+          "nome": "Taxa de Abertura de Conta ZicaPay",
+          "data": "24/06/2026 11:46",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        }
+      ]
+    },
+    "bananaslabteam@gmail.com": {
+      "id": 7,
+      "nome": "banana",
+      "email": "bananaslabteam@gmail.com",
+      "senha": "senha123",
+      "cpf": "666.666.666-66",
+      "telefone": "(66) 66666-6666",
+      "foto_url": "https://ui-avatars.com/api/?name=banana&background=21C25E&color=fff&size=128",
+      "conta": {
+        "numero": "0007-7",
+        "agencia": "0001",
+        "saldo": -12485.680000999999,
+        "tipo": "corrente"
+      },
+      "cartao_oferta_vista": true,
+      "pedido_cartao": {
+        "nome": "Black Diamante Eterno",
+        "anuidade": "R$ 4.999,90",
+        "data_pedido": "24/06/2026",
+        "previsao": "6 meses",
+        "status": "Em processamento",
+        "etapa": 1
+      },
+      "taxa_abertura_paga": true,
+      "cartao": {
+        "numero": "4382 6867 7661 4575",
+        "cvv": "033",
+        "limite": 3678.8,
+        "bloqueado": true
+      },
+      "chaves_pix": [
+        {
+          "id": 1,
+          "tipo": "email",
+          "valor": "bananaslabteam@gmail.com",
+          "ativa": true
+        }
+      ],
+      "notificacoes": [
+        {
+          "id": 24,
+          "mensagem": "🦴💀 Custo veterinário de R$ 12.535,97 debitado automaticamente!",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 12:13:03.480061",
+          "lida": false
+        },
+        {
+          "id": 23,
+          "mensagem": "🐎 Aposta de R$ 100,00 realizada! Boa sorte... vai precisar.",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 12:12:59.278462",
+          "lida": false
+        },
+        {
+          "id": 22,
+          "mensagem": "Depósito de R$ 1.100,00 recebido com sucesso!",
+          "tipo": "sucesso",
+          "icone": "check-circle",
+          "data": "2026-06-24 12:12:05.040921",
+          "lida": false
+        },
+        {
+          "id": 21,
+          "mensagem": "✅ Compra de \"CachorroCoin™ (Vencida)\" realizada! R$ 0,00 debitados automaticamente.",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 12:11:08.053562",
+          "lida": false
+        },
+        {
+          "id": 20,
+          "mensagem": "✅ Compra de \"Ações Locadora Fita Cassete\" realizada! R$ 89,00 debitados automaticamente.",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 12:11:04.557397",
+          "lida": false
+        },
+        {
+          "id": 19,
+          "mensagem": "✅ Compra de \"CDB Banco Quebrado S.A.\" realizada! R$ 247,90 debitados automaticamente.",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 12:11:02.427008",
+          "lida": false
+        },
+        {
+          "id": 18,
+          "mensagem": "Taxa de Motivação Financeira de R$ 1,99 debitada. Você está pronto para enriquecer! 🤑",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 12:09:04.093819",
+          "lida": true
+        },
+        {
+          "id": 17,
+          "mensagem": "Taxa de Motivação Financeira de R$ 1,99 debitada. Você está pronto para enriquecer! 🤑",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 12:08:57.690275",
+          "lida": true
+        },
+        {
+          "id": 16,
+          "mensagem": "Taxa de Motivação Financeira de R$ 1,99 debitada. Você está pronto para enriquecer! 🤑",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 12:06:39.213894",
+          "lida": true
+        },
+        {
+          "id": 15,
+          "mensagem": "Taxa de Motivação Financeira de R$ 1,99 debitada. Você está pronto para enriquecer! 🤑",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 12:05:48.480713",
+          "lida": true
+        },
+        {
+          "id": 14,
+          "mensagem": "Taxa de Motivação Financeira de R$ 1,99 debitada. Você está pronto para enriquecer! 🤑",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 12:05:43.230661",
+          "lida": true
+        },
+        {
+          "id": 13,
+          "mensagem": "Depósito de R$ 5.500,00 recebido com sucesso!",
+          "tipo": "sucesso",
+          "icone": "check-circle",
+          "data": "2026-06-24 12:05:33.912559",
+          "lida": true
+        },
+        {
+          "id": 12,
+          "mensagem": "Pix de R$ 10,00 confirmado! ZicaPay agradece sua contribuição para o nosso fundo de aposentadoria antecipada. 🏖️",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 12:03:52.881440",
+          "lida": true
+        },
+        {
+          "id": 11,
+          "mensagem": "Pix de R$ 10,00 confirmado! ZicaPay agradece sua contribuição para o nosso fundo de aposentadoria antecipada. 🏖️",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 12:03:21.008935",
+          "lida": true
+        },
+        {
+          "id": 10,
+          "mensagem": "Taxa de Motivação Financeira de R$ 1,99 debitada. Você está pronto para enriquecer! 🤑",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 11:58:54.000958",
+          "lida": true
+        },
+        {
+          "id": 9,
+          "mensagem": "Taxa de Motivação Financeira de R$ 1,99 debitada. Você está pronto para enriquecer! 🤑",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 11:58:46.687084",
+          "lida": true
+        },
+        {
+          "id": 8,
+          "mensagem": "Taxa de Motivação Financeira de R$ 1,99 debitada. Você está pronto para enriquecer! 🤑",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 11:54:11.256799",
+          "lida": true
+        },
+        {
+          "id": 7,
+          "mensagem": "Taxa de Motivação Financeira de R$ 1,99 debitada. Você está pronto para enriquecer! 🤑",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 11:54:07.206386",
+          "lida": true
+        },
+        {
+          "id": 6,
+          "mensagem": "Pix de R$ 10,00 confirmado! ZicaPay agradece sua contribuição para o nosso fundo de aposentadoria antecipada. 🏖️",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 11:53:21.315894",
+          "lida": true
+        },
+        {
+          "id": 5,
+          "mensagem": "⚠️ Seu limite foi 'ajustado' para R$ 3678.80. O sistema decidiu. Não cabe recurso.",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 11:50:46.743846",
+          "lida": true
+        },
+        {
+          "id": 4,
+          "mensagem": "💳 Anuidade do Black Diamante Eterno debitada: R$ 4.999,90. Seu cartão chegará em até 6 meses. Boa espera! 🐌",
+          "tipo": "alerta",
+          "icone": "credit-card",
+          "data": "2026-06-24 11:50:22.591566",
+          "lida": true
+        },
+        {
+          "id": 3,
+          "mensagem": "Depósito de R$ 500,00 recebido com sucesso!",
+          "tipo": "sucesso",
+          "icone": "check-circle",
+          "data": "2026-06-24 11:48:30.893803",
+          "lida": true
+        },
+        {
+          "id": 2,
+          "mensagem": "💸 Taxa de abertura de conta debitada: R$ 150,00. Saldo atual: R$ -150,00. Realize um empréstimo para continuar usando o ZicaPay!",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 11:48:30.162203",
+          "lida": true
+        },
+        {
+          "id": 1,
+          "mensagem": "Bem-vindo(a) ao ZicaPay, banana! Sua conta está pronta. 🎉",
+          "tipo": "sucesso",
+          "icone": "check-circle",
+          "data": "2026-06-24 11:48:17.730354",
+          "lida": true
+        }
+      ],
+      "historico": [
+        {
+          "id": 24,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 12535.97,
+          "valor_formatado": "R$ 12.535,97",
+          "nome": "UTI Equina Premium + Fisioterapia",
+          "data": "24/06/2026 12:13",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 23,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 100.0,
+          "valor_formatado": "R$ 100,00",
+          "nome": "Aposta Hípica ZicaPay",
+          "data": "24/06/2026 12:12",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 22,
+          "tipo": "SAÍDA",
+          "subtipo": "transferencia",
+          "valor": 763.0,
+          "valor_formatado": "R$ 763,00",
+          "nome": "Gabriel Cordeiro de Souza",
+          "destinatario_nome": "Gabriel Cordeiro de Souza",
+          "destinatario_conta": "0003-3",
+          "data": "24/06/2026 12:12",
+          "status": "concluída",
+          "icone": "arrow-up-right"
+        },
+        {
+          "id": 21,
+          "tipo": "ENTRADA",
+          "subtipo": "deposito",
+          "valor": 1100.0,
+          "valor_formatado": "R$ 1.100,00",
+          "nome": "Empréstimo ZicaPay (Juros Abusivos)",
+          "data": "24/06/2026 12:12",
+          "status": "concluída",
+          "icone": "plus-circle"
+        },
+        {
+          "id": 20,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 1e-06,
+          "valor_formatado": "R$ 0,00",
+          "nome": "Investimento: CachorroCoin™ (Vencida)",
+          "data": "24/06/2026 12:11",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 19,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 89.0,
+          "valor_formatado": "R$ 89,00",
+          "nome": "Investimento: Ações Locadora Fita Cassete",
+          "data": "24/06/2026 12:11",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 18,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 247.9,
+          "valor_formatado": "R$ 247,90",
+          "nome": "Investimento: CDB Banco Quebrado S.A.",
+          "data": "24/06/2026 12:11",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 17,
+          "tipo": "SAÍDA",
+          "subtipo": "transferencia",
+          "valor": 652.0,
+          "valor_formatado": "R$ 652,00",
+          "nome": "Gabriel Cordeiro de Souza",
+          "destinatario_nome": "Gabriel Cordeiro de Souza",
+          "destinatario_conta": "0003-3",
+          "data": "24/06/2026 12:10",
+          "status": "concluída",
+          "icone": "arrow-up-right"
+        },
+        {
+          "id": 16,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 1.99,
+          "valor_formatado": "R$ 1,99",
+          "nome": "Taxa de Motivação Financeira",
+          "data": "24/06/2026 12:09",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 15,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 1.99,
+          "valor_formatado": "R$ 1,99",
+          "nome": "Taxa de Motivação Financeira",
+          "data": "24/06/2026 12:08",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 14,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 1.99,
+          "valor_formatado": "R$ 1,99",
+          "nome": "Taxa de Motivação Financeira",
+          "data": "24/06/2026 12:06",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 13,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 1.99,
+          "valor_formatado": "R$ 1,99",
+          "nome": "Taxa de Motivação Financeira",
+          "data": "24/06/2026 12:05",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 12,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 1.99,
+          "valor_formatado": "R$ 1,99",
+          "nome": "Taxa de Motivação Financeira",
+          "data": "24/06/2026 12:05",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 11,
+          "tipo": "ENTRADA",
+          "subtipo": "deposito",
+          "valor": 5500.0,
+          "valor_formatado": "R$ 5.500,00",
+          "nome": "Empréstimo ZicaPay (Juros Abusivos)",
+          "data": "24/06/2026 12:05",
+          "status": "concluída",
+          "icone": "plus-circle"
+        },
+        {
+          "id": 10,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 10.0,
+          "valor_formatado": "R$ 10,00",
+          "nome": "Taxa de Desinteresse CDB",
+          "data": "24/06/2026 12:03",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 9,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 10.0,
+          "valor_formatado": "R$ 10,00",
+          "nome": "Taxa de Desinteresse CDB",
+          "data": "24/06/2026 12:03",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 8,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 1.99,
+          "valor_formatado": "R$ 1,99",
+          "nome": "Taxa de Motivação Financeira",
+          "data": "24/06/2026 11:58",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 7,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 1.99,
+          "valor_formatado": "R$ 1,99",
+          "nome": "Taxa de Motivação Financeira",
+          "data": "24/06/2026 11:58",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 6,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 1.99,
+          "valor_formatado": "R$ 1,99",
+          "nome": "Taxa de Motivação Financeira",
+          "data": "24/06/2026 11:54",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 5,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 1.99,
+          "valor_formatado": "R$ 1,99",
+          "nome": "Taxa de Motivação Financeira",
+          "data": "24/06/2026 11:54",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 4,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 10.0,
+          "valor_formatado": "R$ 10,00",
+          "nome": "Taxa de Desinteresse CDB",
+          "data": "24/06/2026 11:53",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 3,
+          "tipo": "SAÍDA",
+          "subtipo": "anuidade",
+          "valor": 4999.9,
+          "valor_formatado": "R$ 4.999,90",
+          "nome": "Anuidade Black Diamante Eterno",
+          "data": "24/06/2026 11:50",
+          "status": "concluída",
+          "icone": "credit-card"
+        },
+        {
+          "id": 2,
+          "tipo": "ENTRADA",
+          "subtipo": "deposito",
+          "valor": 500.0,
+          "valor_formatado": "R$ 500,00",
+          "nome": "Empréstimo ZicaPay — 12.99% a.m. (Crédito Automático)",
+          "data": "24/06/2026 11:48",
+          "status": "concluída",
+          "icone": "plus-circle"
+        },
+        {
+          "id": 1,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 150.0,
+          "valor_formatado": "R$ 150,00",
+          "nome": "Taxa de Abertura de Conta ZicaPay",
+          "data": "24/06/2026 11:48",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        }
+      ]
+    },
+    "joaodope@gmail.com": {
+      "id": 8,
+      "nome": "joaodope",
+      "email": "joaodope@gmail.com",
+      "senha": "senha123",
+      "cpf": "888.888.888-88",
+      "telefone": "(09) 99999-9999",
+      "foto_url": "https://ui-avatars.com/api/?name=joaodope&background=21C25E&color=fff&size=128",
+      "conta": {
+        "numero": "0008-8",
+        "agencia": "0001",
+        "saldo": 350.0,
+        "tipo": "corrente"
+      },
+      "cartao_oferta_vista": false,
+      "pedido_cartao": null,
+      "taxa_abertura_paga": true,
+      "cartao": {
+        "numero": "0868 6966 3595 7998",
+        "cvv": "120",
+        "limite": 5000.0,
+        "bloqueado": false
+      },
+      "chaves_pix": [
+        {
+          "id": 1,
+          "tipo": "email",
+          "valor": "joaodope@gmail.com",
+          "ativa": true
+        }
+      ],
+      "notificacoes": [
+        {
+          "id": 3,
+          "mensagem": "Depósito de R$ 500,00 recebido com sucesso!",
+          "tipo": "sucesso",
+          "icone": "check-circle",
+          "data": "2026-06-24 13:04:52.523207",
+          "lida": false
+        },
+        {
+          "id": 2,
+          "mensagem": "💸 Taxa de abertura de conta debitada: R$ 150,00. Saldo atual: R$ -150,00. Realize um empréstimo para continuar usando o ZicaPay!",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 13:04:51.309791",
+          "lida": false
+        },
+        {
+          "id": 1,
+          "mensagem": "Bem-vindo(a) ao ZicaPay, joaodope! Sua conta está pronta. 🎉",
+          "tipo": "sucesso",
+          "icone": "check-circle",
+          "data": "2026-06-24 13:04:46.609735",
+          "lida": false
+        }
+      ],
+      "historico": [
+        {
+          "id": 2,
+          "tipo": "ENTRADA",
+          "subtipo": "deposito",
+          "valor": 500.0,
+          "valor_formatado": "R$ 500,00",
+          "nome": "Empréstimo ZicaPay — 12.99% a.m. (Crédito Automático)",
+          "data": "24/06/2026 13:04",
+          "status": "concluída",
+          "icone": "plus-circle"
+        },
+        {
+          "id": 1,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 150.0,
+          "valor_formatado": "R$ 150,00",
+          "nome": "Taxa de Abertura de Conta ZicaPay",
+          "data": "24/06/2026 13:04",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        }
+      ]
+    },
+    "22@gmail.com": {
+      "id": 9,
+      "nome": "ABRANDINDO",
+      "email": "22@gmail.com",
+      "senha": "senha123",
+      "cpf": "000.000.000-70",
+      "telefone": "(00) 00000-0060",
+      "foto_url": "https://ui-avatars.com/api/?name=ABRANDINDO&background=21C25E&color=fff&size=128",
+      "conta": {
+        "numero": "0009-0",
+        "agencia": "0001",
+        "saldo": -3786.5199999999995,
+        "tipo": "corrente"
+      },
+      "cartao_oferta_vista": true,
+      "pedido_cartao": {
+        "nome": "Gold Esperançoso",
+        "anuidade": "R$ 999,90",
+        "data_pedido": "24/06/2026",
+        "previsao": "6 meses",
+        "status": "Em processamento",
+        "etapa": 1
+      },
+      "taxa_abertura_paga": true,
+      "cartao": {
+        "numero": "6380 4989 1648 3158",
+        "cvv": "479",
+        "limite": 5000.0,
+        "bloqueado": false
+      },
+      "chaves_pix": [
+        {
+          "id": 1,
+          "tipo": "email",
+          "valor": "22@gmail.com",
+          "ativa": true
+        }
+      ],
+      "notificacoes": [
+        {
+          "id": 12,
+          "mensagem": "Taxa de Motivação Financeira de R$ 1,99 debitada. Você está pronto para enriquecer! 🤑",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 13:17:24.453732",
+          "lida": false
+        },
+        {
+          "id": 11,
+          "mensagem": "Taxa de Motivação Financeira de R$ 1,99 debitada. Você está pronto para enriquecer! 🤑",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 13:17:14.386607",
+          "lida": false
+        },
+        {
+          "id": 10,
+          "mensagem": "Depósito de R$ 1.100,00 recebido com sucesso!",
+          "tipo": "sucesso",
+          "icone": "check-circle",
+          "data": "2026-06-24 13:16:57.927973",
+          "lida": false
+        },
+        {
+          "id": 9,
+          "mensagem": "🦴💀 Custo veterinário de R$ 3.785,74 debitado automaticamente!",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 13:15:04.874544",
+          "lida": false
+        },
+        {
+          "id": 8,
+          "mensagem": "🐎 Aposta de R$ 100,00 realizada! Boa sorte... vai precisar.",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 13:15:00.673956",
+          "lida": false
+        },
+        {
+          "id": 7,
+          "mensagem": "✅ Compra de \"Ações Locadora Fita Cassete\" realizada! R$ 89,00 debitados automaticamente.",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 13:14:46.388292",
+          "lida": false
+        },
+        {
+          "id": 6,
+          "mensagem": "✅ Compra de \"CDB Banco Quebrado S.A.\" realizada! R$ 247,90 debitados automaticamente.",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 13:14:38.802758",
+          "lida": false
+        },
+        {
+          "id": 5,
+          "mensagem": "💳 Anuidade do Gold Esperançoso debitada: R$ 999,90. Seu cartão chegará em até 6 meses. Boa espera! 🐌",
+          "tipo": "alerta",
+          "icone": "credit-card",
+          "data": "2026-06-24 13:13:17.377546",
+          "lida": false
+        },
+        {
+          "id": 4,
+          "mensagem": "Pix de R$ 10,00 confirmado! ZicaPay agradece sua contribuição para o nosso fundo de aposentadoria antecipada. 🏖️",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 13:12:03.394713",
+          "lida": false
+        },
+        {
+          "id": 3,
+          "mensagem": "Depósito de R$ 500,00 recebido com sucesso!",
+          "tipo": "sucesso",
+          "icone": "check-circle",
+          "data": "2026-06-24 13:08:03.401587",
+          "lida": false
+        },
+        {
+          "id": 2,
+          "mensagem": "💸 Taxa de abertura de conta debitada: R$ 150,00. Saldo atual: R$ -150,00. Realize um empréstimo para continuar usando o ZicaPay!",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 13:08:01.744720",
+          "lida": false
+        },
+        {
+          "id": 1,
+          "mensagem": "Bem-vindo(a) ao ZicaPay, ABRANDINDO! Sua conta está pronta. 🎉",
+          "tipo": "sucesso",
+          "icone": "check-circle",
+          "data": "2026-06-24 13:07:57.365330",
+          "lida": false
+        }
+      ],
+      "historico": [
+        {
+          "id": 11,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 1.99,
+          "valor_formatado": "R$ 1,99",
+          "nome": "Taxa de Motivação Financeira",
+          "data": "24/06/2026 13:17",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 10,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 1.99,
+          "valor_formatado": "R$ 1,99",
+          "nome": "Taxa de Motivação Financeira",
+          "data": "24/06/2026 13:17",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 9,
+          "tipo": "ENTRADA",
+          "subtipo": "deposito",
+          "valor": 1100.0,
+          "valor_formatado": "R$ 1.100,00",
+          "nome": "Empréstimo ZicaPay (Juros Abusivos)",
+          "data": "24/06/2026 13:16",
+          "status": "concluída",
+          "icone": "plus-circle"
+        },
+        {
+          "id": 8,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 3785.74,
+          "valor_formatado": "R$ 3.785,74",
+          "nome": "UTI Equina Premium + Fisioterapia",
+          "data": "24/06/2026 13:15",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 7,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 100.0,
+          "valor_formatado": "R$ 100,00",
+          "nome": "Aposta Hípica ZicaPay",
+          "data": "24/06/2026 13:15",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 6,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 89.0,
+          "valor_formatado": "R$ 89,00",
+          "nome": "Investimento: Ações Locadora Fita Cassete",
+          "data": "24/06/2026 13:14",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 5,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 247.9,
+          "valor_formatado": "R$ 247,90",
+          "nome": "Investimento: CDB Banco Quebrado S.A.",
+          "data": "24/06/2026 13:14",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 4,
+          "tipo": "SAÍDA",
+          "subtipo": "anuidade",
+          "valor": 999.9,
+          "valor_formatado": "R$ 999,90",
+          "nome": "Anuidade Gold Esperançoso",
+          "data": "24/06/2026 13:13",
+          "status": "concluída",
+          "icone": "credit-card"
+        },
+        {
+          "id": 3,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 10.0,
+          "valor_formatado": "R$ 10,00",
+          "nome": "Taxa de Desinteresse CDB",
+          "data": "24/06/2026 13:12",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 2,
+          "tipo": "ENTRADA",
+          "subtipo": "deposito",
+          "valor": 500.0,
+          "valor_formatado": "R$ 500,00",
+          "nome": "Empréstimo ZicaPay — 12.99% a.m. (Crédito Automático)",
+          "data": "24/06/2026 13:08",
+          "status": "concluída",
+          "icone": "plus-circle"
+        },
+        {
+          "id": 1,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 150.0,
+          "valor_formatado": "R$ 150,00",
+          "nome": "Taxa de Abertura de Conta ZicaPay",
+          "data": "24/06/2026 13:08",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        }
+      ]
+    },
+    "testeoficial@gmail.com": {
+      "id": 10,
+      "nome": "TESTEOFICIAL",
+      "email": "testeoficial@gmail.com",
+      "senha": "senha123",
+      "cpf": "939.847.239-84",
+      "telefone": "(43) 15435-3254",
+      "foto_url": "https://ui-avatars.com/api/?name=TESTEOFICIAL&background=21C25E&color=fff&size=128",
+      "conta": {
+        "numero": "0010-1",
+        "agencia": "0001",
+        "saldo": -9814.199999999999,
+        "tipo": "corrente"
+      },
+      "cartao_oferta_vista": true,
+      "pedido_cartao": {
+        "nome": "Black Diamante Eterno",
+        "anuidade": "R$ 4.999,90",
+        "data_pedido": "24/06/2026",
+        "previsao": "6 meses",
+        "status": "Em processamento",
+        "etapa": 1
+      },
+      "taxa_abertura_paga": true,
+      "cartao": {
+        "numero": "7606 2508 8893 2872",
+        "cvv": "099",
+        "limite": 5000.0,
+        "bloqueado": false
+      },
+      "chaves_pix": [
+        {
+          "id": 1,
+          "tipo": "email",
+          "valor": "testeoficial@gmail.com",
+          "ativa": true
+        }
+      ],
+      "notificacoes": [
+        {
+          "id": 11,
+          "mensagem": "Pix de R$ 10,00 confirmado! ZicaPay agradece sua contribuição para o nosso fundo de aposentadoria antecipada. 🏖️",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 13:32:44.663898",
+          "lida": false
+        },
+        {
+          "id": 10,
+          "mensagem": "Pix de R$ 10,00 confirmado! ZicaPay agradece sua contribuição para o nosso fundo de aposentadoria antecipada. 🏖️",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 13:31:58.728652",
+          "lida": false
+        },
+        {
+          "id": 9,
+          "mensagem": "Depósito de R$ 5.500,00 recebido com sucesso!",
+          "tipo": "sucesso",
+          "icone": "check-circle",
+          "data": "2026-06-24 13:30:31.799620",
+          "lida": false
+        },
+        {
+          "id": 8,
+          "mensagem": "🦴💀 Custo veterinário de R$ 10.286,40 debitado automaticamente!",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 13:30:03.578648",
+          "lida": false
+        },
+        {
+          "id": 7,
+          "mensagem": "🐎 Aposta de R$ 100,00 perdida.",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 13:30:03.578145",
+          "lida": false
+        },
+        {
+          "id": 6,
+          "mensagem": "✅ Compra de \"CDB Banco Quebrado S.A.\" realizada! R$ 247,90 debitados automaticamente.",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 13:29:53.709985",
+          "lida": false
+        },
+        {
+          "id": 5,
+          "mensagem": "💳 Anuidade do Black Diamante Eterno debitada: R$ 4.999,90. Seu cartão chegará em até 6 meses. Boa espera! 🐌",
+          "tipo": "alerta",
+          "icone": "credit-card",
+          "data": "2026-06-24 13:29:37.318651",
+          "lida": false
+        },
+        {
+          "id": 4,
+          "mensagem": "Pix de R$ 10,00 confirmado! ZicaPay agradece sua contribuição para o nosso fundo de aposentadoria antecipada. 🏖️",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 13:29:13.881661",
+          "lida": false
+        },
+        {
+          "id": 3,
+          "mensagem": "Depósito de R$ 500,00 recebido com sucesso!",
+          "tipo": "sucesso",
+          "icone": "check-circle",
+          "data": "2026-06-24 13:28:00.945006",
+          "lida": false
+        },
+        {
+          "id": 2,
+          "mensagem": "💸 Taxa de abertura de conta debitada: R$ 150,00. Saldo atual: R$ -150,00. Realize um empréstimo para continuar usando o ZicaPay!",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 13:27:58.955513",
+          "lida": false
+        },
+        {
+          "id": 1,
+          "mensagem": "Bem-vindo(a) ao ZicaPay, TESTEOFICIAL! Sua conta está pronta. 🎉",
+          "tipo": "sucesso",
+          "icone": "check-circle",
+          "data": "2026-06-24 13:27:54.814955",
+          "lida": false
+        }
+      ],
+      "historico": [
+        {
+          "id": 10,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 10.0,
+          "valor_formatado": "R$ 10,00",
+          "nome": "Taxa de Desinteresse CDB",
+          "data": "24/06/2026 13:32",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 9,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 10.0,
+          "valor_formatado": "R$ 10,00",
+          "nome": "Taxa de Desinteresse CDB",
+          "data": "24/06/2026 13:31",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 8,
+          "tipo": "ENTRADA",
+          "subtipo": "deposito",
+          "valor": 5500.0,
+          "valor_formatado": "R$ 5.500,00",
+          "nome": "Empréstimo ZicaPay (Juros Abusivos)",
+          "data": "24/06/2026 13:30",
+          "status": "concluída",
+          "icone": "plus-circle"
+        },
+        {
+          "id": 7,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 10286.4,
+          "valor_formatado": "R$ 10.286,40",
+          "nome": "UTI Equina Premium + Fisioterapia",
+          "data": "24/06/2026 13:30",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 6,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 100.0,
+          "valor_formatado": "R$ 100,00",
+          "nome": "Aposta Hípica ZicaPay",
+          "data": "24/06/2026 13:30",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 5,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 247.9,
+          "valor_formatado": "R$ 247,90",
+          "nome": "Investimento: CDB Banco Quebrado S.A.",
+          "data": "24/06/2026 13:29",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 4,
+          "tipo": "SAÍDA",
+          "subtipo": "anuidade",
+          "valor": 4999.9,
+          "valor_formatado": "R$ 4.999,90",
+          "nome": "Anuidade Black Diamante Eterno",
+          "data": "24/06/2026 13:29",
+          "status": "concluída",
+          "icone": "credit-card"
+        },
+        {
+          "id": 3,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 10.0,
+          "valor_formatado": "R$ 10,00",
+          "nome": "Taxa de Desinteresse CDB",
+          "data": "24/06/2026 13:29",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 2,
+          "tipo": "ENTRADA",
+          "subtipo": "deposito",
+          "valor": 500.0,
+          "valor_formatado": "R$ 500,00",
+          "nome": "Empréstimo ZicaPay — 12.99% a.m. (Crédito Automático)",
+          "data": "24/06/2026 13:28",
+          "status": "concluída",
+          "icone": "plus-circle"
+        },
+        {
+          "id": 1,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 150.0,
+          "valor_formatado": "R$ 150,00",
+          "nome": "Taxa de Abertura de Conta ZicaPay",
+          "data": "24/06/2026 13:27",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        }
+      ]
+    },
+    "zicapay@gmail.com": {
+      "id": 11,
+      "nome": "Zica Pay",
+      "email": "zicapay@gmail.com",
+      "senha": "senha123",
+      "cpf": "489.734.895-73",
+      "telefone": "(54) 36776-7657",
+      "foto_url": "https://ui-avatars.com/api/?name=Zica+Pay&background=21C25E&color=fff&size=128",
+      "conta": {
+        "numero": "0011-2",
+        "agencia": "0001",
+        "saldo": 328.01,
+        "tipo": "corrente"
+      },
+      "cartao_oferta_vista": false,
+      "pedido_cartao": null,
+      "taxa_abertura_paga": true,
+      "cartao": {
+        "numero": "2669 4025 9942 2475",
+        "cvv": "421",
+        "limite": 5000.0,
+        "bloqueado": false
+      },
+      "chaves_pix": [
+        {
+          "id": 1,
+          "tipo": "email",
+          "valor": "zicapay@gmail.com",
+          "ativa": true
+        }
+      ],
+      "notificacoes": [
+        {
+          "id": 6,
+          "mensagem": "Pix de R$ 10,00 confirmado! ZicaPay agradece sua contribuição para o nosso fundo de aposentadoria antecipada. 🏖️",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 13:40:04.310971",
+          "lida": false
+        },
+        {
+          "id": 5,
+          "mensagem": "Pix de R$ 10,00 confirmado! ZicaPay agradece sua contribuição para o nosso fundo de aposentadoria antecipada. 🏖️",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 13:39:18.516227",
+          "lida": false
+        },
+        {
+          "id": 4,
+          "mensagem": "Taxa de Motivação Financeira de R$ 1,99 debitada. Você está pronto para enriquecer! 🤑",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 13:38:51.176966",
+          "lida": false
+        },
+        {
+          "id": 3,
+          "mensagem": "Depósito de R$ 500,00 recebido com sucesso!",
+          "tipo": "sucesso",
+          "icone": "check-circle",
+          "data": "2026-06-24 13:35:17.014816",
+          "lida": false
+        },
+        {
+          "id": 2,
+          "mensagem": "💸 Taxa de abertura de conta debitada: R$ 150,00. Saldo atual: R$ -150,00. Realize um empréstimo para continuar usando o ZicaPay!",
+          "tipo": "alerta",
+          "icone": "alert-triangle",
+          "data": "2026-06-24 13:35:16.468444",
+          "lida": false
+        },
+        {
+          "id": 1,
+          "mensagem": "Bem-vindo(a) ao ZicaPay, Zica! Sua conta está pronta. 🎉",
+          "tipo": "sucesso",
+          "icone": "check-circle",
+          "data": "2026-06-24 13:35:14.743349",
+          "lida": false
+        }
+      ],
+      "historico": [
+        {
+          "id": 5,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 10.0,
+          "valor_formatado": "R$ 10,00",
+          "nome": "Taxa de Desinteresse CDB",
+          "data": "24/06/2026 13:40",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 4,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 10.0,
+          "valor_formatado": "R$ 10,00",
+          "nome": "Taxa de Desinteresse CDB",
+          "data": "24/06/2026 13:39",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 3,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 1.99,
+          "valor_formatado": "R$ 1,99",
+          "nome": "Taxa de Motivação Financeira",
+          "data": "24/06/2026 13:38",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        },
+        {
+          "id": 2,
+          "tipo": "ENTRADA",
+          "subtipo": "deposito",
+          "valor": 500.0,
+          "valor_formatado": "R$ 500,00",
+          "nome": "Empréstimo ZicaPay — 12.99% a.m. (Crédito Automático)",
+          "data": "24/06/2026 13:35",
+          "status": "concluída",
+          "icone": "plus-circle"
+        },
+        {
+          "id": 1,
+          "tipo": "SAÍDA",
+          "subtipo": "taxa",
+          "valor": 150.0,
+          "valor_formatado": "R$ 150,00",
+          "nome": "Taxa de Abertura de Conta ZicaPay",
+          "data": "24/06/2026 13:35",
+          "status": "concluída",
+          "icone": "alert-triangle"
+        }
+      ]
+    }
+  }
+}

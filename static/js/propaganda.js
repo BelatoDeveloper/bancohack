@@ -40,7 +40,7 @@ const CAMINHO_DO_VIDEO = './static/midia/koda.mp4';   // <- COLOQUE AQUI O CAMIN
  * O usuário NAO pode fechar o modal antes desse tempo.
  * Valor padrão: 30 segundos.
  */
-const DURACAO_PROPAGANDA = 30; // <- segundos obrigatórios — personalizável
+const DURACAO_PROPAGANDA = 15; // <- segundos obrigatórios — personalizável
 
 /**
  * TEXTO_PROPAGANDA: O texto exibido no corpo do pop-up.
@@ -62,6 +62,9 @@ let segundosRestantes = DURACAO_PROPAGANDA;
 
 /** saldoRevelado: flag — true quando o saldo foi liberado e mostrado */
 let saldoRevelado = false;
+
+// ZicaPay Feature: controla se a interrupção dos 10s já foi disparada nesta sessão
+let interrupcao10sDisparada = false;
 
 // ── FUNCAO PRINCIPAL: abrirModalPropaganda() ──────────────────────────────────
 /**
@@ -85,12 +88,15 @@ function abrirModalPropaganda() {
   // Se o overlay nao existir, encerra (provavelmente estamos em outra pagina)
   if (!overlay || !countdown || !btnFechar) return;
 
-  // ── Resetar o estado para um novo ciclo ──────────────────────────────────
+  // ── Resetar o estado para um novo ciclo ───────────────────────────────────────
   segundosRestantes = DURACAO_PROPAGANDA;
   countdown.textContent = segundosRestantes + 's restantes';
 
   // Reseta a barra de progresso para 0%
   if (barFill) barFill.style.width = '0%';
+
+  // ZicaPay Feature: reseta a flag de interrupção para cada nova sessão de propaganda
+  interrupcao10sDisparada = false;
 
   // Garante que o botão de fechar começa desabilitado
   btnFechar.classList.remove('ativo');
@@ -286,6 +292,74 @@ function exibirAlertaCamelo() {
 
 // ── SVG HELPERS ───────────────────────────────────────────────────────────────
 
+// ZicaPay Feature: reinicia o timer de 30 segundos (punição do botão "EU SAI FAZ UM TEMPO")
+function reiniciarTimerPropaganda() {
+  var countdown = document.getElementById('propaganda-countdown');
+  var barFill = document.querySelector('.propaganda-progress-bar-fill');
+  var btnFechar = document.getElementById('btn-fechar-propaganda');
+
+  // Para qualquer timer anterior
+  if (timerPropaganda) clearInterval(timerPropaganda);
+
+  // Reinicia o contador e a barra para o estado inicial
+  segundosRestantes = DURACAO_PROPAGANDA;
+  if (countdown) countdown.textContent = segundosRestantes + 's restantes';
+  if (barFill) barFill.style.width = '0%';
+  if (btnFechar) {
+    btnFechar.classList.remove('ativo');
+    btnFechar.setAttribute('aria-disabled', 'true');
+  }
+
+  // Reinicia o setInterval do timer do zero
+  timerPropaganda = setInterval(function () {
+    segundosRestantes--;
+    if (countdown) countdown.textContent = segundosRestantes + 's restantes';
+
+    var progresso = ((DURACAO_PROPAGANDA - segundosRestantes) / DURACAO_PROPAGANDA) * 100;
+    if (barFill) barFill.style.width = progresso + '%';
+
+    if (segundosRestantes <= 0) {
+      clearInterval(timerPropaganda);
+      timerPropaganda = null;
+      if (barFill) barFill.style.width = '100%';
+      if (countdown) countdown.textContent = 'Concluido!';
+      var vid = document.getElementById('propaganda-video');
+      if (vid && !vid.paused) vid.pause();
+      if (btnFechar) {
+        btnFechar.classList.add('ativo');
+        btnFechar.setAttribute('aria-disabled', 'false');
+      }
+    }
+  }, 1000);
+}
+
+// ZicaPay Feature: exibe o pop-up de confirmação de presença (interrupção dos 10s)
+function abrirPopupPresenca() {
+  var popup = document.getElementById('popup-ainda-aqui');
+  if (popup) {
+    popup.style.display = 'flex';
+    popup.style.opacity = '0';
+    setTimeout(function () {
+      popup.style.transition = 'opacity 0.25s ease';
+      popup.style.opacity = '1';
+    }, 10);
+  }
+}
+
+// ZicaPay Feature: fecha o pop-up de confirmação de presença
+function fecharPopupPresenca() {
+  var popup = document.getElementById('popup-ainda-aqui');
+  if (popup) {
+    popup.style.transition = 'opacity 0.2s ease';
+    popup.style.opacity = '0';
+    setTimeout(function () {
+      popup.style.display = 'none';
+      popup.style.transition = '';
+    }, 220);
+  }
+}
+
+
 function eyeIconAberto() {
   return '<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>';
 }
@@ -406,6 +480,48 @@ function initPropaganda() {
       video.style.display = 'block';
       if (placeholder) placeholder.style.display = 'none';
     }
+
+    // ZicaPay Feature: Interrupção estilo Netflix aos 10 segundos
+    // Detecta via timeupdate quando o vídeo atinge exatamente 10 segundos
+    video.addEventListener('timeupdate', function () {
+      if (!interrupcao10sDisparada && video.currentTime >= 10) {
+        interrupcao10sDisparada = true;
+        // Pausa o vídeo imediatamente
+        video.pause();
+        // Exibe o pop-up de confirmação de presença
+        abrirPopupPresenca();
+      }
+    });
+  }
+
+  // ── Configurar botões do pop-up de presença ───────────────────────────────
+  var btnEstou = document.getElementById('btn-ainda-estou');
+  var btnSai = document.getElementById('btn-fui-embora');
+
+  // ZicaPay Feature: botão "ESTOU" — fecha pop-up e retoma o vídeo
+  if (btnEstou) {
+    btnEstou.addEventListener('click', function () {
+      fecharPopupPresenca();
+      var vid = document.getElementById('propaganda-video');
+      if (vid) vid.play().catch(function () {});
+    });
+  }
+
+  // ZicaPay Feature: botão "EU SAI FAZ UM TEMPO" — punição máxima
+  // Reinicia o vídeo DO ZERO e reinicia o timer de 30 segundos
+  if (btnSai) {
+    btnSai.addEventListener('click', function () {
+      fecharPopupPresenca();
+      var vid = document.getElementById('propaganda-video');
+      if (vid) {
+        vid.currentTime = 0; // Reinicia o vídeo para 0:00
+        vid.play().catch(function () {});
+      }
+      // Permite que a interrupção dos 10s dispare novamente
+      interrupcao10sDisparada = false;
+      // Reinicia o timer de 30 segundos do zero
+      reiniciarTimerPropaganda();
+    });
   }
 }
 

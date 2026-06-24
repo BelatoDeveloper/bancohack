@@ -390,7 +390,7 @@
 /* Botão 2: estilo LinkedIn — azul corporativo */
 #dp2-btn-linkedin {
   background: linear-gradient(135deg, #ff0000, #ff0000);
-  color: rgb(0, 0, 0);
+  color: rgb(217, 255, 0);
 }
 
 #dp2-btn-linkedin:hover {

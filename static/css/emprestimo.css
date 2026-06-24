@@ -1,0 +1,302 @@
+/* ============================================================
+ * emprestimo.css — Estilos da tela de Empréstimo ZicaPay
+ * ZicaPay Feature: extraído do bloco <style> inline em emprestimo.html
+ * ============================================================ */
+
+/* Base UI limpa, inspirada na imagem */
+.ui-container {
+    padding: 24px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.page-header-clean {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.back-btn-clean {
+    background: #f1f5f9;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0f172a;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.page-title-clean {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.balance-card-clean {
+    background: #dcfce7;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 24px;
+    border: 1px solid #bbf7d0;
+}
+
+.balance-label-clean {
+    font-size: 0.875rem;
+    color: #166534;
+    margin-bottom: 8px;
+}
+
+.balance-amount-clean {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #15803d;
+}
+
+.card-container {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.section-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 4px;
+}
+
+.section-subtitle {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin-bottom: 20px;
+}
+
+/* Métodos (Juros) */
+.methods-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+    position: relative;
+    /* Para a pegadinha da troca */
+}
+
+.method-btn {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px 12px;
+    text-align: center;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+}
+
+.method-btn.selected {
+    border-color: #22c55e;
+    background: #f0fdf4;
+}
+
+.method-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #22c55e;
+    color: white;
+    margin-bottom: 8px;
+}
+
+.method-icon.gray {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.method-title {
+    font-weight: 700;
+    color: #0f172a;
+    font-size: 0.95rem;
+}
+
+.method-sub {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-top: 4px;
+}
+
+/* Valores Rápidos */
+.quick-values-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+}
+
+.quick-values-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.quick-val-btn {
+    padding: 8px 16px;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    background: white;
+    font-weight: 600;
+    color: #334155;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.quick-val-btn:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+/* Outro Valor Input */
+.custom-val-label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.input-wrapper {
+    position: relative;
+    margin-bottom: 32px;
+}
+
+.input-prefix {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: 700;
+    color: #64748b;
+    font-size: 1.125rem;
+}
+
+.custom-val-input {
+    width: 100%;
+    padding: 16px 16px 16px 50px;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #0f172a;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.custom-val-input:focus {
+    border-color: #22c55e;
+}
+
+/* Botão Submit (Bait and Switch) */
+.btn-fake-cancel {
+    width: 100%;
+    padding: 18px;
+    background: #22c55e;
+    color: white;
+    font-weight: 700;
+    font-size: 1.125rem;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+    transition: transform 0.1s;
+}
+
+.btn-fake-cancel:active {
+    transform: scale(0.98);
+}
+
+.info-box {
+    background: #fef3c7;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    align-items: flex-start;
+}
+
+.info-icon {
+    color: #d97706;
+    flex-shrink: 0;
+}
+
+.info-text {
+    font-size: 0.85rem;
+    color: #92400e;
+    line-height: 1.5;
+}
+
+/* Hidden elements */
+.btn-real-submit {
+    background: none;
+    border: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+}
+
+/* Modal Inescapável de Termos */
+.termos-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.termos-modal {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.termos-modal h3 {
+    margin-top: 0;
+}
+
+.btn-fechar-termos {
+    margin-top: 20px;
+    padding: 12px 24px;
+    background: #334155;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+}

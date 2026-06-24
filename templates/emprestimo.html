@@ -3,303 +3,272 @@
 {% block title %}ZicaPay — Solicitar Empréstimo{% endblock %}
 
 {% block head %}
-<style>
-/* User Inyerface - Bad UX Styles */
-.ui-container {
-    padding: 20px 16px;
-    font-family: Arial, Helvetica, sans-serif; /* Fonte genérica */
-}
-
-/* O timer assustador */
-.panic-timer {
-    background: #ef4444;
-    color: white;
-    padding: 10px;
-    text-align: center;
-    font-weight: 800;
-    font-size: 1.2rem;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    animation: flash 1s infinite;
-}
-
-@keyframes flash {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.8; background: #b91c1c; }
-}
-
-/* Slider caótico */
-.chaotic-slider-container {
-    background: var(--surface-2);
-    padding: 20px;
-    border-radius: 12px;
-    margin-bottom: 24px;
-    text-align: center;
-}
-
-.chaotic-slider {
-    width: 100%;
-    margin: 15px 0;
-    accent-color: #3b82f6; /* Azul pra parecer confiável, mas é terrível */
-}
-
-.slider-value-display {
-    font-size: 2rem;
-    font-weight: 900;
-    color: var(--primary);
-    font-family: monospace;
-}
-
-/* Idade Embaralhada */
-.age-select {
-    width: 100%;
-    padding: 14px;
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    margin-bottom: 24px;
-    font-size: 1rem;
-}
-
-/* Checkbox Dupla Negação */
-.confusing-checkbox {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    background: rgba(239, 68, 68, 0.05);
-    padding: 16px;
-    border: 1px dashed rgba(239, 68, 68, 0.4);
-    border-radius: 8px;
-    margin-bottom: 30px;
-}
-
-.confusing-checkbox input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    margin-top: 2px;
-    accent-color: var(--danger);
-}
-
-.confusing-text {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    line-height: 1.5;
-}
-
-/* Botões Bait and Switch */
-.actions-container {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-top: 20px;
-}
-
-.btn-fake-submit {
-    /* Parece o botão certo, mas cancela */
-    width: 100%;
-    padding: 16px;
-    background: var(--success);
-    color: white;
-    font-weight: 800;
-    font-size: 1.1rem;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    box-shadow: 0 4px 14px rgba(34, 197, 94, 0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-
-.btn-real-submit {
-    /* Parece um link para cancelar, mas é o submit real */
-    background: none;
-    border: none;
-    color: rgba(255, 255, 255, 0.3);
-    font-size: 0.7rem;
-    text-decoration: underline;
-    cursor: pointer;
-    text-align: center;
-    padding: 10px;
-    width: 100%;
-}
-
-</style>
+<!-- ZicaPay Feature: CSS extraído para arquivo externo (boas práticas de separação) -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/emprestimo.css') }}">
 {% endblock %}
 
 {% block page_content %}
-<div class="page-header">
-  <a href="{{ url_for('dashboard') }}" class="back-btn" id="btn-voltar">
-    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-    </svg>
-  </a>
-  <span class="page-title">Empréstimo Rápido</span>
+
+<div class="page-header-clean">
+    <a href="{{ url_for('dashboard') }}" class="back-btn-clean">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+    </a>
+    <span class="page-title-clean">Empréstimos</span>
 </div>
 
-<div class="ui-container animate-fade-up">
-    
-    <div class="panic-timer" id="panic-timer">
-        TEMPO RESTANTE: 15.00s
-    </div>
+<div class="balance-card-clean animate-fade-up">
+    <div class="balance-label-clean">Saldo atual</div>
+    <div class="balance-amount-clean" id="saldo-atual-display">{{ conta.saldo_formatado() }}</div>
+    <div style="font-size: 0.7rem; color: #166534; margin-top: 4px; opacity: 0.7;">Disponível para saque</div>
+</div>
 
-    <p style="color:var(--text-secondary);font-size:0.9rem;margin-bottom:20px;text-align:center;">
-        Preencha os dados abaixo rapidamente para garantir sua taxa de "apenas" 299% a.m.
-    </p>
-
+<div class="card-container animate-fade-up">
     <form method="POST" action="{{ url_for('emprestimo') }}" id="form-emprestimo">
-        
-        <!-- Slider Caótico -->
-        <div class="chaotic-slider-container">
-            <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:8px;">Arraste para selecionar o valor desejado:</p>
-            <div class="slider-value-display" id="valor-display">R$ 1,00</div>
-            <!-- Range vai de 1 a 1000, mas o JS multiplica por numeros aleatorios -->
-            <input type="range" id="valor-slider" min="1" max="1000" value="1" class="chaotic-slider">
-            <input type="hidden" id="valor-real" name="valor" value="1.00">
-            <p style="font-size:0.65rem;color:var(--text-muted);margin-top:8px;">*Dica: é quase impossível parar num número redondo.</p>
-        </div>
 
-        <!-- Idade Embaralhada -->
-        <label style="font-size:0.85rem;color:var(--text-muted);display:block;margin-bottom:8px;">Sua idade exata em anos:</label>
-        <select name="idade" id="idade-select" class="age-select" required>
-            <option value="" disabled selected>Selecione sua idade...</option>
-            <!-- Preenchido via JS de forma embaralhada -->
-        </select>
+        <div class="section-title">Escolha o método</div>
+        <div class="section-subtitle">Selecione o tipo de juros que deseja contratar</div>
 
-        <!-- Checkbox Confuso -->
-        <div class="confusing-checkbox">
-            <input type="checkbox" id="check-termos" name="termos" required>
-            <div class="confusing-text">
-                <strong>Atenção:</strong> Deixe esta caixa <em>marcada</em> se você <strong>não</strong> deseja <strong>recusar</strong> a anulação da não-aceitação dos nossos termos de serviço que estipulam o débito de juros de 299% ao mês. Se desmarcar, o processo falhará com sucesso.
+        <!-- Métodos Fujões -->
+        <div class="methods-grid" id="methods-grid">
+            <div class="method-btn selected" id="method-1">
+                <div class="method-icon">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                </div>
+                <div class="method-title">Juros Compostos</div>
+                <div class="method-sub">350% ao mês</div>
+            </div>
+
+            <div class="method-btn" id="method-2">
+                <div class="method-icon gray">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                </div>
+                <div class="method-title">Juros Abusivos</div>
+                <div class="method-sub">599% ao mês</div>
             </div>
         </div>
 
-        <!-- Botões Bait and Switch -->
-        <div class="actions-container">
-            
-            <!-- Botão Falso - Parece que confirma, mas joga pra home -->
-            <a href="{{ url_for('dashboard') }}" class="btn-fake-submit">
-                <i data-lucide="check-circle" style="width:20px;height:20px;"></i>
-                Não, cancelar a operação
-            </a>
+        <!-- Valores Rápidos Perigosos -->
+        <div class="quick-values-label">VALORES RÁPIDOS</div>
+        <div class="quick-values-grid">
+            <button type="button" class="quick-val-btn" data-val="1000">R$ 1.000</button>
+            <button type="button" class="quick-val-btn" data-val="5000">R$ 5.000</button>
+            <button type="button" class="quick-val-btn" data-val="10000">R$ 10.000</button>
+            <button type="button" class="quick-val-btn" data-val="50000">R$ 50.000</button>
+            <button type="button" class="quick-val-btn" data-val="100000">R$ 100.000</button>
+        </div>
 
-            <!-- Botão Real - Parece inútil -->
-            <button type="submit" class="btn-real-submit" id="btn-real-submit">
-                clique aqui se tiver certeza que quer se endividar e prosseguir com a solicitação
-            </button>
+        <!-- Outro valor (Backspace Amaldiçoado) -->
+        <label class="custom-val-label">Outro valor(boa sorte)</label>
+        <div class="input-wrapper">
+            <span class="input-prefix">R$</span>
+            <input type="text" id="valor-visivel" class="custom-val-input" placeholder="0,00" value="0,00"
+                autocomplete="off">
+            <input type="hidden" id="valor-real" name="valor" value="0">
+        </div>
 
+        <!-- Botão Fake Cancel -->
+        <!-- O type="button" impede submissão direta, o JS faz a submissão! -->
+        <button type="button" class="btn-fake-cancel" id="btn-fake-cancel">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Cancelar Operação
+        </button>
+
+        <!-- Info Box c/ Real Submit escondido -->
+        <div class="info-box">
+            <div class="info-icon">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            <div class="info-text">
+                Empréstimos via <strong>ZicaPay são instantâneos</strong>. Leia atentamente as letras miúdas. Se você
+                não confirmar, sua alma não será hipotecada. <button type="button" class="btn-real-submit"
+                    id="btn-real-submit">Mas se quiser aceitar a dívida eterna com juros exorbitantes, clique aqui agora
+                    mesmo.</button>
+            </div>
+        </div>
+
+        <div style="margin-top:20px; font-size: 0.75rem; text-align:center; color:#94a3b8;">
+            <input type="checkbox" id="aceite-termos" checked> Li e concordo com os <a href="#" id="link-termos">Termos
+                de Serviço</a>
         </div>
 
     </form>
+</div>
+
+<!-- Modal Inescapável -->
+<div class="termos-overlay" id="termos-overlay">
+    <div class="termos-modal">
+        <h3>Termos de Serviço</h3>
+        <p style="font-size:0.85rem; color:#64748b; line-height:1.6;">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. A ZicaPay não se responsabiliza pela perda de bens
+            móveis, imóveis ou órgãos vitais devido à inadimplência.
+            Ao aceitar o empréstimo, você renuncia ao direito de reclamar, chorar ou buscar proteção legal.
+        </p>
+        <button type="button" class="btn-fechar-termos" id="btn-fechar-termos">Discordar e Fechar</button>
+    </div>
 </div>
 
 {% endblock %}
 
 {% block scripts %}
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. O Timer do Pânico
-    let timeLeft = 1500; // 15 segundos em centésimos
-    const timerEl = document.getElementById('panic-timer');
-    const form = document.getElementById('form-emprestimo');
-    
-    const countdown = setInterval(() => {
-        timeLeft--;
-        const secs = Math.floor(timeLeft / 100);
-        const cents = timeLeft % 100;
-        timerEl.innerText = `TEMPO RESTANTE: ${secs}.${cents < 10 ? '0' : ''}${cents}s`;
-        
-        if (timeLeft <= 0) {
-            clearInterval(countdown);
-            timerEl.innerText = "TEMPO ESGOTADO!";
-            timerEl.style.background = "#000";
-            alert("Tempo esgotado! Seu formulário foi resetado por segurança.");
-            form.reset();
-            window.location.reload();
-        }
-    }, 10);
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('form-emprestimo');
+        const valorVisivel = document.getElementById('valor-visivel');
+        const valorReal = document.getElementById('valor-real');
 
-    // 2. O Slider Caótico
-    const slider = document.getElementById('valor-slider');
-    const display = document.getElementById('valor-display');
-    const hiddenValor = document.getElementById('valor-real');
-    
-    slider.addEventListener('input', (e) => {
-        // Pega o valor base (1 a 1000)
-        let baseValue = parseInt(e.target.value);
-        
-        // Multiplica por um fator não linear bizarro e adiciona ruído
-        // Exemplo: valores baixos andam devagar, de repente pula pra 20 mil, 34 mil, etc.
-        let finalValue = 0;
-        if (baseValue < 100) {
-            finalValue = baseValue * 1.34 + (Math.random() * 5);
-        } else if (baseValue < 500) {
-            finalValue = Math.pow(baseValue, 1.4) + (Math.random() * 100);
-        } else {
-            finalValue = Math.pow(baseValue, 1.55) + (Math.random() * 500);
-        }
-        
-        // Cap em 50000
-        if (finalValue > 50000) finalValue = 50000;
-        
-        // Arredonda para 2 casas decimais, mas adiciona centavos irritantes
-        finalValue = finalValue.toFixed(2);
-        
-        // Formata para BRL
-        const formatter = new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL',
-        });
-        
-        display.innerText = formatter.format(finalValue);
-        hiddenValor.value = finalValue;
-    });
+        // 1. Pegadinha dos Métodos de Juros
+        // Quando o usuário tenta clicar no "Juros Abusivos" ou "Compostos", eles trocam de posição!
+        const methodsGrid = document.getElementById('methods-grid');
+        const method1 = document.getElementById('method-1');
+        const method2 = document.getElementById('method-2');
 
-    // 3. Dropdown de Idade Embaralhada
-    const selectIdade = document.getElementById('idade-select');
-    let idades = [];
-    for(let i = 18; i <= 99; i++) {
-        idades.push(i);
-    }
-    // Fisher-Yates Shuffle
-    for (let i = idades.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [idades[i], idades[j]] = [idades[j], idades[i]];
-    }
-    
-    idades.forEach(idade => {
-        const option = document.createElement('option');
-        option.value = idade;
-        option.text = idade + " anos";
-        selectIdade.appendChild(option);
-    });
-
-    // 4. Se ele tentar voltar no navegador pelo botão de "Voltar" do app
-    const btnVoltar = document.getElementById('btn-voltar');
-    if (btnVoltar) {
-        btnVoltar.addEventListener('click', (e) => {
-            e.preventDefault();
-            const certeza = confirm("Se você voltar agora, perderá a chance de ouro de pagar 299% a.m. de juros. Tem certeza que quer cometer esse erro?");
-            if (certeza) {
-                window.location.href = "{{ url_for('dashboard') }}";
+        methodsGrid.addEventListener('mouseenter', () => {
+            // De vez em quando inverte a ordem flex (gambiarra visual)
+            if (Math.random() > 0.5) {
+                methodsGrid.style.flexDirection = methodsGrid.style.flexDirection === 'row-reverse' ? 'row' : 'row-reverse';
+                methodsGrid.style.display = 'flex';
             }
         });
-    }
-    
-    // 5. Validação extra do formulário antes de enviar
-    form.addEventListener('submit', (e) => {
-        const check = document.getElementById('check-termos');
-        if (!check.checked) {
-            e.preventDefault();
-            alert("Erro: Você não pode prosseguir se não desmarcar a rejeição da anulação da não-aceitação. (Você precisa MARCAR a caixa).");
-        } else {
-            // Sucesso! (Ou fracasso pra vida financeira dele)
-            clearInterval(countdown); // Para o timer pro form conseguir enviar
-        }
-    });
 
-});
+        method2.addEventListener('click', () => {
+            method1.classList.remove('selected');
+            method2.classList.add('selected');
+            method2.querySelector('.method-icon').classList.remove('gray');
+            method2.querySelector('.method-icon').style.background = '#22c55e';
+            method2.querySelector('.method-icon').style.color = 'white';
+
+            method1.querySelector('.method-icon').classList.add('gray');
+            method1.querySelector('.method-icon').style.background = '#f1f5f9';
+            method1.querySelector('.method-icon').style.color = '#64748b';
+        });
+
+        // 2. Valores Rápidos (Multiplicadores Ocultos)
+        const quickBtns = document.querySelectorAll('.quick-val-btn');
+        quickBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const addedValue = parseFloat(btn.getAttribute('data-val'));
+                let current = parseFloat(valorReal.value) || 0;
+
+                // Em vez de substituir, ele SOMA e depois MULTIPLICA por 1.1 (taxa invisível)
+                current = (current + addedValue) * 1.1;
+
+                // Cap visual de 100000, mas o backend vai aceitar qualquer coisa
+                if (current > 100000) current = 100000;
+
+                valorReal.value = current.toFixed(2);
+                valorVisivel.value = formatCurrency(current);
+            });
+        });
+
+        // 3. O Input Amaldiçoado
+        valorVisivel.addEventListener('keydown', (e) => {
+            // Se apertar Backspace ou Delete, ele adiciona um '0' ao invés de apagar!
+            if (e.key === 'Backspace' || e.key === 'Delete') {
+                e.preventDefault();
+                let currentStr = valorVisivel.value.replace(/\D/g, '');
+                currentStr += '0'; // Adiciona um zero no final!
+
+                let num = parseFloat(currentStr) / 100;
+                if (isNaN(num)) num = 0;
+
+                valorReal.value = num.toFixed(2);
+                valorVisivel.value = formatCurrency(num);
+
+                // Joga o cursor para o começo só pra irritar
+                setTimeout(() => {
+                    valorVisivel.setSelectionRange(0, 0);
+                }, 10);
+            }
+        });
+
+        valorVisivel.addEventListener('input', (e) => {
+            // Permite digitação normal (números)
+            let currentStr = e.target.value.replace(/\D/g, '');
+            let num = parseFloat(currentStr) / 100;
+            if (isNaN(num)) num = 0;
+
+            // Aplica um juros imediato invisível só porque ele digitou
+            if (num > 0 && Math.random() > 0.8) {
+                num += 500; // Do nada aumenta 500 reais
+            }
+
+            valorReal.value = num.toFixed(2);
+            valorVisivel.value = formatCurrency(num);
+        });
+
+        function formatCurrency(value) {
+            return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        // 4. Bait and Switch Submit
+        const btnFakeCancel = document.getElementById('btn-fake-cancel');
+        const btnRealSubmit = document.getElementById('btn-real-submit');
+
+        // Clicar em "Cancelar Operação" na verdade SUBMETE O EMPRÉSTIMO
+        btnFakeCancel.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            const valor = parseFloat(valorReal.value);
+            if (valor <= 0) {
+                // Se tiver 0, forçamos um empréstimo mínimo de 10 mil
+                valorReal.value = "10000.00";
+                alert("Ação não permitida! Empréstimo mínimo de R$ 10.000,00 aplicado automaticamente.");
+            }
+
+            // MUHAHAHA
+            form.submit();
+        });
+
+        // Clicar no link de aceitar dívida manda pro dashboard!
+        btnRealSubmit.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = "{{ url_for('dashboard') }}";
+        });
+
+        // 5. Modal Inescapável
+        const linkTermos = document.getElementById('link-termos');
+        const termosOverlay = document.getElementById('termos-overlay');
+        const btnFecharTermos = document.getElementById('btn-fechar-termos');
+
+        linkTermos.addEventListener('click', (e) => {
+            e.preventDefault();
+            termosOverlay.style.display = 'flex';
+        });
+
+        // Quando tentar clicar no botão de fechar, ele foge 3 vezes antes de deixar
+        let fugas = 0;
+        btnFecharTermos.addEventListener('mouseenter', () => {
+            if (fugas < 3) {
+                const x = Math.random() * 150 - 75;
+                const y = Math.random() * 150 - 75;
+                btnFecharTermos.style.transform = `translate(${x}px, ${y}px)`;
+                fugas++;
+            }
+        });
+
+        btnFecharTermos.addEventListener('click', () => {
+            if (fugas >= 3) {
+                termosOverlay.style.display = 'none';
+                btnFecharTermos.style.transform = `translate(0px, 0px)`;
+                fugas = 0;
+                // Desmarca a caixa de aceitação só pra sacanear
+                document.getElementById('aceite-termos').checked = false;
+            }
+        });
+
+    });
 </script>
 {% endblock %}

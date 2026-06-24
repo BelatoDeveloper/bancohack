@@ -31,11 +31,11 @@ O sistema viola propositalmente as Heurísticas de Usabilidade de Jakob Nielsen 
 
 1. **Splash** — tela de entrada com instruções confusas
 2. **Termos de Uso** — checkboxes interdependentes e contraditórios que nunca deixam o usuário aceitar de primeira
-3. **Cadastro** — regras de senha absurdas e contraditórias + campo de confirmar senha que sempre diz não coincidir
-4. **Login** — regras de senha que só aparecem após tentar entrar, mudam a cada tentativa e se contradizem
+3. **Cadastro** — regras de senha abs urdas e contraditórias + campo de confirmar senha que sempre diz não coincidir + **Regra dos 3 Cliques**: mensagens motivacionais irônicas a cada clique frustrado ("LEMBRE-SE DE SER INSISTENTE", "TENTAR NOVAMENTE É UMA VIRTUDE")
+4. **Login** — regras de senha que só aparecem após tentar entrar, mudam a cada tentativa e se contradizem + **Regra dos 3 Cliques**: aviso discreto "LEMBRE-SE QUE O BOTÃO QUE DECIDE"; apenas no 3º clique o login é concluído
 5. **Taxa de Abertura** — cobrança surpresa imediata de R$150; saldo negativo obriga a aceitar um empréstimo com juros abusivos
-6. **Dashboard** — saldo visível apenas após assistir propaganda obrigatória (com som forçado)
-7. **Onboarding do Mal** — um guia interativo que insulta o usuário e o guia para tomar péssimas decisões financeiras
+6. **Dashboard** — saldo visível apenas após assistir propaganda obrigatória (com som forçado) + **Interrupção estilo Netflix aos 10 segundos**: vídeo pausa e exibe "VOCÊ AINDA ESTÁ AI?" com botões de punição
+7. **Onboarding do Mal** — guia interativo expandido (7 passos) que insulta o usuário e o guia para tomar péssimas decisões financeiras; encerra com a mensagem "AGORA VOCÊ JÁ SABE USAR O ZICAPAY, E É NOSSO CÚ MPLICE CASO A CASA CAIA"
 8. **Pop-ups Interativos** — "O Mestre da Fuga" (botão que foge do mouse), "O Refém Intelectual" (captcha cronometrado), e "A Roleta da Recusa" (slot machine para cancelar um cartão de crédito)
 9. **Investimentos** — "Tinder dos Investimentos" (swipe compra sem confirmação) e "Apostas Hípicas" (corrida viciada onde o usuário sempre perde e é taxado pelo veterinário)
 
@@ -140,15 +140,16 @@ bancohack/
     │   └── investir.css
     └── js/
         ├── app.js
-        ├── login.js
-        ├── cadastro.js
+        ├── login.js           (dark pattern: regra dos 3 cliques)
+        ├── cadastro.js        (dark pattern: regra dos 3 cliques + mensagens irônicas)
         ├── termos.js
-        ├── propaganda.js
+        ├── propaganda.js      (dark pattern: interrupção aos 10s + timer)
         ├── darkPopups.js
         ├── popupsConfig.js
-        ├── taxa_abertura.js      (lógica da extorsão pós-login)
-        ├── guia_zica.js          (onboarding sarcástico)
-        └── investir.js           (lógica das apostas e swipe)
+        ├── taxa_abertura.js   (lógica da extorsão pós-login)
+        ├── guia_zica.js       (onboarding sarcast ico expandido 7 passos)
+        ├── investir.js        (lógica das apostas e swipe)
+        └── perfil.js, pix.js, cartoes.js, termos.js, ...
 ```
 
 > Para detalhamento completo da arquitetura, consulte o arquivo `RELATORIO_MTC.md`.
@@ -183,9 +184,37 @@ A equipe declara responsabilidade integral pelo conteúdo entregue e está apta 
 O projeto foi testado pelos próprios integrantes da equipe simulando o fluxo completo do usuário, desde a tela inicial até as operações financeiras. Foram validados:
 
 - Fluxo de termos com checkboxes contraditórios
-- Sistema de regras absurdas de senha no login e cadastro
+- **Regra dos 3 Cliques** no login (erros falsos nos 2 primeiros cliques, libera no 3º) e no cadastro (mensagens irônicas sequenciais)
+- **Interrupção de propaganda** aos 10 segundos (pausa + pop-up "VOCÊ AINDA ESTÁ AI?")
+- **Onboarding expandido** 7 passos, com encerramento no passo final com mensagem de cumplicidade
 - Propaganda obrigatória antes de ver o saldo
 - Operações de transferência, Pix e extrato funcionando corretamente no backend
+
+---
+
+## Aviso de Compliance — Hackathon IFRO 2026/1
+
+> ⚠️ **Declaração Obrigatória conforme regras do Hackathon Extensionista IFRO Ariquemes**
+
+### Uso de Inteligência Artificial
+
+Este projeto utilizou ferramentas de IA como apoio no desenvolvimento. Toda IA utilizada está documentada na seção **Uso de IA** acima. O conteúdo gerado por IA foi **revisado, compreendido e adaptado** pela equipe antes de ser integrado.
+
+### Chaves e Credenciais
+
+Nenhuma chave de API, senha ou credencial real está exposta no código-fonte deste repositório. Todas as integrações utilizam configurações de ambiente (variáveis de ambiente ou arquivo de configuração local não versionado).
+
+### Disponibilidade do MVP
+
+O MVP está funcional e disponível para demonstração. O sistema executa localmente via `flask run` seguindo as instruções de instalação deste README.
+
+### Prazo de Submissão
+
+Este projeto deve ser submetido até **19/06/2026 às 23h59** conforme cronograma do Hackathon Extensionista IFRO Ariquemes 2026/1.
+
+### Autoria
+
+Todo o conteúdo é de autoria da equipe **BananasLab Team** (IFRO Campus Ariquemes), desenvolvido exclusivamente para fins acadêmicos no contexto do Hackathon Extensionista. Os dark patterns implementados são demonstrações didáticas de más práticas de UX e **não representam a intenção real de prejudicar usuários**.
 
 ---
 

@@ -302,3 +302,65 @@ USUÁRIO
 
 ---
 
+## 7. Dark Patterns Implementados — Rodada Final
+
+Esta seção documenta os dark patterns adicionados na iteração final do projeto, incorporados aos arquivos JavaScript e HTML existentes.
+
+### 7.1 Regra dos 3 Cliques (login.js e cadastro.js)
+
+- **Arquivo:** `static/js/login.js` e `static/js/cadastro.js`
+- **Mecanismo:** contador `clickCount` e `e.preventDefault()` bloqueiam o submit até o 3º clique
+- **Heurísticas violadas:** H1 (visibilidade), H3 (controle e liberdade), H9 (mensagens de erro)
+- **No Login:** exibe erros falsos ("Senha incorreta") nas 2 primeiras tentativas; libera no 3º clique
+- **No Cadastro:** mensagens irônicas progressivas — "LEMBRE-SE DE SER INSISTENTE", "TENTAR NOVAMENTE É UMA VIRTUDE", "LEMBRE-SE QUE ESSE BOTÃO DE CRIAR CONTA É BEM CLICÁVEL"
+
+### 7.2 Interrupção Estilo Netflix (propaganda.js + dashboard.html)
+
+- **Arquivo:** `static/js/propaganda.js` e `templates/dashboard.html`
+- **Mecanismo:** evento `timeupdate` detecta `currentTime >= 10s`, pausa o vídeo e exibe pop-up
+- **Pop-up:** "VOCÊ AINDA ESTÁ AI?" com dois botões de ação:
+  - **ESTOU** (vermelho): fecha pop-up e retoma o vídeo
+  - **EU SAI FAZ UM TEMPO** (verde): reinicia o vídeo para 0:00 **e** reinicia o timer de 30 segundos (punição máxima)
+- **Heurísticas violadas:** H1 (visibilidade), H3 (controle), H5 (prevenção de erros)
+
+### 7.3 Onboarding Expandido — Passos 5, 6 e 7 (guia_zica.js)
+
+- **Arquivo:** `static/js/guia_zica.js`
+- **Passos adicionados:**
+  - **Passo 5 (investir.html):** aponta para Tinder de Ativos ou Corrida Hípica; avança quando o usuário swipa ou aposta (flag `zicapay-guia-investiu` no localStorage)
+  - **Passo 6 (dashboard):** direciona para a seção de Empréstimos após a derrota financeira
+  - **Passo 7 (dashboard):** mensagem final "AGORA VOCÊ JÁ SABE USAR O ZICAPAY, E É NOSSO CÚMPLICE CASO A CASA CAIA"; encerra o guia permanentemente
+
+### 7.4 Separação CSS/JS (Boas Práticas)
+
+- Blocos `<style>` inline extraídos para `static/css/cartoes.css` e `static/css/emprestimo.css`
+- Referenciados via `<link>` no `{% block head %}` de cada template
+
+---
+
+## 8. Compliance — Hackathon IFRO 2026/1
+
+> ⚠️ **Declaração obrigatória conforme regras do Hackathon Extensionista IFRO Ariquemes**
+
+### Uso de Inteligência Artificial
+
+Este projeto utilizou ferramentas de IA (Claude / Anthropic e AntiGravity) como apoio no desenvolvimento de código frontend e documentação. Todo conteúdo gerado foi **revisado, compreendido, testado e adaptado** pela equipe. A equipe é responsável integral pelo conteúdo entregue.
+
+### Chaves e Credenciais
+
+Nenhuma chave de API, senha ou credencial real está exposta no código-fonte deste repositório. Todas as integrações utilizam configurações de ambiente não versionadas.
+
+### Disponibilidade do MVP
+
+O MVP está funcional e disponível para demonstração. Executa localmente via `python app.py` seguindo as instruções de instalação.
+
+### Prazo de Submissão
+
+Este projeto deve ser submetido até **19/06/2026 às 23h59** conforme cronograma do Hackathon Extensionista IFRO Ariquemes 2026/1.
+
+### Autoria e Responsabilidade
+
+Projeto desenvolvido pela equipe **BananasLab Team** — IFRO Campus Ariquemes. Os dark patterns são demonstrações didáticas de más práticas de UX e não representam intenção real de prejudicar usuários.
+
+---
+

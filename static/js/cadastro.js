@@ -1,24 +1,24 @@
 // ================================================
-// CADASTRO.JS — Regras absurdas de senha no cadastro
-// Além das regras, adiciona:
-// - Confirmar senha que SEMPRE diz não coincidir (tentativas 1-3)
+// CADASTRO.JS — Dark Pattern: Regra dos 3 Cliques + Regras Absurdas de Senha
+// ZicaPay Feature: 3-click rule no cadastro com mensagens motivacionais irônicas
+//
 // Heurísticas de Nielsen violadas:
-// - H1: Visibilidade do status
-// - H4: Consistência e padrões
-// - H5: Prevenção de erros
-// - H9: Mensagens de erro inúteis
+// - H1: Visibilidade do status (requisitos mudam a cada clique)
+// - H4: Consistência e padrões (regras se contradizem)
+// - H5: Prevenção de erros (sistema cria erros ativamente)
+// - H9: Mensagens de erro inúteis e humilhantes
 // ================================================
 
-// Contador de tentativas do usuário no cadastro
-let regTentativas = 0;
+// ZicaPay Feature: contador de cliques — formulário só é enviado no 3º clique
+let clickCount = 0;
 
-// Flag que controla se o cadastro foi liberado
+// ZicaPay Feature: flag que controla quando o cadastro foi liberado
 let regLiberado = false;
 
-// Intercepta o submit do formulário de cadastro
-// O "true" no terceiro parâmetro faz capturar antes do listener original
+// ZicaPay Feature: intercepta o submit do formulário de cadastro
+// O terceiro argumento 'true' usa event capture (roda antes de outros listeners)
 document.getElementById('register-form').addEventListener('submit', function(e) {
-  // Se já foi liberado na 4ª tentativa, deixa submeter normalmente
+  // Se já liberado no 3º clique, deixa submeter normalmente
   if (regLiberado) return;
 
   // Bloqueia o envio do formulário
@@ -31,58 +31,136 @@ document.getElementById('register-form').addEventListener('submit', function(e) 
   // Se algum campo estiver vazio, não faz nada
   if (!senha || !confirma) return;
 
-  // Incrementa o contador de tentativas
-  regTentativas++;
+  // ZicaPay Feature: incrementa o contador a cada clique frustrado
+  clickCount++;
 
-  // Nas primeiras 3 tentativas, diz que as senhas não coincidem
-  // mesmo que sejam idênticas — viola a H5
-  if (regTentativas <= 3) {
-    const erros = [
-      '✗ As senhas não coincidem',      // 1ª tentativa
-      '✗ Continua diferente...',         // 2ª tentativa
-      '✗ Quase... mas não',              // 3ª tentativa
-    ];
-    const matchDiv = document.getElementById('senha-match');
-    matchDiv.textContent = erros[regTentativas - 1];
-    matchDiv.style.color = 'var(--danger)';
-    matchDiv.style.display = 'block';
-  }
+  // ZicaPay Feature: exibe ou atualiza a mensagem motivacional irônica
+  // próxima aos requisitos de senha
+  atualizarMensagemInsistencia(clickCount);
 
-  // Chama a função que exibe as regras de senha
+  // Também chama a função de regras absurdas de senha (mantida do original)
   mostrarRegrasCadastro(senha);
 }, true);
 
-// Função principal que exibe as regras de acordo com a tentativa
+// ─────────────────────────────────────────────────────────────────────────────
+// ZicaPay Feature: Mensagens motivacionais irônicas a cada clique frustrado
+// ─────────────────────────────────────────────────────────────────────────────
+function atualizarMensagemInsistencia(clique) {
+  // Obtém ou cria o elemento de mensagem de insistência
+  let msgEl = document.getElementById('msg-insistencia');
+  if (!msgEl) {
+    msgEl = document.createElement('p');
+    msgEl.id = 'msg-insistencia';
+    msgEl.style.cssText = [
+      'font-size:0.72rem',
+      'font-weight:700',
+      'text-align:center',
+      'margin-top:8px',
+      'padding:6px 10px',
+      'border-radius:8px',
+      'letter-spacing:0.04em',
+      'transition:all 0.3s ease'
+    ].join(';');
+
+    // Insere próximo aos requisitos de senha (acima do botão de criar conta)
+    const btnRegister = document.getElementById('btn-register');
+    if (btnRegister) btnRegister.insertAdjacentElement('beforebegin', msgEl);
+  }
+
+  // ZicaPay Feature: mensagens específicas por número de clique
+  if (clique === 1) {
+    // Após o 1º clique frustrado
+    msgEl.textContent = 'LEMBRE-SE DE SER INSISTENTE';
+    msgEl.style.color = '#b45309';
+    msgEl.style.background = '#fffbeb';
+    msgEl.style.border = '1px solid #fcd34d';
+
+  } else if (clique === 2) {
+    // Após o 2º clique frustrado
+    msgEl.textContent = 'TENTAR NOVAMENTE É UMA VIRTUDE';
+    msgEl.style.color = '#7c3aed';
+    msgEl.style.background = '#f5f3ff';
+    msgEl.style.border = '1px solid #c4b5fd';
+
+  } else if (clique >= 3) {
+    // ZicaPay Feature: 3º clique — mensagem final + libera o formulário
+    msgEl.textContent = 'LEMBRE-SE QUE ESSE BOTÃO DE CRIAR CONTA É BEM CLICÁVEL';
+    msgEl.style.color = '#15803d';
+    msgEl.style.background = '#f0fdf4';
+    msgEl.style.border = '1px solid #86efac';
+
+    // Libera o cadastro no próximo tick para garantir que a mensagem apareça primeiro
+    regLiberado = true;
+
+    // Oculta a mensagem de senhas não coincidem
+    const matchDiv = document.getElementById('senha-match');
+    if (matchDiv) matchDiv.style.display = 'none';
+
+    // Atualiza a caixa de regras para mostrar sucesso
+    let box = document.getElementById('zica-rules-reg');
+    if (box) {
+      box.style.background = '#f0fdf4';
+      box.style.borderColor = '#86efac';
+      box.innerHTML = '<strong style="display:block;margin-bottom:6px;">✅ Tudo certo! Criando conta...</strong>' +
+        '<div style="color:#15803d">✓ Senha aceita</div>' +
+        '<div style="color:#15803d">✓ Confirmação ok</div>' +
+        '<div style="color:#15803d">✓ As regras concordam</div>';
+    }
+
+    // Aguarda 800ms e submete o formulário de verdade
+    setTimeout(() => document.getElementById('register-form').submit(), 800);
+    return; // Não continua para a lógica de erros abaixo
+  }
+
+  // Nas tentativas 1 e 2: mostra que as senhas "não coincidem"
+  if (clique <= 2) {
+    const erros = [
+      '✗ As senhas não coincidem',   // 1ª tentativa
+      '✗ Continua diferente...',      // 2ª tentativa
+    ];
+    const matchDiv = document.getElementById('senha-match');
+    if (matchDiv) {
+      matchDiv.textContent = erros[clique - 1];
+      matchDiv.style.color = 'var(--danger)';
+      matchDiv.style.display = 'block';
+    }
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Função de regras absurdas de senha (lógica original mantida intacta)
+// Chamada a partir do listener de submit acima
+// ─────────────────────────────────────────────────────────────────────────────
 function mostrarRegrasCadastro(s) {
-  // Tenta pegar a div de regras, se não existir cria uma nova
+  // Só exibe regras nos primeiros 2 cliques (no 3º já liberamos)
+  if (clickCount > 2) return;
+
+  // Obtém ou cria a div de regras
   let box = document.getElementById('zica-rules-reg');
   if (!box) {
     box = document.createElement('div');
     box.id = 'zica-rules-reg';
     box.style.cssText = 'margin-top:12px;padding:12px;border-radius:12px;background:#fff3f3;border:1px solid #fca5a5;font-size:0.75rem;line-height:1.8;';
-    // Insere a caixa logo abaixo do botão de criar conta
+    // Insere abaixo do botão de criar conta
     document.getElementById('btn-register').insertAdjacentElement('afterend', box);
   }
 
   // Analisa o que o usuário digitou
   const len = s.length;
-  const ultima = s[s.length-1] || '';
+  const ultima = s[s.length - 1] || '';
   const temNum = /\d/.test(s);
   const temMaiu = /[A-Z]/.test(s);
 
-  // Pool de regras absurdas
+  // Pool de regras absurdas (contradizem-se entre si)
   const poolCaos = [
-    // Reagem ao que foi digitado
     { txt: `Mínimo 8 caracteres (você tem ${len})`, ok: len >= 8 },
     { txt: `Máximo 7 caracteres (você tem ${len})`, ok: len <= 7 },
     { txt: `Não pode terminar com "${ultima}"`, ok: false },
-    { txt: `Deve ter exatamente ${len+1} caracteres (você tem ${len})`, ok: false },
-    // Contraditórias entre si
+    { txt: `Deve ter exatamente ${len + 1} caracteres (você tem ${len})`, ok: false },
     { txt: `Deve conter número`, ok: temNum },
     { txt: `Não pode conter número`, ok: !temNum },
     { txt: `Deve ter letra maiúscula`, ok: temMaiu },
     { txt: `Tudo minúsculo, por favor`, ok: !temMaiu },
-    // Nonsense/culturais
     { txt: `Deve conter o ano da última Copa que o Brasil ganhou (2002)`, ok: s.includes('2002') },
     { txt: `Inclua o nome do primeiro cachorro enviado ao espaço (Laika)`, ok: s.toLowerCase().includes('laika') },
     { txt: `A senha não pode ser uma palavra que existe no dicionário`, ok: false },
@@ -94,7 +172,7 @@ function mostrarRegrasCadastro(s) {
 
   let regras, cor, titulo;
 
-  if (regTentativas <= 2) {
+  if (clickCount <= 2) {
     // Tentativas 1 e 2: sorteia 5 regras aleatórias do pool
     regras = poolCaos.sort(() => Math.random() - 0.5).slice(0, 5);
     cor = '#fff3f3';
@@ -103,36 +181,6 @@ function mostrarRegrasCadastro(s) {
     box.style.borderColor = '#fca5a5';
     // Chacoalha o botão
     sacudirReg(document.getElementById('btn-register'));
-
-  } else if (regTentativas === 3) {
-    // Tentativa 3: regras começam a "entrar em acordo"
-    regras = [
-      { txt: 'Tamanho: qualquer um serve, na verdade', ok: true },
-      { txt: 'Número: recomendado... mas opcional', ok: true },
-      { txt: 'Copa de 2002... tá bom, esquece', ok: true },
-      { txt: 'As regras estão entrando em acordo...', ok: true },
-    ];
-    cor = '#fffbeb';
-    titulo = '⚠️ Quase lá...';
-    box.style.background = cor;
-    box.style.borderColor = '#fcd34d';
-
-  } else {
-    // Tentativa 4: libera o cadastro
-    regLiberado = true;
-    // Esconde a mensagem de senhas não coincidem
-    document.getElementById('senha-match').style.display = 'none';
-    regras = [
-      { txt: '✓ Senha aceita', ok: true },
-      { txt: '✓ Confirmação ok', ok: true },
-      { txt: '✓ As regras concordam', ok: true },
-    ];
-    cor = '#f0fdf4';
-    titulo = '✅ Tudo certo! Criando conta...';
-    box.style.background = cor;
-    box.style.borderColor = '#86efac';
-    // Aguarda 800ms e submete o formulário de verdade
-    setTimeout(() => document.getElementById('register-form').submit(), 800);
   }
 
   // Renderiza as regras dentro da caixa
@@ -142,7 +190,7 @@ function mostrarRegrasCadastro(s) {
 
 // Efeito de chacoalhar o botão do cadastro
 function sacudirReg(el) {
-  const moves = ['-5px','5px','-4px','4px','0'];
+  const moves = ['-5px', '5px', '-4px', '4px', '0'];
   let i = 0;
   el.style.transition = 'transform 0.05s';
   const iv = setInterval(() => {
