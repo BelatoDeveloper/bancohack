@@ -20,61 +20,78 @@ document.addEventListener('DOMContentLoaded', () => {
     function formatBRL(val) {
         return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     }
-    /** Saldo visual atual (lido do DOM) */
+    // FIX: Bug Hackathon — saldoVisual inicializado do DOM mas mantido em sincronia com o backend.
+    // O data-saldo é a fonte de verdade do DOM; atualizamos ele junto com o textContent.
     let saldoVisual = parseFloat(
         document.getElementById('invest-saldo-valor')
             ?.dataset?.saldo || '0'
     );
-    /** Atualiza o texto do saldo no hero e anima a dedução */
-    function debitarSaldo(valor) {
-        // Busca saldo atualizado do servidor para garantir sincronia
-        fetch('/api/accounts/balance')
-            .then(r => r.json())
-            .then(d => {
-                saldoVisual = d.saldo;
-                const el = document.getElementById('invest-saldo-valor');
-                if (!el) return;
-                el.textContent = formatBRL(saldoVisual);
-                el.classList.remove('debited');
-                void el.offsetWidth;
-                el.classList.add('debited');
-            })
-            .catch(() => {
-                // Fallback: calcula local caso API falhe
-                saldoVisual = saldoVisual - valor;
-                const el = document.getElementById('invest-saldo-valor');
-                if (!el) return;
-                el.textContent = formatBRL(saldoVisual);
-                el.classList.remove('debited');
-                void el.offsetWidth;
-                el.classList.add('debited');
-            });
-    }
+
     /**
-     * Debita um valor no backend (Firebase) e atualiza o saldo visual.
+     * FIX: Bug Hackathon — atualizarDisplaySaldo(novoSaldo)
+     * Ponto único de atualização visual do saldo.
+     * Atualiza: (1) saldoVisual, (2) #invest-saldo-valor textContent + data-saldo,
+     * (3) todos os .zicapay-saldo-display da página, (4) anima o elemento.
+     */
+    function atualizarDisplaySaldo(novoSaldo, animarEl) {
+        saldoVisual = novoSaldo;
+
+        // Atualiza o display principal da tela de investimentos
+        const el = document.getElementById('invest-saldo-valor');
+        if (el) {
+            el.textContent = formatBRL(novoSaldo);
+            // FIX: Bug D — mantém data-saldo sincronizado para evitar fallback errado
+            el.dataset.saldo = novoSaldo;
+            if (animarEl) {
+                el.classList.remove('debited');
+                void el.offsetWidth; // força reflow para reiniciar animação
+                el.classList.add('debited');
+            }
+        }
+
+        // FIX: Bug Hackathon — atualiza também o balance-amount do dashboard se visível
+        const balanceEl = document.getElementById('balance-amount');
+        if (balanceEl && !balanceEl.classList.contains('hidden')) {
+            balanceEl.textContent = formatBRL(novoSaldo);
+        }
+
+        // FIX: Atualiza todos os elementos de saldo na página (pix, emprestimo, etc.)
+        document.querySelectorAll('.zicapay-saldo-display').forEach(e => {
+            e.textContent = formatBRL(novoSaldo);
+        });
+    }
+
+    /**
+     * FIX: Bug Hackathon — cobrarNoBackend() retorna uma Promise.
+     * Isso permite encadear chamadas serializadas (Bug C) e usar o novo_saldo
+     * da resposta JSON diretamente — sem segunda requisição extra (Bug C race condition).
+     *
      * @param {number} valor - valor a cobrar
      * @param {string} motivo - descrição da cobrança para o extrato
      * @param {string} msg - mensagem para a notificação
+     * @returns {Promise<number>} novo saldo após cobrança
      */
     function cobrarNoBackend(valor, motivo, msg) {
-        fetch('/api/fees/charge', {
+        return fetch('/api/fees/charge', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ valor, motivo, mensagem: msg })
         })
-        .then(r => r.json())
-        .then(d => {
-            if (d.novo_saldo !== undefined) {
-                saldoVisual = d.novo_saldo;
-                const el = document.getElementById('invest-saldo-valor');
-                if (!el) return;
-                el.textContent = formatBRL(saldoVisual);
-                el.classList.remove('debited');
-                void el.offsetWidth;
-                el.classList.add('debited');
-            }
-        })
-        .catch(() => debitarSaldo(valor)); // fallback visual
+            .then(r => r.json())
+            .then(d => {
+                // FIX: Bug C+D — usa novo_saldo da resposta, sem requisição extra
+                if (d.novo_saldo !== undefined) {
+                    atualizarDisplaySaldo(d.novo_saldo, true);
+                    return d.novo_saldo;
+                }
+                return saldoVisual;
+            })
+            .catch(() => {
+                // Fallback local se a rede falhar — aplica subtração visual
+                const estimado = saldoVisual - valor;
+                atualizarDisplaySaldo(estimado, true);
+                return estimado;
+            });
     }
     // Modal de verificação que bloqueia toda a tela ao entrar.
     // • Botão "carne e osso" → fecha o modal normalmente.
@@ -502,7 +519,7 @@ document.addEventListener('DOMContentLoaded', () => {
             horseRival.style.left = '0%';
             horseRival.style.transform = 'translateY(-50%) rotate(0deg)';
         }
-        
+
         // Força reflow para o browser registrar o estado zerado
         void horseUser?.offsetWidth;
         void horseRival?.offsetWidth;
@@ -528,32 +545,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Passo 4: Fim da animação, caixa vermelha e cobrança
         setTimeout(() => {
-            // Debita o valor da aposta (atrasado para esperar a animação)
+            // FIX: Bug C — Cobranças SERIALIZADAS: aguarda resposta da aposta
+            // antes de cobrar o veterinário para evitar race condition de saldo.
+            // Gera o valor do veterinário aqui para usar no texto do resultado.
+            const vetCost = parseFloat((Math.random() * 12000 + 3000).toFixed(2));
+
+            // Cobrança 1: Aposta (aguarda Promise)
             cobrarNoBackend(
                 betValue,
                 'Aposta Hípica ZicaPay',
-                `🐎 Aposta de ${formatBRL(betValue)} perdida.`
-            );
+                `🐎 Aposta de ${formatBRL(betValue)} perdida. Seu cavalo quebrou a pata.`
+            ).then(() => {
+                // FIX: Bug C — Cobrança 2 só começa APÓS a resposta da cobrança 1
+                // O novo_saldo da cobrança 2 é o saldo final correto.
+                return cobrarNoBackend(
+                    vetCost,
+                    'UTI Equina Premium + Fisioterapia',
+                    `🦴💀 Custo veterinário de ${formatBRL(vetCost)} debitado automaticamente!`
+                );
+            }).then(saldoFinal => {
+                // Saldo final confirmado pelo backend após as 2 cobranças
+                atualizarDisplaySaldo(saldoFinal, true);
+            }).catch(() => {
+                // Se qualquer cobrança falhar, faz uma leitura fresca do backend
+                if (window.ZicaPay && window.ZicaPay.syncBalanceFromAPI) {
+                    window.ZicaPay.syncBalanceFromAPI();
+                }
+            });
 
-            // Exibe resultado após a queda
+            // Exibe resultado imediatamente (não precisa esperar as cobranças)
             if (resultEl) {
                 resultEl.classList.add('visible');
-                // Calcula "custo veterinário" inventado (entre R$ 3.000 e R$ 15.000)
-                const vetCost = (Math.random() * 12000 + 3000).toFixed(2);
-                // Cobra o veterinário no backend também
-                cobrarNoBackend(
-                    parseFloat(vetCost),
-                    'UTI Equina Premium + Fisioterapia',
-                    `🦴💀 Custo veterinário de ${formatBRL(parseFloat(vetCost))} debitado automaticamente!`
-                );
                 document.getElementById('hipica-result-text').innerHTML =
                     `Puxa, seu cavalo sofreu uma <strong>fratura exposta</strong> na pata dianteira esquerda 🦴<br><br>` +
                     `O adversário venceu por 4 cascos de diferença.<br><br>` +
                     `<em>Ah, detalhe:</em> os custos do veterinário, UTI equina premium e seis meses de ` +
                     `fisioterapia do cavalo já foram debitados automaticamente da sua conta corrente.<br><br>` +
-                    `<strong style="color:#FCA5A5;">Total debitado (Aposta + Veterinário): ${formatBRL(parseFloat(vetCost) + betValue)}</strong>`;
+                    `<strong style="color:#FCA5A5;">Total debitado (Aposta + Veterinário): ${formatBRL(vetCost + betValue)}</strong>`;
             }
-            
+
             raceRunning = false;
             if (betBtn) betBtn.disabled = false;
         }, 2000); // Espera 2s (tempo total da corrida do rival)
