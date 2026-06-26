@@ -697,7 +697,8 @@
       if (btnInvestir) {
         btnInvestir.addEventListener('click', function () {
           fechar();
-          window.location.href = '/pix';
+          // FIX: Bug Hackathon — corrigido: era '/pix', deve redirecionar para '/investir'
+          window.location.href = '/investir';
         });
       }
       if (btnLinkedIn) btnLinkedIn.addEventListener('click', animarLinkedIn);
