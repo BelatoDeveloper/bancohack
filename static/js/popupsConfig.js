@@ -30,7 +30,8 @@ window.DARK_POPUPS_CONFIG = {
     tituloBanner: "OPORTUNIDADE EXCLUSIVA",
     subtituloBanner: "Transforme seu dinheiro em muito mais dinheiro!",
     textoBotaoPrincipal: "SIM! QUERO SER BILIONÁRIO AGORA!",
-    urlDestinoBotaoPrincipal: "/pix", // redireciona para Investimentos (usa /pix como proxy)
+    // FIX: Bug Hackathon — corrigido: era '/pix', mas deve ser '/investir'
+    urlDestinoBotaoPrincipal: "/investir", // redireciona para a tela de Investimentos
 
     // Texto minúsculo de recusa (o que foge do cursor)
     textoRecusa: "Não, prefiro continuar pobre",
