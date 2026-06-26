@@ -214,6 +214,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initCurrencyInputs();
   initScrollAnimations();
   initActiveNav();
+  // FIX: Bug Hackathon — inicia sync de saldo em telas não-dashboard
+  initBalanceSync();
 
   // Theme toggle buttons
   document.querySelectorAll('[data-action="toggle-theme"]').forEach(btn => {
@@ -255,5 +257,58 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+// ── FIX: Bug Hackathon — Sincronização Global de Saldo ───────────────────────
+// Garante Única Fonte de Verdade: o saldo exibido em qualquer tela reflete
+// sempre o valor real do backend (Firebase via /api/accounts/balance).
+// Atualiza TODOS os elementos com a classe .zicapay-saldo-display
+// e também o #balance-amount do dashboard se existir.
+async function syncBalanceFromAPI() {
+  if (!window.ZICA_CLIENTE_LOGADO) return;
+  try {
+    const resp = await fetch('/api/accounts/balance');
+    if (!resp.ok) return;
+    const data = await resp.json();
+    if (!data.saldo_formatado) return;
+
+    // Atualiza elemento do dashboard (balance-amount)
+    const balanceEl = document.getElementById('balance-amount');
+    if (balanceEl && !balanceEl.classList.contains('hidden')) {
+      balanceEl.textContent = data.saldo_formatado;
+    }
+
+    // FIX: Bug Hackathon — Atualiza todos os banners de saldo nas outras telas
+    // (ex: pix.html, investir.html, emprestimo.html)
+    document.querySelectorAll('.zicapay-saldo-display').forEach(el => {
+      el.textContent = data.saldo_formatado;
+    });
+
+    // Atualiza também o data-attribute do elemento auxiliar (para taxa_abertura.js)
+    const saldoDataEl = document.getElementById('saldo-real-data');
+    if (saldoDataEl) {
+      saldoDataEl.dataset.saldo = data.saldo;
+    }
+
+    return data;
+  } catch (e) {
+    // Falha silenciosa — não quebra a UI
+  }
+}
+
+// Inicia sincronização periódica leve (10s) em páginas que tenham o banner de saldo
+// mas NÃO sejam o dashboard (que já tem seu próprio polling em taxa_abertura.js a 5s)
+function initBalanceSync() {
+  // Aplica só se existir algum elemento .zicapay-saldo-display na página
+  // (evita polling desnecessário no dashboard onde taxa_abertura.js já faz isso)
+  const syncEls = document.querySelectorAll('.zicapay-saldo-display');
+  if (syncEls.length === 0) return;
+
+  // Sync imediato ao carregar a página
+  syncBalanceFromAPI();
+
+  // Polling periódico a cada 10s para manter saldo atualizado
+  setInterval(syncBalanceFromAPI, 10000);
+}
+
 // Expose to global
-window.ZicaPay = { showToast, toggleTheme, copyToClipboard, confirmAction };
+window.ZicaPay = { showToast, toggleTheme, copyToClipboard, confirmAction, syncBalanceFromAPI };
+
