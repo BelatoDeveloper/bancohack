@@ -18,21 +18,47 @@ from models.cartao import Cartao
 
 LOCAL_DB_FILE = "local_db.json"
 
-# FIX VERCEL FIREBASE: Inicializando o Firebase Admin
+# FIX: Bug Hackathon — Inicialização Firebase com suporte a variáveis de ambiente (Vercel)
+# Prioridade: 1) Env var FIREBASE_SERVICE_ACCOUNT_JSON (produção Vercel)
+#             2) Arquivo firebase_credentials.json (desenvolvimento local)
+#             3) GOOGLE_APPLICATION_CREDENTIALS (path para arquivo via env var)
 try:
     if not firebase_admin._apps:
-        cred_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "firebase_credentials.json")
-        if os.path.exists(cred_path):
-            cred = credentials.Certificate(cred_path)
-            firebase_admin.initialize_app(cred)
-            db_firestore = firestore.client()
-        else:
-            db_firestore = None
+        db_firestore = None
+
+        # Tentativa 1: Credenciais via variável de ambiente (JSON completo como string)
+        # Configurado no painel da Vercel: Settings > Environment Variables
+        firebase_json_env = os.environ.get("FIREBASE_SERVICE_ACCOUNT_JSON")
+        if firebase_json_env:
+            try:
+                cred_dict = json.loads(firebase_json_env)
+                cred = credentials.Certificate(cred_dict)
+                firebase_admin.initialize_app(cred)
+                db_firestore = firestore.client()
+                print("[ZicaPay] Firebase inicializado via variável de ambiente FIREBASE_SERVICE_ACCOUNT_JSON")
+            except Exception as e_env:
+                print(f"[ZicaPay] Falha ao inicializar Firebase via env var: {e_env}")
+
+        # Tentativa 2: Arquivo físico local (desenvolvimento)
+        if db_firestore is None:
+            cred_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "firebase_credentials.json")
+            if os.path.exists(cred_path):
+                try:
+                    cred = credentials.Certificate(cred_path)
+                    firebase_admin.initialize_app(cred)
+                    db_firestore = firestore.client()
+                    print("[ZicaPay] Firebase inicializado via arquivo local firebase_credentials.json")
+                except Exception as e_file:
+                    print(f"[ZicaPay] Falha ao inicializar Firebase via arquivo: {e_file}")
+
+        if db_firestore is None:
+            print("[ZicaPay] Firebase indisponível — usando banco local (local_db.json)")
     else:
         db_firestore = firestore.client()
 except Exception as e:
-    print(f"Erro ao inicializar Firebase: {e}")
+    print(f"[ZicaPay] Erro crítico ao inicializar Firebase: {e}")
     db_firestore = None
+
 
 class BancoDados:
     """Repositório mock usando arquivo JSON local."""
