@@ -20,7 +20,8 @@
 
 <div class="balance-card-clean animate-fade-up">
     <div class="balance-label-clean">Saldo atual</div>
-    <div class="balance-amount-clean" id="saldo-atual-display">{{ conta.saldo_formatado() }}</div>
+    <!-- FIX: Bug Hackathon — classe .zicapay-saldo-display permite sync automático via JS -->
+    <div class="balance-amount-clean zicapay-saldo-display" id="saldo-atual-display">{{ conta.saldo_formatado() }}</div>
     <div style="font-size: 0.7rem; color: #166534; margin-top: 4px; opacity: 0.7;">Disponível para saque</div>
 </div>
 
