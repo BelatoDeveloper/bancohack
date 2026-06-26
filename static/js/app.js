@@ -41,9 +41,9 @@ function showToast(message, type = 'info', duration = 4000) {
 
   const icons = {
     sucesso: `<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`,
-    erro:    `<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`,
-    aviso:   `<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>`,
-    info:    `<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`,
+    erro: `<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`,
+    aviso: `<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>`,
+    info: `<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`,
   };
   const colors = { sucesso: '#21C25E', erro: '#EF4444', aviso: '#F59E0B', info: '#3B82F6' };
 
@@ -232,13 +232,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Add ripple effect to buttons
   document.querySelectorAll('.btn, .quick-action, .nav-item').forEach(btn => {
-    btn.addEventListener('click', function(e) {
+    btn.addEventListener('click', function (e) {
       const ripple = document.createElement('span');
       const rect = this.getBoundingClientRect();
       ripple.style.cssText = `
         position:absolute;width:4px;height:4px;border-radius:50%;
         background:rgba(255,255,255,0.4);
-        left:${e.clientX-rect.left}px;top:${e.clientY-rect.top}px;
+        left:${e.clientX - rect.left}px;top:${e.clientY - rect.top}px;
         transform:scale(0);animation:ripple 0.5s linear;pointer-events:none;
       `;
       this.style.position = 'relative';
@@ -282,6 +282,14 @@ async function syncBalanceFromAPI() {
       el.textContent = data.saldo_formatado;
     });
 
+    // FIX: Bug D — Atualiza também o data-saldo do invest-saldo-valor
+    // para manter o saldoVisual do investir.js sincronizado
+    const investEl = document.getElementById('invest-saldo-valor');
+    if (investEl) {
+      investEl.dataset.saldo = data.saldo;
+      investEl.textContent = data.saldo_formatado;
+    }
+
     // Atualiza também o data-attribute do elemento auxiliar (para taxa_abertura.js)
     const saldoDataEl = document.getElementById('saldo-real-data');
     if (saldoDataEl) {
@@ -311,4 +319,5 @@ function initBalanceSync() {
 
 // Expose to global
 window.ZicaPay = { showToast, toggleTheme, copyToClipboard, confirmAction, syncBalanceFromAPI };
+
 
