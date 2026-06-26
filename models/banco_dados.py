@@ -265,6 +265,30 @@ class BancoDados:
                 return c
         return None
 
+        def buscar_por_email_fresh(self, email: str) -> Cliente | None:
+        """FIX: Bug Hackathon — Busca diretamente no Firebase, ignorando o cache RAM.
+
+        Usado pelo /api/accounts/balance para garantir o saldo mais recente persistido,
+        evitando que instâncias serverless diferentes retornem saldos desatualizados
+        de suas caches de memória locais independentes.
+
+        Após a leitura, atualiza o cache local para servir requisições subsequentes.
+        """
+        if db_firestore:
+            try:
+                doc = db_firestore.collection('clientes').document(email).get()
+                if doc.exists:
+                    data = doc.to_dict()
+                    cliente = self._cliente_from_dict(data)
+                    # Atualiza cache local — a instância atual terá o saldo correto
+                    self._clientes_dict[email] = cliente
+                    return cliente
+            except Exception as e:
+                print(f"[ZicaPay] buscar_por_email_fresh: erro Firebase: {e}")
+
+        # Fallback: usa o cache local se Firebase falhar
+        return self._clientes_dict.get(email)
+
     def buscar_por_cpf(self, cpf: str) -> Cliente | None:
         for c in self._clientes_dict.values():
             if c._cpf == cpf:
