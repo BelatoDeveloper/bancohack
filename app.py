@@ -43,19 +43,36 @@ def get_cliente_logado():
 
     cliente = db.buscar_por_email(email)
 
-    # BLINDAGEM HACKATHON: Se o banco de dados retornar vazio (amnésia serverless),
-    # recriamos um usuário fantasma na hora para o app não quebrar com Erro 500.
+    # FIX: Bug Hackathon — BLINDAGEM HACKATHON revisada:
+    # Só cria um usuário fantasma em último caso absoluto.
+    # Antes de criar, tenta usar o nome real da sessão (salvo no login/cadastro).
     if not cliente:
-        try:
-            cliente = db.registrar_cliente(
-                nome="Usuário Convidado",
-                email=email,
-                senha="123",
-                cpf="00000000000",
-                telefone="00000000000",
-            )
-        except Exception:
-            return None
+        # Recupera o nome real da sessão se ele foi salvo
+        nome_sessao = session.get("nome_usuario", None)
+        if not nome_sessao:
+            # Nenhum dado de nome na sessão — cria fantasma genérico como último recurso
+            try:
+                cliente = db.registrar_cliente(
+                    nome="Usuário Convidado",
+                    email=email,
+                    senha="123",
+                    cpf="00000000000",
+                    telefone="00000000000",
+                )
+            except Exception:
+                return None
+        else:
+            # Temos o nome real — recria o usuário no banco com os dados da sessão
+            try:
+                cliente = db.registrar_cliente(
+                    nome=nome_sessao,
+                    email=email,
+                    senha="recuperado_sessao",
+                    cpf="00000000000",
+                    telefone="00000000000",
+                )
+            except Exception:
+                return None
 
     return cliente
 
@@ -116,6 +133,9 @@ def login():
         cliente = db.buscar_por_email(email)
         if cliente and cliente.verificar_senha(senha):
             session["email_usuario"] = cliente.email
+            # FIX: Bug Hackathon — persiste nome real na sessão para evitar fallback "Usuário Convidado"
+            session["nome_usuario"] = cliente.nome
+            session["primeiro_nome_usuario"] = cliente.primeiro_nome
             flash(f"Bem-vindo(a) de volta, {cliente.primeiro_nome}! 👋", "sucesso")
             return redirect(url_for("dashboard"))
         else:
@@ -167,6 +187,9 @@ def cadastro():
         try:
             cliente = db.registrar_cliente(nome, email, senha, cpf, telefone)
             session["email_usuario"] = cliente.email
+            # FIX: Bug Hackathon — persiste nome real na sessão após cadastro
+            session["nome_usuario"] = cliente.nome
+            session["primeiro_nome_usuario"] = cliente.primeiro_nome
             flash(f"Conta criada com sucesso! Bem-vindo(a) ao ZicaPay, {cliente.primeiro_nome}! 🎉", "sucesso")
             return redirect(url_for("dashboard"))
         except ValueError as e:

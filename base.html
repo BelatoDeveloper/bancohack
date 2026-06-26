@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="theme-color" content="#21C25E">
+  <meta name="description" content="ZicaPay — Seu banco digital inteligente">
+  <title>{% block title %}ZicaPay{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  <!-- CSS dos dark pattern popups — carregado globalmente pois os popups
+       podem aparecer em qualquer página do app -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/darkPopups.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/guia.css') }}">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2321C25E'/><text y='.9em' font-size='70' x='50%' text-anchor='middle' fill='white' font-weight='900'>Z</text></svg>">
+  {% block head %}{% endblock %}
+</head>
+
+<body>
+
+  {% block full_page %}
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+    <div class="toast toast--{{ category }}">
+      <span class="toast-icon">
+        {% if category == 'sucesso' %}
+        <svg width="20" height="20" fill="none" stroke="#21C25E" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        {% elif category == 'erro' %}
+        <svg width="20" height="20" fill="none" stroke="#EF4444" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        {% else %}
+        <svg width="20" height="20" fill="none" stroke="#F59E0B" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
+        </svg>
+        {% endif %}
+      </span>
+      <span class="toast-text">{{ message }}</span>
+      <button class="toast-close" onclick="this.parentElement.remove()">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    {% endfor %}
+    {% endwith %}
+  </div>
+
+  {% block page_content %}{% endblock %}
+
+  {% if session.get('email_usuario') %}
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav" role="navigation" aria-label="Navegação principal">
+    <a href="{{ url_for('dashboard') }}" class="nav-item" id="nav-home" aria-label="Início">
+      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+      </svg>
+      <span>Início</span>
+    </a>
+    <a href="{{ url_for('pix') }}" class="nav-item" id="nav-pix" aria-label="Pix">
+      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+      </svg>
+      <span>Pix</span>
+    </a>
+    <!-- ══ BOTÃO CENTRAL ALTERADO: "Extrato" → "Investir" (Bad UX Feature #1) ══
+       Redireciona para a área de investimentos com dark patterns.
+       O ícone usa o gráfico de tendência ascendente para seduzir o usuário. -->
+    <a href="{{ url_for('investir') }}" class="nav-item nav-item--investir" id="nav-investir" aria-label="Investir">
+      <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+      </svg>
+      <span>Investir</span>
+      <a href="{{ url_for('cartoes') }}" class="nav-item" id="nav-cartoes" aria-label="Cartões">
+        <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+        </svg>
+        <span>Cartões</span>
+      </a>
+      <a href="{{ url_for('perfil') }}" class="nav-item" id="nav-perfil" aria-label="Perfil">
+        <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg>
+        <span>Perfil</span>
+      </a>
+  </nav>
+  {% endif %}
+
+  {% endblock %}
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+     HTML DOS 3 DARK PATTERN POPUPS
+     Renderizados apenas para usuários logados. Começam com display:none.
+     O JS (darkPopups.js) controla quando cada um aparece.
+     ═══════════════════════════════════════════════════════════════════════ -->
+  {% if session.get('email_usuario') %}
+
+  <!-- ── POP-UP 1: "O Mestre da Fuga" — Banner de Scroll ─────────────────── -->
+  <!--
+  Gatilho: rolar 40% da página (configurável em popupsConfig.js)
+  Estrutura: banner compacto no rodapé com botão verde pulsante
+  e texto de recusa minúsculo que foge do cursor.
+-->
+  <div class="dp-overlay" id="dp1-overlay" role="dialog" aria-modal="true" aria-label="Oferta de investimento">
+    <div id="dp1-banner">
+
+      <!-- Texto de urgência / branding do banner -->
+      <div id="dp1-titulo">OPORTUNIDADE EXCLUSIVA</div>
+      <div id="dp1-subtitulo">Transforme seu dinheiro em muito mais dinheiro!</div>
+
+      <!-- Botão principal pulsante — ao clicar vai para Investimentos -->
+      <button id="dp1-btn-principal" type="button">SIM! QUERO SER BILIONÁRIO AGORA!</button>
+
+      <!-- Área do mini-desafio (oculta até maxFugas tentativas do texto de recusa) -->
+      <div id="dp1-desafio">
+        <p style="font-size:0.75rem;color:rgba(255,255,255,0.5);margin-bottom:4px;">
+          Você quer desistir? Prove que não é preguiça financeira:
+        </p>
+        <!-- Contador de cliques restantes -->
+        <div id="dp1-contador">7</div>
+        <!-- Botão de desafio: texto preenchido pelo JS via config -->
+        <button id="dp1-btn-desafio" type="button">
+          <span id="dp1-texto-desafio">💪 Clique 7 vezes para quebrar a preguiça financeira!</span>
+        </button>
+      </div>
+
+      <!--
+      Texto de recusa — minúsculo por dark pattern proposital.
+      position:absolute permite ao JS mover este elemento dentro do banner.
+      Começa no canto inferior direito e foge quando o cursor se aproxima.
+    -->
+      <button id="dp1-recusa" type="button" aria-label="Recusar oferta">Não, prefiro continuar pobre</button>
+
+    </div>
+  </div>
+
+  <!-- ── POP-UP 2: "O Refém Intelectual" — CDB com Captcha ────────────────── -->
+  <!--
+  Gatilho: submit do form #form-enviar-pix na página pix.html
+  Estrutura: modal formal/corporativo com captcha cronometrado
+  e 3 botões de "ultimato" após o tempo esgotar.
+-->
+  <div class="dp-overlay" id="dp2-overlay" role="dialog" aria-modal="true" aria-label="Oferta CDB ZicaPay">
+    <div class="dp-modal" id="dp2-modal">
+
+      <!-- Cabeçalho: branding corporativo do CDB -->
+      <div id="dp2-header">
+        <!-- Badge azul que parece legítimo -->
+        <div id="dp2-badge-cdb">⭐ OFERTA EXCLUSIVA ZICAPAY</div>
+        <!-- Título do produto -->
+        <div id="dp2-titulo-cdb">Oferta Exclusiva — CDB ZicaPay Premium</div>
+        <!-- O "rendimento" absurdo — preenchido pelo JS -->
+        <div id="dp2-subtitulo-cdb">Rendimento garantido de -2% ao ano 🎉</div>
+        <!-- Rodapé em letra pequena explicando o absurdo -->
+        <div id="dp2-rodape-cdb">*Rendimento negativo garantido. Sim, você perde dinheiro. É exclusivo.</div>
+      </div>
+
+      <!-- Área do captcha cronometrado -->
+      <div id="dp2-captcha-area">
+        <!-- Pergunta do captcha — preenchida pelo JS via config -->
+        <div id="dp2-pergunta">Para confirmar que você é um investidor inteligente...</div>
+        <!-- Campo de resposta -->
+        <textarea id="dp2-input-captcha" rows="2" placeholder="Digite aqui..."></textarea>
+        <!-- Barra de progresso do timer -->
+        <div id="dp2-timer-barra-track">
+          <div id="dp2-timer-barra-fill"></div>
+        </div>
+        <div id="dp2-timer-texto">15s restantes</div>
+      </div>
+
+      <!-- Tela de ultimato — aparece quando o timer esgota -->
+      <div id="dp2-ultimato">
+        <div id="dp2-ultimato-titulo">⏰ Tempo Esgotado!</div>
+        <div id="dp2-ultimato-sub">Você não passou no captcha de nível universitário. E agora?</div>
+
+        <!-- Botão 1: azul — redireciona para investimentos -->
+        <button class="dp2-btn-ultimato" id="dp2-btn-investir" type="button">😔 Desculpe, vou investir agora!</button>
+        <!-- Botão 2: LinkedIn — simula post de "fracasso" -->
+        <button class="dp2-btn-ultimato" id="dp2-btn-linkedin" type="button">💼 Postar meu fracasso no LinkedIn</button>
+        <!-- Botão 3: vermelho — cobra taxa simbólica -->
+        <button class="dp2-btn-ultimato" id="dp2-btn-pagar" type="button">💸 Pagar a Taxa de Desinteresse (R$
+          10,00)</button>
+
+        <!-- Simulação do post no LinkedIn (aparece ao clicar no botão 2) -->
+        <div id="dp2-linkedin-sim"></div>
+      </div>
+
+      <!-- Animação do Pix voando (aparece após "pagar" a taxa) -->
+      <div id="dp2-pix-voando">
+        <span id="dp2-pix-emoji">💸</span>
+        <p id="dp2-msg-pix" style="color:#000000;font-weight:700;font-size:0.85rem;">Pix enviado com sucesso!</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── POP-UP 3: "A Roleta da Recusa" — Slot Machine de Cartões ──────────── -->
+  <!--
+  Gatilho: clique em qualquer link para /cartoes (incluindo nav inferior)
+  Estrutura: modal com animação de slot machine, 6 níveis de cartão,
+  e botão fujão no último nível.
+-->
+  <div class="dp-overlay" id="dp3-overlay" role="dialog" aria-modal="true" aria-label="Seleção de cartão">
+    <div class="dp-modal" id="dp3-modal">
+
+      <!-- Cabeçalho -->
+      <div id="dp3-header">
+        <div id="dp3-titulo-roleta"><i class="ph ph-slots" style="vertical-align:middle;font-size:1.2rem;"></i> ROLETA
+          DOS CARTÕES ZICAPAY</div>
+        <div id="dp3-nivel-texto">Nível 1 de 6</div>
+      </div>
+
+      <!-- Indicador de nível (6 bolinhas) -->
+      <div id="dp3-indicador-niveis">
+        <!-- JS cria as bolinhas dinamicamente baseado nos níveis da config -->
+        <div class="dp3-nivel-dot dp-atual"></div>
+        <div class="dp3-nivel-dot"></div>
+        <div class="dp3-nivel-dot"></div>
+        <div class="dp3-nivel-dot"></div>
+        <div class="dp3-nivel-dot"></div>
+        <div class="dp3-nivel-dot"></div>
+      </div>
+
+      <!-- Container da roleta: mostra o cartão atual — layout de cartão real -->
+      <div id="dp3-slot-container">
+
+        <!--
+          MELHORIA #4: Cabeçalho do cartão no estilo realista.
+          O chip (#dp3-card-chip) e o número (#dp3-card-numero) são puramente
+          decorativos/estéticos — não são dados reais. O JS atualiza a cor da borda
+          do chip e os 4 últimos dígitos do número a cada nível revelado.
+        -->
+        <div id="dp3-card-topo">
+          <!-- Chip EMV decorativo — quadrado com linhas simulando contatos elétricos -->
+          <div id="dp3-card-chip">
+            <div class="dp3-chip-linha"></div>
+            <div class="dp3-chip-linha"></div>
+            <div class="dp3-chip-linha"></div>
+          </div>
+          <!-- Emoji do cartão no canto superior direito — gira durante a animação de slot -->
+          <span id="dp3-card-emoji"><i class="ph ph-credit-card"></i></span>
+        </div>
+
+        <!-- Número do cartão mascarado — 4 últimos dígitos gerados aleatoriamente pelo JS -->
+        <div id="dp3-card-numero">•••• •••• •••• ????</div>
+
+        <!-- Nome do cartão (preenchido pelo JS com o nome do nível atual) -->
+        <div id="dp3-card-nome">Carregando...</div>
+        <!-- Valor da anuidade (cor de destaque do nível aplicada pelo JS) -->
+        <div id="dp3-card-anuidade">R$ ???</div>
+        <!-- Frase de humilhação satírica (preenchida pelo JS) -->
+        <p id="dp3-card-humilhacao"></p>
+
+        <!--
+          Animação especial do nível 6: carteira vazia piscando em vermelho.
+          Começa oculta e é ativada pelo JS quando nivelAtual === 5.
+        -->
+        <div id="dp3-carteira-vazia" style="font-size:3rem;"><i class="ph ph-wallet"></i></div>
+      </div>
+
+
+      <!-- Botão ACEITAR — com estilo de dark pattern (checkbox disfarçado) -->
+      <label id="dp3-lbl-aceitar"
+        style="display:none;align-items:center;gap:6px;font-size:0.8rem;color:var(--text-muted);cursor:pointer;margin-bottom:12px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--surface-2);">
+        <input type="checkbox" id="dp3-btn-aceitar"
+          style="accent-color:var(--primary);width:16px;height:16px;cursor:pointer;">
+        <span>Aceitar e contratar</span>
+      </label>
+
+      <!-- Botão de recusa — avança para o próximo nível (oculto no nível 6) -->
+      <button id="dp3-btn-recusar" type="button">Recusar e ver próxima opção</button>
+
+    </div>
+  </div>
+
+  <!--
+  Botão fujão do nível 6 — fica FORA do modal para poder se mover
+  livremente pela viewport inteira. É position:fixed controlado pelo JS.
+  Começa oculto e é ativado quando o usuário chega ao nível 6.
+-->
+  <button id="dp3-btn-sem-cartao" type="button">Continuar sem cartão</button>
+
+  {% endif %}
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+
+  <script>
+    window.ZICA_CLIENTE_LOGADO = {{ 'true' if session.get('email_usuario') else 'false' }};
+    {# FIX: Bug Hackathon — usa 'defined' para evitar NameError quando 'cliente' não é passado pela rota #}
+    window.ZICA_CARTAO_VISTA = {{ 'true' if (cliente is defined and cliente and cliente.cartao_oferta_vista) else 'false' }};
+  </script>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  {% block scripts %}{% endblock %}
+
+  <!-- Scripts dos dark pattern popups:
+     1. popupsConfig.js: configuração centralizada (carregado primeiro — darkPopups.js depende dele)
+     2. darkPopups.js: lógica dos 3 popups
+     Carregados APÓS o app.js para garantir que o DOM esteja pronto. -->
+  {% if session.get('email_usuario') %}
+  <script src="{{ url_for('static', filename='js/popupsConfig.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/darkPopups.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/guia_zica.js') }}"></script>
+  {% endif %}
+
+</body>
+
+</html>

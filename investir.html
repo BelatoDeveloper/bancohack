@@ -1,0 +1,355 @@
+{% extends "base.html" %}
+{# ═══════════════════════════════════════════════════════════════════════════
+ZicaPay — investir.html
+Tela de Investimentos com Dark Patterns / Bad UX intencional.
+
+DARK PATTERNS IMPLEMENTADOS:
+1. CAPTCHA Anti-Robô → Modal #captcha-overlay (linha ~30)
+2. Tinder dos Investimentos → Section #tinder-section (linha ~100)
+3. Apostas Hípicas Viciadas → Section #hipica-section (linha ~180)
+
+Todos os "truques" estão comentados no código e no investir.js.
+═══════════════════════════════════════════════════════════════════════════ #}
+
+{% block title %}ZicaPay — Investimentos{% endblock %}
+
+{% block head %}
+{# CSS exclusivo da tela de investimentos — reutiliza tokens do main.css #}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/investir.css') }}">
+{% endblock %}
+
+{% block page_content %}
+
+{# ══════════════════════════════════════════════════════════════════════════
+[DARK PATTERN 1] CAPTCHA ANTI-ROBÔ
+──────────────────────────────────────────────────────────────────────────
+Ocupa TODA a tela ao entrar na página. Não pode ser fechado por ESC ou
+clique fora. Só é removido se o usuário clicar "Sou humano".
+Se clicar "Sou robô", o overlay vira vermelho e trava o usuário
+exibindo o modal de punição com NFTs de pedras.
+══════════════════════════════════════════════════════════════════════════ #}
+<div class="captcha-overlay" id="captcha-overlay" role="dialog" aria-modal="true" aria-labelledby="captcha-title">
+
+    {# ── Modal principal de CAPTCHA ── #}
+    <div class="captcha-modal" id="captcha-modal">
+        <div class="captcha-icon">🛡️</div>
+
+        <h2 class="captcha-title" id="captcha-title">
+            Verificação de Cibersegurança ZicaPay
+        </h2>
+
+        <p class="captcha-text">
+            Prometa que você não é um robô.
+            <br><br>
+            <small style="font-size:0.7rem;opacity:0.6;">
+                ⚠️ Nossa IA quântica detecta mentiras com 98,7% de precisão.
+                Estamos monitorando sua frequência cardíaca e transpiração em tempo real.
+            </small>
+        </p>
+
+        {# Botão principal — chamativo, verde, fácil de clicar #}
+        <button class="captcha-btn-human" id="btn-human" type="button">
+            🫀 Eu prometo ser feito de carne e osso
+        </button>
+
+        {#
+        [DARK PATTERN 1] Botão "Sou robô" mal visível:
+        - Fonte minúscula (0.72rem via CSS)
+        - Cor cinza escura sobre fundo escuro
+        - Sem bordas ou destaque visual
+        - Texto sublinado pontilhado quase imperceptível
+        #}
+        <button class="captcha-btn-robot" id="btn-robot" type="button">
+            Não, sou feito de código
+        </button>
+    </div>
+
+    {#
+    ── Modal de PUNIÇÃO (inicialmente oculto)
+    Aparece ao clicar "Sou robô". O overlay NÃO fecha.
+    O botão "Entendi" tem cursor:not-allowed e não executa nada.
+    #}
+    <div class="punish-modal" id="punish-modal" role="alertdialog" aria-labelledby="punish-title">
+        <div class="punish-icon">🚫</div>
+
+        <h3 class="punish-title" id="punish-title">Acesso Negado!</h3>
+
+        <div class="punish-nft-badge">
+            Boletim de ocorrência nº 34324234242 emitido!
+        </div>
+
+        <p class="punish-text">
+            Você clicou sem <strong style="color:#FCA5A5;">tremer</strong> e sem
+            <strong style="color:#FCA5A5;">suar</strong>. Humanos de verdade
+            choram de ansiedade na hora de investir.
+            <br><br>
+            Como punição por tentar nos enganar, acabamos de converter parte do
+            seu saldo em <strong style="color:#FCA5A5;">Fotos estaticas de um senhor careca</strong> e enviamos seu
+            histórico
+            de navegação para a
+            sua família.
+            <br><br>
+            <small style="opacity:0.5;font-size:0.65rem;">
+                *Custo de conversão: R$ 47,00 por foto.
+                Total de fotos: 847.
+                Valor total debitado: R$ 39.809,00.
+                Esta cobrança não pode ser contestada(você aceitou os termos.).
+            </small>
+        </p>
+
+        {# Botão inerte — cursor:not-allowed no CSS, sem handler JS #}
+        <button class="punish-ok-btn" id="punish-ok-btn" type="button">
+            🔒 Área de Investimentos Bloqueada Permanentemente
+        </button>
+    </div>
+
+</div>{# /captcha-overlay #}
+
+
+{# ══════════════════════════════════════════════════════════════════════════
+HEADER DA PÁGINA
+══════════════════════════════════════════════════════════════════════════ #}
+<div class="page-header">
+    <a href="{{ url_for('dashboard') }}" class="back-btn" id="btn-voltar" aria-label="Voltar">
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+    </a>
+    <h1 class="page-title">Investimentos</h1>
+    <span style="font-size:1.2rem;">📈</span>
+</div>
+
+
+{# ══════════════════════════════════════════════════════════════════════════
+HERO — Saldo e boas-vindas
+══════════════════════════════════════════════════════════════════════════ #}
+<div class="invest-hero invest-section">
+    <div class="invest-hero-title">💸 ZicaPay Investimentos</div>
+    <div class="invest-hero-subtitle">
+        Onde seu dinheiro vai para nunca mais voltar.
+    </div>
+
+    <div class="invest-saldo-label">Saldo disponível para destruição</div>
+    {#
+    O data-saldo é lido pelo JS para controle interno do saldo visual.
+    Não é o saldo real — apenas visual (para as pegadinhas de débito).
+    #}
+    {# FIX: Bug Hackathon — classe .zicapay-saldo-display permite sync automático via JS #}
+    <div class="invest-saldo-valor zicapay-saldo-display" id="invest-saldo-valor" data-saldo="{{ conta.saldo }}">
+        {{ conta.saldo_formatado() }}
+    </div>
+</div>
+
+
+{# ══════════════════════════════════════════════════════════════════════════
+[DARK PATTERN 2] TINDER DOS INVESTIMENTOS
+──────────────────────────────────────────────────────────────────────────
+Cards deslizáveis estilo Tinder com ativos terríveis.
+Swipe para DIREITA = compra AUTOMÁTICA sem confirmação.
+Swipe para ESQUERDA = próximo card (sem compra).
+Botão "Desfazer" é quase invisível e não funciona.
+══════════════════════════════════════════════════════════════════════════ #}
+<div class="invest-divider"></div>
+<div class="invest-section-label">Escolha seu ativo</div>
+
+<section class="tinder-section invest-section" id="tinder-section" aria-labelledby="tinder-title">
+    <div class="tinder-section-header">
+        <h2 class="tinder-section-title" id="tinder-title">
+            🃏 Mercado Financeiro
+        </h2>
+        <span class="tinder-hint">Deslize para explorar</span>
+    </div>
+
+    {# Stack de cards — renderizado e gerenciado pelo JS #}
+    <div class="tinder-stack" id="tinder-stack" role="list" aria-label="Ativos disponíveis"></div>
+
+    {# Instruções de swipe (propositalmente confusas) #}
+    <div class="tinder-directions">
+        <div class="tinder-dir tinder-dir--left">
+            <div class="tinder-dir-icon">👈</div>
+            <span>Próximo</span>
+        </div>
+        <div class="tinder-dir tinder-dir--right">
+            <div class="tinder-dir-icon">👉</div>
+            {#
+            [DARK PATTERN 2] Texto induz a pensar que direita = "ver mais",
+            mas na realidade COMPRA o ativo automaticamente.
+            #}
+            <span>Ver detalhes*</span>
+        </div>
+    </div>
+
+    {# Feedback de compra realizada (aparece ao swipe direita) #}
+    <div class="purchase-feedback" id="purchase-feedback" role="alert" aria-live="assertive"></div>
+
+    {#
+    [DARK PATTERN 2] Botão "Desfazer" quase invisível:
+    - Cor #D1D5DB (cinza claríssimo) sobre fundo branco
+    - Tamanho 0.65rem
+    - Sem bordas ou background
+    - opacity: 0.6
+    - Ao clicar → alert nativo irônico, sem desfazer a compra
+    #}
+    <button class="btn-desfazer" id="btn-desfazer" type="button" title="Desfazer última operação">
+        desfazer
+    </button>
+
+    {# Nota de rodapé em letras miúdas — dark pattern de fine print #}
+    <p style="font-size:0.58rem;color:var(--text-muted);text-align:center;margin-top:6px;opacity:0.6;padding:0 8px;">
+        *"Ver detalhes" confirma automaticamente a aquisição do ativo, sujeita a
+        taxa de custódia de 4,5% ao dia. Aplicação mínima de D+∞.
+        Ao deslizar, você concorda com os Termos e Condições ZicaPay (812 páginas).
+    </p>
+</section>
+
+
+{# ══════════════════════════════════════════════════════════════════════════
+[DARK PATTERN 3] APOSTAS HÍPICAS — "APOSTE SEU PATRIMÔNIO"
+──────────────────────────────────────────────────────────────────────────
+Corrida de cavalos com resultado manipulado via CSS @keyframes.
+O cavalo do usuário SEMPRE tropeça na metade (rotate 90deg).
+O adversário SEMPRE ganha.
+Design intencional de banca clandestina (cores caóticas, letras piscando).
+══════════════════════════════════════════════════════════════════════════ #}
+<div class="invest-divider"></div>
+<div class="invest-section-label">Aposte seu patrimônio</div>
+
+<section class="hipica-section invest-section" id="hipica-section" aria-labelledby="hipica-title">
+    <div class="hipica-card">
+
+        {# Header estilo "banca clandestina" #}
+        <div class="hipica-header">
+            <span style="font-size:1.5rem;">🎰</span>
+            <h2 class="hipica-header-title" id="hipica-title">
+                ZicaPay Hipódromo
+            </h2>
+            <span class="hipica-header-badge">AO VIVO</span>
+        </div>
+
+        {#
+        [DARK PATTERN 3] Fine print irônico — termos absurdos em fonte minúscula.
+        Ninguém vai ler isso, mas está lá.
+        #}
+        <div class="hipica-warning">
+            ⚖️ Regulamentado pela Comissão Internacional de Apostas de Alto Risco e Baixa Esperança (CIARBE) ·
+            Probabilidade real de ganho: 0% · Apostas não reembolsáveis por força maior, menor ou média
+        </div>
+
+        <div class="hipica-body">
+
+            {# ── PISTA DE CORRIDA ── #}
+            <div class="hipica-track" role="img" aria-label="Pista de corrida de cavalos">
+                <div class="hipica-finish" aria-hidden="true"></div>
+
+                {# Lane 1 — Cavalo do Usuário #}
+                <div class="hipica-lane">
+                    <span class="hipica-lane-label" style="color:rgba(245,158,11,0.8);">Seu</span>
+                    <div class="hipica-lane-track">
+                        {#
+                        [DARK PATTERN 3 — CORE] horse-user
+                        Recebe a classe .horse--running-user via JS ao iniciar a corrida.
+                        A animação CSS @keyframes horseUser faz o cavalo:
+                        - Correr até 45% da pista
+                        - Girar 90deg na posição 50% (simula perna quebrada)
+                        - Ficar imóvel até o fim
+                        #}
+                        <span class="horse" id="horse-user" aria-label="Seu cavalo" role="img">🐎</span>
+                    </div>
+                </div>
+
+                {# Lane 2 — Adversário (sempre vence) #}
+                <div class="hipica-lane">
+                    <span class="hipica-lane-label" style="color:rgba(239,68,68,0.7);">Rival</span>
+                    <div class="hipica-lane-track">
+                        {#
+                        [DARK PATTERN 3 — CORE] horse-rival
+                        Recebe .horse--running-rival via JS.
+                        A animação CSS @keyframes horseRival vai de 0% a 90% linearmente.
+                        SEMPRE chega na linha de chegada.
+                        #}
+                        <span class="horse" id="horse-rival" aria-label="Cavalo rival" role="img">🐴</span>
+                    </div>
+                </div>
+            </div>
+
+            {# ── SELEÇÃO DE CAVALO ── #}
+            <div class="hipica-select-label">Escolha seu campeão</div>
+            <div class="hipica-horses" role="group" aria-label="Selecione um cavalo">
+
+                {#
+                [DARK PATTERN 3] Todos os cavalos levam ao mesmo resultado.
+                Os nomes são irônicos para criar falsa sensação de escolha estratégica.
+                As "odds" são todas favoráveis mas nunca se concretizam.
+                #}
+                <button class="hipica-horse-btn" data-horse="trovao" type="button" id="horse-btn-1"
+                    aria-pressed="false">
+                    <span class="hipica-horse-btn-emoji">🐎</span>
+                    <span class="hipica-horse-btn-name">Trovão Negro</span>
+                    <span class="hipica-horse-btn-odds">×5.2</span>
+                </button>
+
+                <button class="hipica-horse-btn" data-horse="raios" type="button" id="horse-btn-2" aria-pressed="false">
+                    <span class="hipica-horse-btn-emoji">🐎</span>
+                    <span class="hipica-horse-btn-name">Raios Dourados</span>
+                    <span class="hipica-horse-btn-odds">×3.8</span>
+                </button>
+
+                <button class="hipica-horse-btn" data-horse="esperanca" type="button" id="horse-btn-3"
+                    aria-pressed="false">
+                    <span class="hipica-horse-btn-emoji">🐎</span>
+                    <span class="hipica-horse-btn-name">Esperança Vã</span>
+                    <span class="hipica-horse-btn-odds">×12.0</span>
+                </button>
+
+            </div>
+
+            {# ── VALOR DA APOSTA + BOTÃO ── #}
+            <div class="hipica-bet-row">
+                <input type="number" class="hipica-bet-input" id="hipica-bet-input" placeholder="R$ valor da aposta"
+                    min="1" step="0.01" aria-label="Valor da aposta em reais">
+                {# Botão chamativo com gradiente dourado #}
+                <button class="hipica-bet-btn" id="btn-apostar" type="button">
+                    🏆 APOSTAR
+                </button>
+            </div>
+
+            {#
+            ── RESULTADO DA CORRIDA (oculto inicialmente)
+            Exibido após 4s de animação. Sempre mostra derrota do usuário
+            e débito automático do "custo veterinário".
+            #}
+            <div class="hipica-result" id="hipica-result" role="alert" aria-live="polite">
+                <div class="hipica-result-emoji">🦴💀</div>
+                <div class="hipica-result-title">
+                    Puxa, seu cavalo sofreu uma fratura exposta!
+                </div>
+                <div class="hipica-result-text" id="hipica-result-text">
+                    {# Preenchido dinamicamente pelo JS com valor do veterinário aleatório #}
+                </div>
+            </div>
+
+        </div>{# /hipica-body #}
+
+        {# Rodapé irônico da banca #}
+        <div class="hipica-footer">
+            <span class="hipica-footer-text">
+                © 2025 ZicaPay Hipódromo™ · Nenhuma aposta foi prejudicada na produção deste produto.
+                Cavalos sim.
+            </span>
+            <span class="hipica-footer-logo">ZICA🎰</span>
+        </div>
+
+    </div>{# /hipica-card #}
+</section>
+
+
+{# Espaço para a navbar não cobrir o conteúdo #}
+<div class="invest-bottom-spacer"></div>
+
+{% endblock %}{# /page_content #}
+
+
+{% block scripts %}
+{# JavaScript exclusivo da tela de investimentos #}
+<script src="{{ url_for('static', filename='js/investir.js') }}"></script>
+{% endblock %}
