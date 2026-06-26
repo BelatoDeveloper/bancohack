@@ -37,72 +37,44 @@ def login_required(f):
 
 
 def get_cliente_logado():
-    """Retorna o cliente logado buscando no Firebase com fallback resiliente.
-
-    // FIX: Sessao e Emprestimo — Estratégia de 3 camadas para máxima resiliência:
-    //
-    // Camada 1 (RAM + Firebase): busca_por_email() — tenta RAM local, depois Firestore.
-    //   → Funciona em 99% dos casos (instância "quente" com cache RAM, ou Firebase acessível).
-    //
-    // Camada 2 (Reconstrução em memória a partir da sessão Flask):
-    //   → Se o Firebase está lento ou a RAM do worker está vazia (instância "fria"),
-    //     reconstrói um Cliente mínimo com os dados que Flask persiste na sessão
-    //     (cookie criptografado com email + nome). NÃO grava nada no Firebase —
-    //     preserva o saldo real. O usuário fica logado e pode continuar navegando.
-    //   → Na próxima requisição que fizer salvar_cliente(), o Firebase terá o objeto correto.
-    //
-    // Camada 3 (None → Logout): só expulsa o usuário se não houver NENHUM dado de sessão.
-    //   → Jamais cria nem sobrescreve contas. Zero risco de saldo zerado.
-    """
     email = session.get("email_usuario")
     if not email:
         return None
 
-    # Camada 1: Busca o cliente — tenta RAM local primeiro, depois Firebase
-    try:
-        cliente = db.buscar_por_email(email)
-    except Exception:
-        cliente = None
+    cliente = db.buscar_por_email(email)
 
-    if cliente:
-        return cliente
+    # FIX: Bug Hackathon — BLINDAGEM HACKATHON revisada:
+    # Só cria um usuário fantasma em último caso absoluto.
+    # Antes de criar, tenta usar o nome real da sessão (salvo no login/cadastro).
+    if not cliente:
+        # Recupera o nome real da sessão se ele foi salvo
+        nome_sessao = session.get("nome_usuario", None)
+        if not nome_sessao:
+            # Nenhum dado de nome na sessão — cria fantasma genérico como último recurso
+            try:
+                cliente = db.registrar_cliente(
+                    nome="Usuário Convidado",
+                    email=email,
+                    senha="123",
+                    cpf="00000000000",
+                    telefone="00000000000",
+                )
+            except Exception:
+                return None
+        else:
+            # Temos o nome real — recria o usuário no banco com os dados da sessão
+            try:
+                cliente = db.registrar_cliente(
+                    nome=nome_sessao,
+                    email=email,
+                    senha="recuperado_sessao",
+                    cpf="00000000000",
+                    telefone="00000000000",
+                )
+            except Exception:
+                return None
 
-    # Camada 2: Firebase inacessível ou worker frio — reconstrói em memória com dados da sessão.
-    # Usamos os dados gravados na sessão Flask (cookie do lado do servidor) durante o login.
-    nome_sessao = session.get("nome_usuario", email.split("@")[0])
-    try:
-        from models.conta import Conta
-        from models.cliente import Cliente as ClienteModel
-
-        conta_temp = Conta(numero="0000-0", agencia="0001", saldo_inicial=0.0)
-        cliente_temp = ClienteModel(
-            id=0,
-            nome=nome_sessao,
-            email=email,
-            senha="",
-            cpf="00000000000",
-            telefone="00000000000",
-            conta=conta_temp,
-        )
-        # Garante que taxa_abertura_paga começa como False para disparar o popup
-        cliente_temp.taxa_abertura_paga = False
-
-        # Tenta popular o saldo real consultando o Firebase diretamente (sem exceção)
-        try:
-            cliente_real = db.buscar_por_email_fresh(email)
-            if cliente_real:
-                return cliente_real
-        except Exception:
-            pass
-
-        # Última linha de defesa: retorna objeto em memória para manter sessão ativa
-        print(f"[ZicaPay] get_cliente_logado: usando fallback em memória para '{email}'")
-        return cliente_temp
-
-    except Exception as e:
-        print(f"[ZicaPay] get_cliente_logado: falha no fallback em memória: {e}")
-        return None
-
+    return cliente
 
 # ────────────────────────────────────────────────────────────────────────────────
 # ROTA: Investir — Bad UX ZicaPay
@@ -729,26 +701,14 @@ def api_me():
 @app.route("/api/accounts/balance", methods=["GET"])
 @login_required
 def api_balance():
-    """FIX: Bug Hackathon — Leitura de saldo direto do Firebase.
-    Usa buscar_por_email_fresh() para ignorar o cache RAM (que pode conter
-    dados desatualizados em instâncias serverless diferentes) e garantir
-    que o valor retornado é sempre o saldo real persistido no Firestore.
-    """
-    email = session.get("email_usuario")
-    if not email:
-        return jsonify({"erro": "Sessão expirada. Faça login novamente."}), 401
-
-    # FIX: Bug Hackathon — leitura fresca do Firebase, não do cache RAM
-    c = db.buscar_por_email_fresh(email)
+    c = get_cliente_logado()
     if not c or not hasattr(c, 'conta') or c.conta is None:
         session.clear()
         return jsonify({"erro": "Sessão expirada. Faça login novamente."}), 401
-
     return jsonify({
         "saldo": c.conta.saldo,
         "saldo_formatado": c.conta.saldo_formatado(),
     })
-
 
 
 @app.route("/api/transactions", methods=["GET"])
