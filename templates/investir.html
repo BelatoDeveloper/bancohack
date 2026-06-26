@@ -134,7 +134,8 @@ HERO — Saldo e boas-vindas
     O data-saldo é lido pelo JS para controle interno do saldo visual.
     Não é o saldo real — apenas visual (para as pegadinhas de débito).
     #}
-    <div class="invest-saldo-valor" id="invest-saldo-valor" data-saldo="{{ conta.saldo }}">
+    {# FIX: Bug Hackathon — classe .zicapay-saldo-display permite sync automático via JS #}
+    <div class="invest-saldo-valor zicapay-saldo-display" id="invest-saldo-valor" data-saldo="{{ conta.saldo }}">
         {{ conta.saldo_formatado() }}
     </div>
 </div>
