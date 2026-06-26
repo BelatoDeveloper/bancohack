@@ -15,7 +15,9 @@
   <!-- Saldo -->
   <div style="background:var(--primary-10);border:1px solid var(--primary-20);border-radius:16px;padding:16px;margin-bottom:20px;text-align:center;">
     <p style="font-size:0.75rem;color:var(--text-secondary);font-weight:500;">Saldo disponível para transferir</p>
-    <p style="font-size:1.5rem;font-weight:800;color:var(--primary);">{{ cliente.conta.saldo_formatado() }}</p>
+    <!-- FIX: Bug Hackathon — classe .zicapay-saldo-display permite sync automático via JS -->
+    <p style="font-size:1.5rem;font-weight:800;color:var(--primary);" class="zicapay-saldo-display">{{ cliente.conta.saldo_formatado() }}</p>
+
   </div>
 
   <!-- Form -->
