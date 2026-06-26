@@ -129,50 +129,49 @@ class BancoDados:
             tipo=c_data.get("tipo", "corrente")
         )
 
-        # Reconstrói o Cliente (com fallback seguro caso algum valor venha None do Firebase)
-        # FIX: Sessao e Emprestimo — Previne AttributeError caso 'nome' ou outros venham como None
+        # Reconstrói o Cliente
         cliente = Cliente(
-            id=data.get("id") or 0,
-            nome=data.get("nome") or "Usuário",
-            email=data.get("email") or "",
-            senha=data.get("senha") or "",
-            cpf=data.get("cpf") or "00000000000",
-            telefone=data.get("telefone") or "00000000000",
+            id=data.get("id", 0),
+            nome=data.get("nome", ""),
+            email=data.get("email", ""),
+            senha=data.get("senha", ""),
+            cpf=data.get("cpf", ""),
+            telefone=data.get("telefone", ""),
             conta=conta,
             foto_url=data.get("foto_url")
         )
 
-        cliente._historico = data.get("historico") or []
-        cliente.cartao_oferta_vista = data.get("cartao_oferta_vista") or False
-        cliente.pedido_cartao = data.get("pedido_cartao")
-        cliente.taxa_abertura_paga = data.get("taxa_abertura_paga") or False
+        cliente._historico = data.get("historico", [])
+        cliente.cartao_oferta_vista = data.get("cartao_oferta_vista", False)
+        cliente.pedido_cartao = data.get("pedido_cartao", None)
+        cliente.taxa_abertura_paga = data.get("taxa_abertura_paga", False)
         
         # Reconstrói Cartão
-        cartao_data = data.get("cartao") or {}
+        cartao_data = data.get("cartao", {})
         if cartao_data:
-            cliente._cartao = Cartao(id=cliente._id, limite=cartao_data.get("limite") or 5000.0, nome_titular=cliente._nome)
-            cliente._cartao._numero = cartao_data.get("numero") or cliente._cartao._numero
-            cliente._cartao._cvv = cartao_data.get("cvv") or cliente._cartao._cvv
-            cliente._cartao._bloqueado = cartao_data.get("bloqueado") or False
+            cliente._cartao = Cartao(id=cliente._id, limite=cartao_data.get("limite", 5000.0), nome_titular=cliente._nome)
+            cliente._cartao._numero = cartao_data.get("numero", cliente._cartao._numero)
+            cliente._cartao._cvv = cartao_data.get("cvv", cliente._cartao._cvv)
+            cliente._cartao._bloqueado = cartao_data.get("bloqueado", False)
 
         # Reconstrói Chaves Pix
         cliente._chaves_pix = []
-        for p in (data.get("chaves_pix") or []):
-            chave = ChavePix(id=p.get("id") or 1, tipo=p.get("tipo") or "", valor=p.get("valor") or "")
+        for p in data.get("chaves_pix", []):
+            chave = ChavePix(id=p.get("id", 1), tipo=p.get("tipo", ""), valor=p.get("valor", ""))
             if not p.get("ativa", True):
                 chave.desativar()
             cliente._chaves_pix.append(chave)
-            if (p.get("id") or 1) >= cliente._pix_id_counter:
-                cliente._pix_id_counter = (p.get("id") or 1) + 1
+            if p.get("id", 1) >= cliente._pix_id_counter:
+                cliente._pix_id_counter = p.get("id", 1) + 1
 
         # Reconstrói Notificações
         cliente._notificacoes = []
-        for n in (data.get("notificacoes") or []):
+        for n in data.get("notificacoes", []):
             notif = Notificacao(
-                id=n.get("id") or 1,
-                mensagem=n.get("mensagem") or "",
-                tipo=n.get("tipo") or "info",
-                icone=n.get("icone") or "bell"
+                id=n.get("id", 1),
+                mensagem=n.get("mensagem", ""),
+                tipo=n.get("tipo", "info"),
+                icone=n.get("icone", "bell")
             )
             raw_data = n.get("data")
             if isinstance(raw_data, str):
@@ -186,7 +185,7 @@ class BancoDados:
             elif isinstance(raw_data, datetime):
                 # FIX VERCEL FIREBASE: Suporte nativo para datetime retornado pelo Firebase
                 notif._data = raw_data
-            notif._lida = n.get("lida") or False
+            notif._lida = n.get("lida", False)
             cliente._notificacoes.append(notif)
             
         return cliente
@@ -256,37 +255,9 @@ class BancoDados:
                     self._clientes_dict[email] = cliente
                     return cliente
             except Exception as e:
-                import traceback
                 print(f"Erro ao buscar cliente no Firebase: {e}")
-                traceback.print_exc()
 
         return None
-
-    def buscar_por_email_fresh(self, email: str) -> Cliente | None:
-        """FIX: Bug Hackathon — Busca diretamente no Firebase, ignorando o cache RAM.
-
-        Usado pelo /api/accounts/balance para garantir o saldo mais recente persistido,
-        evitando que instâncias serverless diferentes retornem saldos desatualizados
-        de suas caches de memória locais independentes.
-
-        Após a leitura, atualiza o cache local para servir requisições subsequentes.
-        """
-        if db_firestore:
-            try:
-                doc = db_firestore.collection('clientes').document(email).get()
-                if doc.exists:
-                    data = doc.to_dict()
-                    cliente = self._cliente_from_dict(data)
-                    # Atualiza cache local — a instância atual terá o saldo correto
-                    self._clientes_dict[email] = cliente
-                    return cliente
-            except Exception as e:
-                print(f"[ZicaPay] buscar_por_email_fresh: erro Firebase: {e}")
-
-        # Fallback: usa o cache local se Firebase falhar
-        return self._clientes_dict.get(email)
-
-
 
     def buscar_por_numero_conta(self, numero: str) -> Cliente | None:
         for c in self._clientes_dict.values():
