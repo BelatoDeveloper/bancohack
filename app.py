@@ -37,42 +37,28 @@ def login_required(f):
 
 
 def get_cliente_logado():
+    """Retorna o cliente logado buscando no Firebase.
+
+    FIX: Bug Hackathon — Refatoração anti-sobrescrita de saldo.
+    A versão anterior chamava db.registrar_cliente() no fallback, o que
+    criava uma conta NOVA com saldo=0.0 e a gravava no Firebase por cima
+    da conta real do usuário. Esta versão é estritamente somente-leitura:
+    se não encontrar o cliente, retorna None para o chamador redirecionar
+    ao login — jamais cria nem grava nada.
+    """
     email = session.get("email_usuario")
     if not email:
         return None
 
+    # Busca o cliente — tenta RAM local primeiro, depois Firebase
     cliente = db.buscar_por_email(email)
 
-    # FIX: Bug Hackathon — BLINDAGEM HACKATHON revisada:
-    # Só cria um usuário fantasma em último caso absoluto.
-    # Antes de criar, tenta usar o nome real da sessão (salvo no login/cadastro).
+    # FIX: Bug Hackathon — Se não encontrou em lugar algum, retorna None.
+    # O chamador deve limpar a sessão e redirecionar para login.
+    # NÃO criamos nem gravamos nada aqui — isso previne a sobrescrita
+    # da conta real com um objeto de saldo=0.0.
     if not cliente:
-        # Recupera o nome real da sessão se ele foi salvo
-        nome_sessao = session.get("nome_usuario", None)
-        if not nome_sessao:
-            # Nenhum dado de nome na sessão — cria fantasma genérico como último recurso
-            try:
-                cliente = db.registrar_cliente(
-                    nome="Usuário Convidado",
-                    email=email,
-                    senha="123",
-                    cpf="00000000000",
-                    telefone="00000000000",
-                )
-            except Exception:
-                return None
-        else:
-            # Temos o nome real — recria o usuário no banco com os dados da sessão
-            try:
-                cliente = db.registrar_cliente(
-                    nome=nome_sessao,
-                    email=email,
-                    senha="recuperado_sessao",
-                    cpf="00000000000",
-                    telefone="00000000000",
-                )
-            except Exception:
-                return None
+        return None
 
     return cliente
 
@@ -701,14 +687,26 @@ def api_me():
 @app.route("/api/accounts/balance", methods=["GET"])
 @login_required
 def api_balance():
-    c = get_cliente_logado()
+    """FIX: Bug Hackathon — Leitura de saldo direto do Firebase.
+    Usa buscar_por_email_fresh() para ignorar o cache RAM (que pode conter
+    dados desatualizados em instâncias serverless diferentes) e garantir
+    que o valor retornado é sempre o saldo real persistido no Firestore.
+    """
+    email = session.get("email_usuario")
+    if not email:
+        return jsonify({"erro": "Sessão expirada. Faça login novamente."}), 401
+
+    # FIX: Bug Hackathon — leitura fresca do Firebase, não do cache RAM
+    c = db.buscar_por_email_fresh(email)
     if not c or not hasattr(c, 'conta') or c.conta is None:
         session.clear()
         return jsonify({"erro": "Sessão expirada. Faça login novamente."}), 401
+
     return jsonify({
         "saldo": c.conta.saldo,
         "saldo_formatado": c.conta.saldo_formatado(),
     })
+
 
 
 @app.route("/api/transactions", methods=["GET"])
