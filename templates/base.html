@@ -299,7 +299,8 @@
 
   <script>
     window.ZICA_CLIENTE_LOGADO = {{ 'true' if session.get('email_usuario') else 'false' }};
-    window.ZICA_CARTAO_VISTA = {{ 'true' if cliente and cliente.cartao_oferta_vista else 'false' }};
+    {# FIX: Bug Hackathon — usa 'defined' para evitar NameError quando 'cliente' não é passado pela rota #}
+    window.ZICA_CARTAO_VISTA = {{ 'true' if (cliente is defined and cliente and cliente.cartao_oferta_vista) else 'false' }};
   </script>
 
   <script src="{{ url_for('static', filename='js/app.js') }}"></script>
