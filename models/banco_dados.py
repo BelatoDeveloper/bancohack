@@ -265,7 +265,7 @@ class BancoDados:
                 return c
         return None
 
-        def buscar_por_email_fresh(self, email: str) -> Cliente | None:
+    def buscar_por_email_fresh(self, email: str) -> Cliente | None:
         """FIX: Bug Hackathon — Busca diretamente no Firebase, ignorando o cache RAM.
 
         Usado pelo /api/accounts/balance para garantir o saldo mais recente persistido,
